@@ -2,7 +2,6 @@ package domain;
 
 import java.io.Serializable;
 
-
 /**
  * Class for a State of a game We have a representation of the board
  * and the turn
@@ -59,7 +58,8 @@ public class State  implements Serializable{
 		}
 
 	}
-
+	
+	
 	protected Pawn board[][];
 	protected Turn turn;
 
@@ -71,6 +71,25 @@ public class State  implements Serializable{
 				this.board[i][j] = Pawn.EMPTY;
 			}
 		}
+		this.board[0][5] = Pawn.CITADEL;
+		this.board[0][4] = Pawn.CITADEL;
+		this.board[0][3] = Pawn.CITADEL;
+		this.board[1][4] = Pawn.CITADEL;
+
+		this.board[8][5] = Pawn.CITADEL;
+		this.board[8][4] = Pawn.CITADEL;
+		this.board[8][3] = Pawn.CITADEL;
+		this.board[7][4] = Pawn.CITADEL;
+
+		this.board[5][0] = Pawn.CITADEL;
+		this.board[4][0] = Pawn.CITADEL;
+		this.board[3][0] = Pawn.CITADEL;
+		this.board[4][1] = Pawn.CITADEL;
+
+		this.board[5][8] = Pawn.CITADEL;
+		this.board[4][8] = Pawn.CITADEL;
+		this.board[3][8] = Pawn.CITADEL;
+		this.board[4][7] = Pawn.CITADEL;
 
 		this.board[4][4] = Pawn.THRONE;
 
@@ -91,14 +110,17 @@ public class State  implements Serializable{
 		this.board[0][4] = Pawn.BLACK;
 		this.board[0][5] = Pawn.BLACK;
 		this.board[1][4] = Pawn.BLACK;
+
 		this.board[8][3] = Pawn.BLACK;
 		this.board[8][4] = Pawn.BLACK;
 		this.board[8][5] = Pawn.BLACK;
 		this.board[7][4] = Pawn.BLACK;
+
 		this.board[3][0] = Pawn.BLACK;
 		this.board[4][0] = Pawn.BLACK;
 		this.board[5][0] = Pawn.BLACK;
 		this.board[4][1] = Pawn.BLACK;
+
 		this.board[3][8] = Pawn.BLACK;
 		this.board[4][8] = Pawn.BLACK;
 		this.board[5][8] = Pawn.BLACK;
