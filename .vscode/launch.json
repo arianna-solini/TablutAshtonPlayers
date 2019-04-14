@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - ClientTablut",
+            "request": "launch",
+            "mainClass": "client.ClientTablut",
+            "projectName": "Tablut",
+            "args": "${command:SpecifyProgramArgs}"
+        }
+    ]
+}
