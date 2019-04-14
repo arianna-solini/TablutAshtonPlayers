@@ -43,7 +43,7 @@ public class State  implements Serializable{
 	 *
 	 */
 	public enum Pawn {
-		EMPTY("O"), WHITE("W"), BLACK("B"), THRONE("T"), KING("K");
+		EMPTY("O"), WHITE("W"), BLACK("B"), THRONE("T"), KING("K"), CITADEL("C");
 		private final String pawn;
 
 		private Pawn(String s) {
@@ -147,6 +147,13 @@ public class State  implements Serializable{
 		this.board[row][column] = Pawn.EMPTY;
 	}
 
+	public String getBox(int row, int column) {
+		String ret;
+		char col = (char) (column + 97);
+		ret = col + "" + (row + 1);
+		return ret;
+	}
+
 	public String boardString() {
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < this.board.length; i++) {
@@ -224,13 +231,6 @@ public class State  implements Serializable{
 		result = prime * result + ((this.board == null) ? 0 : this.board.hashCode());
 		result = prime * result + ((this.turn == null) ? 0 : this.turn.hashCode());
 		return result;
-	}
-
-	public String getBox(int row, int column) {
-		String ret;
-		char col = (char) (column + 97);
-		ret = col + "" + (row + 1);
-		return ret;
 	}
 
 	public State clone() {
