@@ -1,0 +1,32 @@
+<!-- Per lanciare ClientTablut: ant client -Darg0=<nomegruppo> -Darg1=[white|black] -->
+
+
+<project name="Tablut">
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build"/>
+        <javac encoding="iso-8859-1" srcdir="src" 
+            destdir="build"
+            classpath="lib/gson-2.2.2.jar" />
+        <copy todir="build">
+            <fileset dir="src" excludes="*.java"/>
+        </copy>
+    </target>
+    
+    <target name="client">
+        <java classname="client.ClientTablut" fork="true">
+            <classpath>
+                <pathelement location="lib/gson-2.2.2.jar"/>
+                <pathelement location="build"/>
+            </classpath>
+            <arg value="${arg0}"/>
+            <arg value="${arg1}"/>
+        </java>
+    </target>
+
+
+</project>

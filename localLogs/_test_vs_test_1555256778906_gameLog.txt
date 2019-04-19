@@ -1,0 +1,132 @@
+Apr 14, 2019 5:46:18 PM domain.Game <init>
+FINE: Players:	White:	test	vs	test
+Apr 14, 2019 5:46:18 PM domain.Game <init>
+FINE: Repeated moves allowed:	99	Cache:	0
+Apr 14, 2019 5:46:18 PM domain.Game <init>
+FINE: Inizio partita
+Apr 14, 2019 5:46:18 PM domain.Game <init>
+FINE: Stato:
+OOOBBBOOO
+OOOOBOOOO
+OOOOWOOOO
+BOOOWOOOB
+BBWWKWWBB
+BOOOWOOOB
+OOOOWOOOO
+OOOOBOOOO
+OOOBBBOOO
+-
+B
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+FINE: Turn: B Pawn from e9 to i7
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+FINE: Turn: B Pawn from i4 to b3
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+FINE: Turn: B Pawn from i6 to i2
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+WARNING: Mossa che scavalca una pedina
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+FINE: Turn: B Pawn from h5 to d2
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+FINE: Turn: B Pawn from i4 to b1
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+FINE: Turn: B Pawn from i6 to f5
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+FINE: Turn: B Pawn from a4 to a2
+Apr 14, 2019 5:46:37 PM domain.Game movePawn
+FINE: Movimento pedina
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+FINE: Current draw cache size: 1
+Apr 14, 2019 5:46:37 PM domain.Game checkMove
+FINE: Stato:
+OOOBBBOOO
+BOOOBWOOO
+OOOOWOOOO
+OOOOWOOOB
+BBWWKOWBB
+BOOOWOOOB
+OOOOWOOOO
+OOOOBOOOO
+OOOBBBOOO
+-
+W
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+FINE: Turn: B Pawn from d9 to h9
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+WARNING: Mossa che scavalca una pedina
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+FINE: Turn: B Pawn from e1 to g7
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+FINE: Turn: B Pawn from h5 to d3
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+FINE: Turn: B Pawn from e9 to i7
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+FINE: Turn: B Pawn from e8 to f4
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+FINE: Turn: B Pawn from i4 to b6
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+FINE: Turn: B Pawn from a2 to i8
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+FINE: Turn: B Pawn from b5 to b9
+Apr 14, 2019 5:46:57 PM domain.Game movePawn
+FINE: Movimento pedina
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+FINE: Current draw cache size: 1
+Apr 14, 2019 5:46:57 PM domain.Game checkMove
+FINE: Stato:
+OOOBBBOOO
+BOOOBOOOO
+OOOOWOOOO
+OOOOWOOOB
+BOWWKWWBB
+BOOOWOOOB
+OOOOWOOOO
+OOOOBOOOO
+OBOBBBOOO
+-
+W
+Apr 14, 2019 5:47:30 PM domain.Game checkMove
+FINE: Turn: B Pawn from e2 to c9
+Apr 14, 2019 5:47:30 PM domain.Game checkMove
+WARNING: Mossa in diagonale
+Apr 14, 2019 5:47:30 PM domain.Game checkMove
+FINE: Turn: B Pawn from b9 to a9
+Apr 14, 2019 5:47:30 PM domain.Game movePawn
+FINE: Movimento pedina
+Apr 14, 2019 5:47:30 PM domain.Game checkMove
+FINE: Current draw cache size: 1
+Apr 14, 2019 5:47:30 PM domain.Game checkMove
+FINE: Stato:
+OOOBBBOOO
+BOOOBOOOO
+OOOOWOOOO
+OOOOWOOOB
+BOWWKWOBB
+BOOOWOOOB
+OOOOWOOOO
+OOOOBOOOO
+BOOBBBWOO
+-
+W

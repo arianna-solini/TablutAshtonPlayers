@@ -1,0 +1,23 @@
+Apr 14, 2019 4:20:44 PM domain.Game <init>
+FINE: Players:	White:	test	vs	test
+Apr 14, 2019 4:20:44 PM domain.Game <init>
+FINE: Repeated moves allowed:	99	Cache:	0
+Apr 14, 2019 4:20:44 PM domain.Game <init>
+FINE: Inizio partita
+Apr 14, 2019 4:20:44 PM domain.Game <init>
+FINE: Stato:
+OOOBBBOOO
+OOOOBOOOO
+OOOOWOOOO
+BOOOWOOOB
+BBWWKWWBB
+BOOOWOOOB
+OOOOWOOOO
+OOOOBOOOO
+OOOBBBOOO
+-
+B
+Apr 14, 2019 4:20:45 PM domain.Game checkMove
+FINE: Turn: W Pawn from e5 to b9
+Apr 14, 2019 4:20:45 PM domain.Game checkMove
+WARNING: Mossa in diagonale
