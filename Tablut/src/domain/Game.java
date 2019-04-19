@@ -330,6 +330,7 @@ public class Game  {
 		}
 
 	}
+	
 	public State checkMove(State state, Action a)
 			throws BoardException, ActionException, StopException, PawnException, DiagonalException, ClimbingException,
 			ThroneException, OccupitedException, ClimbingCitadelException, CitadelException {
@@ -345,7 +346,6 @@ public class Game  {
 
 		int rowFrom = a.getRowFrom(), columnFrom = a.getColumnFrom();
 		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-
 
 		// controllo se sono fuori dal tabellone
 		if (columnFrom > board.getLength()- 1 || rowFrom > board.getLength() - 1
@@ -734,24 +734,18 @@ public class Game  {
 		Board newBoard = board;
 		// State newState = new State();
 		this.loggGame.fine("Movimento pedina");
-		// libero il trono o una casella qualunque
-		if (columnFrom == 4 && rowFrom == 4) {
-			//newBoard.getBoard()[rowFrom][columnFrom] = State.Pawn.THRONE;
-		} else {
-			newBoard.getBoard()[rowFrom][columnFrom] = Pawn.EMPTY;
-		}
-
+		// libero una casella qualunque
+		newBoard.getBoard()[rowFrom][columnFrom] = Pawn.EMPTY;
 		// metto nel nuovo tabellone la pedina mossa
 		newBoard.getBoard()[rowTo][columnTo] = pawn;
 		// aggiorno il tabellone
 		state.setBoard(newBoard);
 		// cambio il turno
-		if (state.getTurn().equalsTurn(State.Turn.WHITE.toString())) {
+		if (state.getTurn() == Turn.WHITE) {
 			state.setTurn(State.Turn.BLACK);
 		} else {
 			state.setTurn(State.Turn.WHITE);
 		}
-
 		return state;
 	}
 
