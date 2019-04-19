@@ -41,6 +41,11 @@ public class State  implements Serializable{
 		this.board = new Board();
 		this.turn = Turn.BLACK;
 	}
+	
+	public State(Board board, Turn turn){
+		this.board = board;
+		this.turn = turn;
+	}
 
 	public Board getBoard() {
 		return board;
