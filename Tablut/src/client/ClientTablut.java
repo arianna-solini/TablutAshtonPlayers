@@ -3,7 +3,8 @@ package client;
 import domain.Action;
 import domain.Game;
 import domain.State;
-import domain.State.Pawn;
+import domain.Board;
+import domain.Board.Pawn;
 import domain.State.Turn;
 
 import java.io.DataInputStream;
@@ -106,7 +107,7 @@ public class ClientTablut implements Runnable{
 		System.out.println("-----Inizio partita AshtonTablut-----");
 		Game rules = new Game(99, 0, "localLogs", "test", "test");
 		System.out.println("You are player " + this.player.toString() + "!");
-		State state = new State();
+		State state = new State(); // istanziando State inizializzo anche la board (vedi costruttore)
 		state.setTurn(State.Turn.WHITE); //iniziano i bianchi
 
 		try{
@@ -145,21 +146,18 @@ public class ClientTablut implements Runnable{
 		List<int[]> emptyPawns = new ArrayList<int[]>();
 				
 		if (this.currentState.getTurn().equals(Turn.WHITE)) {
-			/*
-			* Da legare alla classe di dominio State:
-			* raccogliere le caselle con sopra pedine bianche
-			* raccogliere tutte le caselle vuote 
-			*/
+			
 			int[] buf;
-			for (int i=0;i< state.getBoard().length;i++){
-				for(int j=0; j<state.getBoard().length;j++){
-					Pawn curPawn = state.getPawn(i, j);
-					if(curPawn.equalsPawn(State.Pawn.WHITE.toString()) || curPawn.equalsPawn(State.Pawn.KING.toString())){
+			Board boardGame = state.getBoard();
+			for (int i=0;i< boardGame.getLength();i++){
+				for(int j=0; j<boardGame.getLength();j++){
+					Pawn curPawn = boardGame.getPawn(i, j);
+					if(curPawn.equalsPawn(Board.Pawn.WHITE.toString()) || curPawn.equalsPawn(Board.Pawn.KING.toString())){
 						buf = new int[2];
 						buf[0] = i;
 						buf[1] = j;
 						whitePawns.add(buf);
-					}else if (curPawn.equalsPawn(State.Pawn.EMPTY.toString())){
+					}else if (curPawn.equalsPawn(Board.Pawn.EMPTY.toString())){
 						buf = new int[2];
 						buf[0] = i;
 						buf[1] = j;
@@ -185,11 +183,11 @@ public class ClientTablut implements Runnable{
 				/** parametro selected da modificare con la parte di intelligenza, per ora random **/
 
 				selected = whitePawns.get(new Random().nextInt(whitePawns.size() - 1));
-				String from = this.currentState.getBox(selected[0], selected[1]);
+				String from = this.currentState.getBoard().getBox(selected[0], selected[1]);
 				//System.out.println("il random ha scelto from: "+from);
 				
 				selected = emptyPawns.get(new Random().nextInt(emptyPawns.size() - 1));
-				String to = this.currentState.getBox(selected[0], selected[1]);
+				String to = this.currentState.getBoard().getBox(selected[0], selected[1]);
 				//System.out.println("il random ha scelto to: "+to);
 
 				a.setFrom(from);
@@ -209,8 +207,6 @@ public class ClientTablut implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//whitePawns.clear();
-			//emptyPawns.clear();
 
 		// Turno dell'avversario
 		}else if (state.getTurn().equals(State.Turn.BLACK)) {
@@ -239,21 +235,18 @@ public class ClientTablut implements Runnable{
 		List<int[]> emptyPawns = new ArrayList<int[]>();
 				
 		if (this.currentState.getTurn().equals(Turn.BLACK)) {
-			/*
-			* Da legare alla classe di dominio State:
-			* raccogliere le caselle con sopra pedine nere
-			* raccogliere tutte le caselle vuote 
-			*/
+			
 			int[] buf;
-			for (int i=0;i< state.getBoard().length;i++){
-				for(int j=0; j<state.getBoard().length;j++){
-					Pawn curPawn = state.getPawn(i, j);
-					if(curPawn.equalsPawn(State.Pawn.BLACK.toString())){
+			Board boardGame = state.getBoard();
+			for (int i=0;i< boardGame.getLength();i++){
+				for(int j=0; j<boardGame.getLength();j++){
+					Pawn curPawn = boardGame.getPawn(i, j);
+					if(curPawn.equalsPawn(Board.Pawn.BLACK.toString())){
 						buf = new int[2];
 						buf[0] = i;
 						buf[1] = j;
 						blackPawns.add(buf);
-					}else if (curPawn.equalsPawn(State.Pawn.EMPTY.toString())){
+					}else if (curPawn.equalsPawn(Board.Pawn.EMPTY.toString())){
 						buf = new int[2];
 						buf[0] = i;
 						buf[1] = j;
@@ -279,11 +272,11 @@ public class ClientTablut implements Runnable{
 				/** parametro selected da modificare con la parte di intelligenza, per ora random **/
 
 				selected = blackPawns.get(new Random().nextInt(blackPawns.size() - 1));
-				String from = this.currentState.getBox(selected[0], selected[1]);
+				String from = this.currentState.getBoard().getBox(selected[0], selected[1]);
 				//System.out.println("il random ha scelto from: "+from);
 				
 				selected = emptyPawns.get(new Random().nextInt(emptyPawns.size() - 1));
-				String to = this.currentState.getBox(selected[0], selected[1]);
+				String to = this.currentState.getBoard().getBox(selected[0], selected[1]);
 				//System.out.println("il random ha scelto to: "+to);
 
 				a.setFrom(from);
@@ -303,8 +296,6 @@ public class ClientTablut implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//blackPawns.clear();
-			//emptyPawns.clear();
 
 		// Turno dell'avversario
 		}else if (state.getTurn().equals(State.Turn.WHITE)) {
