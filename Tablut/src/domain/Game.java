@@ -167,16 +167,16 @@ public class Game  {
 					case RIGHT:
 						return (columnTo < board.getLength() - 2 
 							&& board.getPawn(rowTo, columnTo + 1).equalsPawn("W")
-							&& board.getPawn(rowTo, columnTo + 2).equalsPawn("B")
+							&&(board.getPawn(rowTo, columnTo + 2).equalsPawn("B")
 								|| board.getPositions().get(board.getBox(rowTo, columnTo+2)) == Position.THRONE
-								|| (board.getPositions().get(board.getBox(rowTo, columnTo+2)) == Position.CITADEL));
+								|| (board.getPositions().get(board.getBox(rowTo, columnTo+2)) == Position.CITADEL)));
 		
 					case LEFT:
 						return (rowTo < board.getLength() - 2
 							&& board.getPawn(rowTo + 1, columnTo).equalsPawn("W")
 							&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("B")
-									|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
-									|| (board.getPositions().get(board.getBox(rowTo+2, columnTo)) == Position.CITADEL)));
+								|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
+								|| (board.getPositions().get(board.getBox(rowTo+2, columnTo)) == Position.CITADEL)));
 		
 					default:
 						return false;
@@ -197,36 +197,129 @@ public class Game  {
 			case BLACK:
 				switch(d){
 					case DOWN:
+						return (rowTo<board.getLength()-2
+							&&board.getPawn(rowTo+1,columnTo).equalsPawn("K")	//re sotto
+							&&
+							(
+								(board.getBox(rowTo+1, columnTo).equals("e5")		//re sul trono
+								&& board.getPawn(5, 4).equalsPawn("B")
+								&& board.getPawn(4, 5).equalsPawn("B")
+								&& board.getPawn(4, 3).equalsPawn("B"))
+								||
+								(board.getBox(rowTo+1, columnTo).equals("e4")		//re adiacente al trono
+								&& board.getPawn(3, 3).equalsPawn("B")
+								&& board.getPawn(3, 5).equalsPawn("B"))
+								||
+								(board.getBox(rowTo+1, columnTo).equals("d5")
+								&& board.getPawn(4, 2).equalsPawn("B")
+								&& board.getPawn(5, 3).equalsPawn("B"))
+								||
+								(board.getBox(rowTo+1, columnTo).equals("f5")
+								&& board.getPawn(4, 6).equalsPawn("B")
+								&& board.getPawn(5, 5).equalsPawn("B"))
+								||
+								(!board.getBox(rowTo+1, columnTo).equals("d5")		//re fuori dalle zone del trono
+								&& !board.getBox(rowTo+1, columnTo).equals("e4")
+								&& !board.getBox(rowTo+1, columnTo).equals("f5")
+								&& !board.getBox(rowTo+1, columnTo).equals("e5")
+								&& board.getPawn(rowTo+2, columnTo).equalsPawn("B")
+									|| (board.getPositions().get(board.getBox(rowTo+2, columnTo)) == Position.CITADEL))
+							)
+						
+						);
 
 					case UP:
+						return (rowTo>1
+							&&board.getPawn(rowTo-1, columnTo).equalsPawn("K")	//re sopra
+							&&
+							(
+								(board.getBox(rowTo-1, columnTo).equals("e5")		//re sul trono
+								&& board.getPawn(3, 4).equalsPawn("B")
+								&& board.getPawn(4, 5).equalsPawn("B")
+								&& board.getPawn(4, 3).equalsPawn("B"))
+								||
+								(board.getBox(rowTo-1, columnTo).equals("e6")		//re adiacente al trono
+								&& board.getPawn(5, 3).equalsPawn("B")
+								&& board.getPawn(5, 5).equalsPawn("B"))
+								||
+								(board.getBox(rowTo-1, columnTo).equals("d5")
+								&& board.getPawn(4, 2).equalsPawn("B")
+								&& board.getPawn(3, 3).equalsPawn("B"))
+								||
+								(board.getBox(rowTo-1, columnTo).equals("f5")
+								&& board.getPawn(4, 4).equalsPawn("B")
+								&& board.getPawn(3, 5).equalsPawn("B"))
+								||
+								(!board.getBox(rowTo-1, columnTo).equals("d5")		//re fuori dalle zone del trono
+								&& !board.getBox(rowTo-1, columnTo).equals("e4")
+								&& !board.getBox(rowTo-1, columnTo).equals("f5")
+								&& !board.getBox(rowTo-1, columnTo).equals("e5")
+								&& board.getPawn(rowTo-2, columnTo).equalsPawn("B")
+									|| (board.getPositions().get(board.getBox(rowTo-2, columnTo)) == Position.CITADEL))
+							)
+						);
 
 					case RIGHT:
+						return (columnTo<board.getLength()-2
+							&& board.getPawn(rowTo,columnTo+1).equalsPawn("K")	//re sulla destra
+							&&
+							(
+								(board.getBox(rowTo, columnTo+1).equals("e5")		//re sul trono
+								&& board.getPawn(3, 4).equalsPawn("B")
+								&& board.getPawn(4, 5).equalsPawn("B")
+								&& board.getPawn(5, 4).equalsPawn("B"))
+								||
+								(board.getBox(rowTo, columnTo+1).equals("e4")		//re adiacente al trono
+								&&board.getPawn(2, 4).equalsPawn("B")
+								&& board.getPawn(3, 5).equalsPawn("B"))
+								||
+								(board.getBox(rowTo, columnTo+1).equals("e6")
+								&& board.getPawn(5, 5).equalsPawn("B")
+								&& board.getPawn(6, 4).equalsPawn("B"))
+								||
+								(board.getBox(rowTo, columnTo+1).equals("d5")
+								&& board.getPawn(3, 3).equalsPawn("B")
+								&& board.getPawn(3, 5).equalsPawn("B"))
+								||
+								(!board.getBox(rowTo, columnTo+1).equals("d5")		//re fuori dalle zone del trono
+								&& !board.getBox(rowTo, columnTo+1).equals("e6")
+								&& !board.getBox(rowTo, columnTo+1).equals("e4")
+								&& !board.getBox(rowTo, columnTo+1).equals("e5")
+								&&(board.getPawn(rowTo, columnTo + 2).equalsPawn("B")
+									|| (board.getPositions().get(board.getBox(rowTo, columnTo+2)) == Position.CITADEL)))
+							)
+						);	
 
 					case LEFT:
 						return (columnTo>1
-							&&board.getPawn(rowTo, columnTo-1).equalsPawn("K")
+							&& board.getPawn(rowTo, columnTo-1).equalsPawn("K")	//re sulla sinistra
 							&&
-							(board.getBox(rowTo, columnTo-1).equals("e5") 
+							(
+								(board.getBox(rowTo, columnTo-1).equals("e5") 		//re sul trono
 								&& board.getPawn(3, 4).equalsPawn("B")
 								&& board.getPawn(4, 3).equalsPawn("B")
 								&& board.getPawn(5, 4).equalsPawn("B"))
-							||
-							(board.getBox(rowTo, columnTo-1).equals("e4")
-								&&board.getPawn(2, 4).equalsPawn("B")
+								||
+								(board.getBox(rowTo, columnTo-1).equals("e4")		//re adiacente al trono
+								&& board.getPawn(2, 4).equalsPawn("B")
 								&& board.getPawn(3, 3).equalsPawn("B"))
-							||
-							(board.getBox(rowTo, columnTo-1).equals("f5")
-								&&board.getPawn(3, 5).equalsPawn("B")
+								||
+								(board.getBox(rowTo, columnTo-1).equals("f5")
+								&& board.getPawn(3, 5).equalsPawn("B")
 								&& board.getPawn(5, 5).equalsPawn("B"))
-							||
-							(!board.getBox(rowTo, columnTo-1).equals("e5")
-							&& !board.getBox(rowTo, columnTo-1).equals("e6")
-							&& !board.getBox(rowTo, columnTo-1).equals("e4")
-							&& !board.getBox(rowTo, columnTo-1).equals("f5")
-							&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("B")
-								|| (board.getPositions().get(board.getBox(rowTo, columnTo-2)) == Position.CITADEL)))
-							
-							);
+								||
+								(board.getBox(rowTo, columnTo+1).equals("e6")
+								&& board.getPawn(5, 3).equalsPawn("B")
+								&& board.getPawn(6, 4).equalsPawn("B"))
+								||
+								(!board.getBox(rowTo, columnTo-1).equals("e5")		//re fuori dalle zone del trono
+								&& !board.getBox(rowTo, columnTo-1).equals("e6")
+								&& !board.getBox(rowTo, columnTo-1).equals("e4")
+								&& !board.getBox(rowTo, columnTo-1).equals("f5")
+								&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("B")
+									|| (board.getPositions().get(board.getBox(rowTo, columnTo-2)) == Position.CITADEL)))
+							)
+						);
 
 					default:
 						return false;
@@ -529,60 +622,9 @@ public class Game  {
 		Board board = state.getBoard();
 		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
 		//ho il re sulla sinistra
-		if (columnTo>1&&board.getPawn(rowTo, columnTo-1).equalsPawn("K"))
-		{
-			//re sul trono
-			if(board.getBox(rowTo, columnTo-1).equals("e5"))
-			{
-				if(board.getPawn(3, 4).equalsPawn("B")
-						&& board.getPawn(4, 3).equalsPawn("B")
-						&& board.getPawn(5, 4).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo - 1));
-				}
-			}
-			//re adiacente al trono
-			if(board.getBox(rowTo, columnTo-1).equals("e4"))
-			{
-				if(board.getPawn(2, 4).equalsPawn("B")
-						&& board.getPawn(3, 3).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo - 1));
-				}
-			}
-			if(board.getBox(rowTo, columnTo-1).equals("e6"))
-			{
-				if(board.getPawn(5, 3).equalsPawn("B")
-						&& board.getPawn(6, 4).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo - 1));
-				}
-			}
-			if(board.getBox(rowTo, columnTo-1).equals("f5"))
-			{
-				if(board.getPawn(3, 5).equalsPawn("B")
-						&& board.getPawn(5, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo - 1));
-				}
-			}
-			//sono fuori dalle zone del trono
-			if(!board.getBox(rowTo, columnTo-1).equals("e5")
-					&& !board.getBox(rowTo, columnTo-1).equals("e6")
-					&& !board.getBox(rowTo, columnTo-1).equals("e4")
-					&& !board.getBox(rowTo, columnTo-1).equals("f5"))
-			{
-				if(board.getPawn(rowTo, columnTo - 2).equalsPawn("B")
-						|| (board.getPositions().get(board.getBox(rowTo, columnTo-2)) == Position.CITADEL))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo - 1));
-				}					
-			}
+		if (checkWin(board, rowTo, columnTo, Direction.LEFT, Turn.BLACK)){
+			state.setTurn(State.Turn.BLACKWIN);
+			this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo - 1));
 		}		
 		return state;
 	}
@@ -591,60 +633,9 @@ public class Game  {
 		Board board = state.getBoard();
 		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
 		//ho il re sulla destra
-		if (columnTo<board.getLength()-2&&(board.getPawn(rowTo,columnTo+1).equalsPawn("K")))				
-		{
-			//re sul trono
-			if(board.getBox(rowTo, columnTo+1).equals("e5"))
-			{
-				if(board.getPawn(3, 4).equalsPawn("B")
-						&& board.getPawn(4, 5).equalsPawn("B")
-						&& board.getPawn(5, 4).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo + 1));
-				}
-			}
-			//re adiacente al trono
-			if(board.getBox(rowTo, columnTo+1).equals("e4"))
-			{
-				if(board.getPawn(2, 4).equalsPawn("B")
-						&& board.getPawn(3, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo + 1));
-				}
-			}
-			if(board.getBox(rowTo, columnTo+1).equals("e6"))
-			{
-				if(board.getPawn(5, 5).equalsPawn("B")
-						&& board.getPawn(6, 4).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo + 1));
-				}
-			}
-			if(board.getBox(rowTo, columnTo+1).equals("d5"))
-			{
-				if(board.getPawn(3, 3).equalsPawn("B")
-						&& board.getPawn(3, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo + 1));
-				}
-			}
-			//sono fuori dalle zone del trono
-			if(!board.getBox(rowTo, columnTo+1).equals("d5")
-					&& !board.getBox(rowTo, columnTo+1).equals("e6")
-					&& !board.getBox(rowTo, columnTo+1).equals("e4")
-					&& !board.getBox(rowTo, columnTo+1).equals("e5"))
-			{
-				if(board.getPawn(rowTo, columnTo + 2).equalsPawn("B")
-						|| (board.getPositions().get(board.getBox(rowTo, columnTo+2)) == Position.CITADEL))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo + 1));
-				}					
-			}
+		if (checkWin(board, rowTo, columnTo, Direction.RIGHT, Turn.BLACK)){
+			state.setTurn(State.Turn.BLACKWIN);
+			this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo, columnTo + 1));
 		}
 		return state;
 	}
@@ -653,61 +644,9 @@ public class Game  {
 		Board board = state.getBoard();
 		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
 		//ho il re sotto
-		if (rowTo<board.getLength()-2&&board.getPawn(rowTo+1,columnTo).equalsPawn("K"))
-		{
-			System.out.println("Ho il re sotto");
-			//re sul trono
-			if(board.getBox(rowTo+1, columnTo).equals("e5"))
-			{
-				if(board.getPawn(5, 4).equalsPawn("B")
-						&& board.getPawn(4, 5).equalsPawn("B")
-						&& board.getPawn(4, 3).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo+1, columnTo));
-				}
-			}
-			//re adiacente al trono
-			if(board.getBox(rowTo+1, columnTo).equals("e4"))
-			{
-				if(board.getPawn(3, 3).equalsPawn("B")
-						&& board.getPawn(3, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo+1, columnTo));
-				}
-			}
-			if(board.getBox(rowTo+1, columnTo).equals("d5"))
-			{
-				if(board.getPawn(4, 2).equalsPawn("B")
-						&& board.getPawn(5, 3).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo+1, columnTo));
-				}
-			}
-			if(board.getBox(rowTo+1, columnTo).equals("f5"))
-			{
-				if(board.getPawn(4, 6).equalsPawn("B")
-						&& board.getPawn(5, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo+1, columnTo));
-				}
-			}
-			//sono fuori dalle zone del trono
-			if(!board.getBox(rowTo+1, columnTo).equals("d5")
-					&& !board.getBox(rowTo+1, columnTo).equals("e4")
-					&& !board.getBox(rowTo+1, columnTo).equals("f5")
-					&& !board.getBox(rowTo+1, columnTo).equals("e5"))
-			{
-				if(board.getPawn(rowTo+2, columnTo).equalsPawn("B")
-						|| (board.getPositions().get(board.getBox(rowTo+2, columnTo)) == Position.CITADEL))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo+1, columnTo));
-				}					
-			}			
+		if (checkWin(board, rowTo, columnTo, Direction.DOWN, Turn.BLACK)){
+			state.setTurn(State.Turn.BLACKWIN);
+			this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo+1, columnTo));
 		}		
 		return state;
 	}
@@ -716,60 +655,9 @@ public class Game  {
 		Board board = state.getBoard();
 		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
 		//ho il re sopra
-		if (rowTo>1&&board.getPawn(rowTo-1, columnTo).equalsPawn("K"))
-		{
-			//re sul trono
-			if(board.getBox(rowTo-1, columnTo).equals("e5"))
-			{
-				if(board.getPawn(3, 4).equalsPawn("B")
-						&& board.getPawn(4, 5).equalsPawn("B")
-						&& board.getPawn(4, 3).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo-1, columnTo));
-				}
-			}
-			//re adiacente al trono
-			if(board.getBox(rowTo-1, columnTo).equals("e6"))
-			{
-				if(board.getPawn(5, 3).equalsPawn("B")
-						&& board.getPawn(5, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo-1, columnTo));
-				}
-			}
-			if(board.getBox(rowTo-1, columnTo).equals("d5"))
-			{
-				if(board.getPawn(4, 2).equalsPawn("B")
-						&& board.getPawn(3, 3).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo-1, columnTo));
-				}
-			}
-			if(board.getBox(rowTo-1, columnTo).equals("f5"))
-			{
-				if(board.getPawn(4, 4).equalsPawn("B")
-						&& board.getPawn(3, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo-1, columnTo));
-				}
-			}
-			//sono fuori dalle zone del trono
-			if(!board.getBox(rowTo-1, columnTo).equals("d5")
-					&& !board.getBox(rowTo-1, columnTo).equals("e4")
-					&& !board.getBox(rowTo-1, columnTo).equals("f5")
-					&& !board.getBox(rowTo-1, columnTo).equals("e5"))
-			{
-				if(board.getPawn(rowTo-2, columnTo).equalsPawn("B")
-						|| (board.getPositions().get(board.getBox(rowTo-2, columnTo)) == Position.CITADEL))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo-1, columnTo));
-				}					
-			}	
+		if (rowTo>1&&board.getPawn(rowTo-1, columnTo).equalsPawn("K")){
+			state.setTurn(State.Turn.BLACKWIN);
+			this.loggGame.fine("Nero vince con re catturato in: " + board.getBox(rowTo-1, columnTo));
 		}
 		return state;
 	}
