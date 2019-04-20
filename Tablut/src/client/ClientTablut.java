@@ -121,9 +121,9 @@ public class ClientTablut implements Runnable{
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {}
-				if(this.player.equals(Turn.WHITE)){
+				if(this.player == Turn.WHITE){
 					imWhite(state, rules);
-				}else{
+				}else if(this.player == Turn.BLACK){
 					imBlack(state, rules);
 				}
 			}

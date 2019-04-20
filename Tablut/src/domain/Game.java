@@ -356,7 +356,7 @@ public class Game  {
 		}
 
 		// controllo che non vada sul trono
-		if(board.getPositions().get(board.getBox(rowTo, columnTo)).equals(Position.THRONE)){
+		if(board.getPositions().get(board.getBox(rowTo, columnTo)) == Position.THRONE){
 			this.loggGame.warning("Mossa sul trono");
 			throw new ThroneException(a);
 		}
