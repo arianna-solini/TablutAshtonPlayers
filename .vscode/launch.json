@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Prova",
+            "request": "launch",
+            "mainClass": "ai.Prova",
+            "projectName": "Tablut"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - ClientTablut",
             "request": "launch",
             "mainClass": "client.ClientTablut",

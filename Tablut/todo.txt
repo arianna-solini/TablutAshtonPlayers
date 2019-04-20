@@ -1,3 +1,12 @@
 ArrayList che riempiamo man mano con gli stati della partita in modo da analizzarlo nel durante
 Cercare di ottimizzare con lambda expressions
-Fai una funzione che controlli le traiettorie possibili per la pedina(4 direzioni possibili ma di quanto in lunghezza?)
+Fai una funzione che controlli le traiettorie possibili per la pedina(4 direzioni possibili ma di quanto in lunghezza?
+
+**intelligenza**
+Usare la classe Prova.java come riferimento:
+.modificare Game e State
+.MinMax genera un albero troppo grande quindi usare tagli AlphaBeta 
+(classe AlphaBetaSearch<STATE,ACTION,PLAYER> o IterativeDeepeningAlphaBetaSearch<STATE,ACTION,PLAYER>)
+.Capire come inserire una strategia
+
+
