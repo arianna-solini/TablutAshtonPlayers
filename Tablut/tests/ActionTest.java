@@ -1,5 +1,3 @@
-package domain.tests;
-
 import domain.Action;
 import domain.State.Turn;
 import java.io.IOException;
