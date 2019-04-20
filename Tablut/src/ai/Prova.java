@@ -2,8 +2,7 @@ package ai;
 
 import aima.core.search.adversarial.AdversarialSearch;
 import aima.core.search.adversarial.AlphaBetaSearch;
-//import aima.core.search.adversarial.AlphaBetaSearch;
-import aima.core.search.adversarial.MinimaxSearch;
+//import aima.core.search.adversarial.MinimaxSearch;
 import aima.core.util.datastructure.XYLocation;
 import aima.core.environment.tictactoe.TicTacToeGame;
 import aima.core.environment.tictactoe.TicTacToeState;
