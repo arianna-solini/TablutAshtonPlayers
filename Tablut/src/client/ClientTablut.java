@@ -31,7 +31,7 @@ public class ClientTablut implements Runnable{
 	private DataInputStream in;
 	private DataOutputStream out;
 	private Gson gson;
-    	private State currentState;
+    private State currentState;
 
 	public ClientTablut(String player, String name) throws UnknownHostException, IOException {
 		
@@ -115,15 +115,15 @@ public class ClientTablut implements Runnable{
 				StateGson temp =  this.gson.fromJson(StreamUtils.readString(in), StateGson.class);	//Avendo personalizzato state abbiamo introdotto StateGson per una lettura corretta
 				state.getBoard().setBoard(temp.getBoard());
 				state.setTurn(temp.getTurn()); 
-				currentState = state;
+				this.currentState = state;
 				System.out.println("Current state:");
-				System.out.println(state.toString());
+				System.out.println(this.currentState.toString());
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {}
-				if(this.player.equals(Turn.WHITE)){
+				if(this.player == Turn.WHITE){
 					imWhite(state, rules);
-				}else{
+				}else if (this.player == Turn.BLACK){
 					imBlack(state, rules);
 				}
 			}
@@ -200,7 +200,7 @@ public class ClientTablut implements Runnable{
 					done = true;
 				} catch (Exception e) {}
 			}
-
+			currentState = new State();
 			System.out.println("Mossa scelta: " + a.toString());
 
 			try {
@@ -236,7 +236,7 @@ public class ClientTablut implements Runnable{
 		List<int[]> blackPawns = new ArrayList<int[]>();
 		List<int[]> emptyPawns = new ArrayList<int[]>();
 				
-		if (this.currentState.getTurn().equals(Turn.BLACK)) {
+		if (this.currentState.getTurn().equals(Turn.BLACK)) {//per ora lasciamo così
 			
 			int[] buf;
 			Board boardGame = state.getBoard();
@@ -289,7 +289,7 @@ public class ClientTablut implements Runnable{
 					done = true;
 				} catch (Exception e) {}
 			}
-
+			currentState = new State();
 			System.out.println("Mossa scelta: " + a.toString());
 
 			try {
