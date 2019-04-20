@@ -6,6 +6,10 @@
 	<classpathentry kind="lib" path="lib/junit-4.13-beta-2.jar"/>
 	<classpathentry kind="lib" path="lib/hamcrest-core-2.1.jar"/>
 	<classpathentry kind="src" path="lib"/>
-	<classpathentry kind="src" path="tests"/>
+	<classpathentry kind="src" path="tests" output="bin">
+		<attributes>
+			<attribute name="test" value="true" />
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
