@@ -3,6 +3,7 @@ package client;
 import domain.Action;
 import domain.Game;
 import domain.State;
+import domain.StateGson;
 import domain.Board;
 import domain.Board.Pawn;
 import domain.State.Turn;
@@ -30,9 +31,9 @@ public class ClientTablut implements Runnable{
 	private DataInputStream in;
 	private DataOutputStream out;
 	private Gson gson;
-    private State currentState;
+    	private State currentState;
 
-    public ClientTablut(String player, String name) throws UnknownHostException, IOException {
+	public ClientTablut(String player, String name) throws UnknownHostException, IOException {
 		
 		int port = -1;
 		this.name = name;
@@ -41,21 +42,20 @@ public class ClientTablut implements Runnable{
 		if(player.equalsIgnoreCase("white")){
 			this.player = State.Turn.WHITE;
 			port = 5800;
-		}else{
+		}else if(player.equalsIgnoreCase("black")){
 			this.player = State.Turn.BLACK;
 			port = 5801;
 		}
 
 		if (port < 1024 || port > 65535) {
-            System.out.println("port " + port + " is out of range");
-            System.out.println("Client: closing..");
-            System.exit(1);
+			System.out.println("port " + port + " is out of range");
+			System.out.println("Client: closing..");
+			System.exit(1);
 		}
         
-        playerSocket = new Socket("localhost", port);
-        out = new DataOutputStream(playerSocket.getOutputStream());
-        in = new DataInputStream(playerSocket.getInputStream());
-        
+		playerSocket = new Socket("localhost", port);
+		out = new DataOutputStream(playerSocket.getOutputStream());
+		in = new DataInputStream(playerSocket.getInputStream());
 	}
 
     public static void main(String[] args) throws Exception {
@@ -112,8 +112,10 @@ public class ClientTablut implements Runnable{
 
 		try{
 			while(true){
-				currentState = this.gson.fromJson(StreamUtils.readString(in), State.class);
-				state = this.currentState;	 
+				StateGson temp =  this.gson.fromJson(StreamUtils.readString(in), StateGson.class);	//Avendo personalizzato state abbiamo introdotto StateGson per una lettura corretta
+				state.getBoard().setBoard(temp.getBoard());
+				state.setTurn(temp.getTurn()); 
+				currentState = state;
 				System.out.println("Current state:");
 				System.out.println(state.toString());
 				try {

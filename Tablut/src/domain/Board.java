@@ -1,10 +1,13 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Board {
+public class Board implements Serializable {
 
-	public enum Direction{
+	private static final long serialVersionUID = 1L;
+
+	public enum Direction {
 		
 		LEFT("L"), RIGHT("R"), UP("U"), DOWN("D"), ANY("A");
 		private final String direction;
@@ -163,6 +166,9 @@ public class Board {
 
 	public Pawn[][] getBoard(){
 		return this.board;
+	}
+	public void setBoard(Pawn[][] board){
+		this.board = board;
 	}
 
 	/**
