@@ -1,4 +1,3 @@
-Metodo che converta lo stato ricevuto da JSON in Stato
 ArrayList che riempiamo man mano con gli stati della partita in modo da analizzarlo nel durante
 Cercare di ottimizzare con lambda expressions
 Fai una funzione che controlli le traiettorie possibili per la pedina(4 direzioni possibili ma di quanto in lunghezza?)
