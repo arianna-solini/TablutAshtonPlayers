@@ -123,7 +123,7 @@ public class ClientTablut implements Runnable{
 				} catch (InterruptedException e) {}
 				if(this.player == Turn.WHITE){
 					imWhite(state, rules);
-				}else if (this.player == Turn.BLACK){
+				}else if(this.player == Turn.BLACK){
 					imBlack(state, rules);
 				}
 			}
