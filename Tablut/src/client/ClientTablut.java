@@ -1,9 +1,9 @@
 package client;
 
 import domain.Action;
-import domain.Game;
 import domain.State;
 import domain.StateGson;
+import domain.TablutGame;
 import domain.Board;
 import domain.Board.Pawn;
 import domain.State.Turn;
@@ -105,7 +105,7 @@ public class ClientTablut implements Runnable{
 		}
 
 		System.out.println("-----Inizio partita AshtonTablut-----");
-		Game rules = new Game(99, 0, "localLogs", "test", "test");
+		TablutGame rules = new TablutGame(99, 0, "localLogs", "test", "test");
 		System.out.println("You are player " + this.player.toString() + "!");
 		State state = new State(); // istanziando State inizializzo anche la board (vedi costruttore)
 		state.setTurn(State.Turn.WHITE); //iniziano i bianchi
@@ -142,7 +142,7 @@ public class ClientTablut implements Runnable{
 
 	}//run
 
-	public void imWhite(State state, Game rules){
+	public void imWhite(State state, TablutGame rules){
 
 		List<int[]> whitePawns = new ArrayList<int[]>();
 		List<int[]> emptyPawns = new ArrayList<int[]>();
@@ -200,7 +200,8 @@ public class ClientTablut implements Runnable{
 					done = true;
 				} catch (Exception e) {}
 			}
-			currentState = new State();
+			// TODO Forse da togliere
+			currentState = new State(); 
 			System.out.println("Mossa scelta: " + a.toString());
 
 			try {
@@ -231,7 +232,7 @@ public class ClientTablut implements Runnable{
 		}
 	}
 
-	public void imBlack(State state, Game rules){
+	public void imBlack(State state, TablutGame rules){
 
 		List<int[]> blackPawns = new ArrayList<int[]>();
 		List<int[]> emptyPawns = new ArrayList<int[]>();
@@ -289,6 +290,7 @@ public class ClientTablut implements Runnable{
 					done = true;
 				} catch (Exception e) {}
 			}
+			// TODO Forse da togliere
 			currentState = new State();
 			System.out.println("Mossa scelta: " + a.toString());
 

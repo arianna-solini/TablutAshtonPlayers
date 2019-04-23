@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import aima.core.search.adversarial.Game;
 import domain.Board.Direction;
 import domain.Board.Pawn;
 import domain.Board.Position;
@@ -25,7 +26,7 @@ import exceptions.*;
  * @author A. Piretti, Andrea Galassi
  *
  */
-public class Game  {
+public class TablutGame implements Game<State, Action, String>{
 
 	/**
 	 * Number of repeated states that can occur before a draw
@@ -45,14 +46,15 @@ public class Game  {
 	private FileHandler fh;
 	private Logger loggGame;
 	private List<State> drawConditions;
+	private State initialState = new State();
 
 	// TODO: Draw conditions are not working
 
-	public Game(int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName, String blackName) {
+	public TablutGame(int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName, String blackName) {
 		this(new State(), repeated_moves_allowed, cache_size, logs_folder, whiteName, blackName);
 	}
 
-	public Game(State state, int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName, String blackName) {
+	public TablutGame(State state, int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName, String blackName) {
 		super();
 		this.repeated_moves_allowed = repeated_moves_allowed;
 		this.cache_size = cache_size;
@@ -776,6 +778,63 @@ public class Game  {
 
 	public void clearDrawConditions() {
 		drawConditions.clear();
+	}
+
+	@Override
+	public List<Action> getActions(State arg0) {
+		return null;
+	}
+
+	@Override
+	public State getInitialState() {
+		return initialState;
+	}
+
+	@Override
+	public String getPlayer(State state) {
+		if (state.getTurn() == Turn.WHITE){
+			return "W";
+		} else {
+			return "B";
+		}
+	}
+
+	@Override
+	public String[] getPlayers() {
+		return new String[] {Board.Pawn.WHITE.toString(), Board.Pawn.BLACK.toString()};
+	}
+
+	@Override
+	public State getResult(State state, Action action) {
+		State result = state.clone();
+		result = movePawn(state, action);
+		return result;
+	}
+
+	@Override
+	public double getUtility(State state, String player) {
+		
+		String actual = state.getTurn().toString();
+		
+		if (isTerminal(state)){
+			if(player.equals(""+actual.charAt(0))){
+				return 1; //If I win
+			} else {
+				return 0; //If I lose
+			}
+		}
+		return -1;
+
+	}
+
+	@Override
+	public boolean isTerminal(State state) {
+		Turn actual = state.getTurn();
+		if ( actual == Turn.WHITEWIN || actual == Turn.BLACKWIN || actual == Turn.DRAW ){
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

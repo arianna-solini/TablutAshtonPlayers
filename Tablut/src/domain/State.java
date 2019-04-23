@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author Andrea Piretti
  *
  */
-public class State  implements Serializable{
+public class State implements Serializable, Cloneable{
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Turn represent the player that has to move or the end of the game(A win
@@ -142,6 +142,7 @@ public class State  implements Serializable{
 		return result;
 	}
 
+	@Override
 	public State clone() {
 		State result = new State();
 
