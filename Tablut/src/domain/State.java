@@ -46,7 +46,7 @@ public class State implements Serializable, Cloneable {
 	private HashMap<String, ArrayList<String>> possibleWhiteActions = new HashMap<String, ArrayList<String>>();
 	private HashMap<String, ArrayList<String>> possibleBlackActions = new HashMap<String, ArrayList<String>>();
 
-	private void InitActions() {
+	private void initActions() {
 		HashMap<String, Position> positions = this.board.getPositions();
 		for (String box : positions.keySet()) {
 			if (positions.get(box).equals(Position.CITADEL)) {
@@ -66,32 +66,52 @@ public class State implements Serializable, Cloneable {
 		int row = this.board.getRow(from);
 		int column = this.board.getColumn(from);
 		ArrayList<String> result = new ArrayList<String>();
-
+		HashMap<String, Position> positions = this.board.getPositions();
 		// verso destra
 		for (int i = column + 1; i < 9; i++) {
-			if (this.board.getPawn(row, i) == Pawn.EMPTY) {
+			if (this.board.getPawn(row, i) == Pawn.EMPTY 
+				&& (positions.get(this.board.getBox(row, i)) != Position.CITADEL || positions.get(from) == Position.CITADEL)
+				&& (positions.get(this.board.getBox(row, i)) != Position.THRONE || positions.get(from) == Position.THRONE)) {
 				result.add(this.board.getBox(row, i));
+			}
+			else{
+				break;
 			}
 		}
 
 		// verso sinistra
-		for (int i = 0; i < column; i++) {
-			if (this.board.getPawn(row, i) == Pawn.EMPTY) {
+		for (int i = column - 1; i > -1; i--) {
+			if (this.board.getPawn(row, i) == Pawn.EMPTY 
+				&& (positions.get(this.board.getBox(row, i)) != Position.CITADEL || positions.get(from) == Position.CITADEL)
+				&& (positions.get(this.board.getBox(row, i)) != Position.THRONE || positions.get(from) == Position.THRONE)) {
 				result.add(this.board.getBox(row, i));
+			}
+			else{
+				break;
 			}
 		}
 
 		// verso l'alto
-		for (int i = 0; i < row; i++) {
-			if (this.board.getPawn(i, column) == Pawn.EMPTY) {
+		for (int i = row - 1; i > -1; i--) {
+			if (this.board.getPawn(i, column) == Pawn.EMPTY  
+				&& (positions.get(this.board.getBox(i, column)) != Position.CITADEL || positions.get(from) == Position.CITADEL)
+				&& (positions.get(this.board.getBox(i, column)) != Position.THRONE || positions.get(from) == Position.THRONE)) {
 				result.add(this.board.getBox(i, column));
+			}
+			else{
+				break;
 			}
 		}
 
 		// verso il basso
 		for (int i = row + 1; i < 9; i++) {
-			if (this.board.getPawn(i, column) == Pawn.EMPTY) {
+			if (this.board.getPawn(i, column) == Pawn.EMPTY  
+				&& (positions.get(this.board.getBox(i, column)) != Position.CITADEL || positions.get(from) == Position.CITADEL)
+				&& (positions.get(this.board.getBox(i, column)) != Position.THRONE || positions.get(from) == Position.THRONE)) {
 				result.add(this.board.getBox(i, column));
+			}
+			else{
+				break;
 			}
 		}
 		return result;
@@ -126,7 +146,7 @@ public class State implements Serializable, Cloneable {
 	public State() {
 		this.board = new Board();
 		this.turn = Turn.BLACK;
-		InitActions();
+		initActions();
 	}
 	
 	public State(Board board, Turn turn){

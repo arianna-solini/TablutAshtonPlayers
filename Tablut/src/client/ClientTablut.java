@@ -4,8 +4,6 @@ import domain.Action;
 import domain.State;
 import domain.StateGson;
 import domain.TablutGame;
-import domain.Board;
-import domain.Board.Pawn;
 import domain.State.Turn;
 
 import java.io.DataInputStream;
@@ -14,13 +12,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import aima.core.search.adversarial.AdversarialSearch;
+import aima.core.search.adversarial.IterativeDeepeningAlphaBetaSearch;
 import utils.StreamUtils;
 
 public class ClientTablut implements Runnable{
@@ -106,6 +103,7 @@ public class ClientTablut implements Runnable{
 
 		System.out.println("-----Inizio partita AshtonTablut-----");
 		TablutGame rules = new TablutGame(99, 0, "localLogs", "test", "test");
+		AdversarialSearch<State, Action> search = IterativeDeepeningAlphaBetaSearch.createFor(rules, 0, 1, 5);
 		System.out.println("You are player " + this.player.toString() + "!");
 		State state = new State(); // istanziando State inizializzo anche la board (vedi costruttore)
 		state.setTurn(State.Turn.WHITE); //iniziano i bianchi
@@ -122,18 +120,11 @@ public class ClientTablut implements Runnable{
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {}
 				if(this.player == Turn.WHITE){
-					imWhite(state, rules);
+					imWhite(currentState, rules, search);
 				}else if(this.player == Turn.BLACK){
-					imBlack(state, rules);
+					imBlack(currentState, rules, search);
 				}
 			}
-
-			/*chiusura socket?
-			playerSocket.shutdownOutput(); 
-			String esito = StreamUtils.readString(in); 
-			System.out.println(esito); 
-			playerSocket.shutdownInput();
-			playerSocket.close();*/
 
 		}catch(JsonSyntaxException | IOException e1){
 			e1.printStackTrace();
@@ -142,67 +133,41 @@ public class ClientTablut implements Runnable{
 
 	}//run
 
-	public void imWhite(State state, TablutGame rules){
-
-		List<int[]> whitePawns = new ArrayList<int[]>();
-		List<int[]> emptyPawns = new ArrayList<int[]>();
+	public void imWhite(State state, TablutGame rules, AdversarialSearch<State, Action> search){
 				
 		if (this.currentState.getTurn().equals(Turn.WHITE)) {
-			
-			int[] buf;
-			Board boardGame = state.getBoard();
-			for (int i=0;i< boardGame.getLength();i++){
-				for(int j=0; j<boardGame.getLength();j++){
-					Pawn curPawn = boardGame.getPawn(i, j);
-					if(curPawn.equalsPawn(Board.Pawn.WHITE.toString()) || curPawn.equalsPawn(Board.Pawn.KING.toString())){
-						buf = new int[2];
-						buf[0] = i;
-						buf[1] = j;
-						whitePawns.add(buf);
-					}else if (curPawn.equalsPawn(Board.Pawn.EMPTY.toString())){
-						buf = new int[2];
-						buf[0] = i;
-						buf[1] = j;
-						emptyPawns.add(buf);
-					}
-				}
 
-			}//for matrix
-			
-
-			int[] selected = new int[2]; // [0]: riga, [1]: colonna
+			long inizio = System.currentTimeMillis();
 			boolean done = false;
-			Action a = null;
+			Action selectedAction = null;
 
 			try {
-				a = new Action("z0", "z0" , State.Turn.WHITE);
+				selectedAction = new Action("z0", "z0" , State.Turn.WHITE);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+
 			while (!done) {
 
-				/** parametro selected da modificare con la parte di intelligenza, per ora random **/
-
-				selected = whitePawns.get(new Random().nextInt(whitePawns.size() - 1));
-				String from = this.currentState.getBoard().getBox(selected[0], selected[1]);
-				//System.out.println("il random ha scelto from: "+from);
+				/** parte di intelligenza **/
 				
-				selected = emptyPawns.get(new Random().nextInt(emptyPawns.size() - 1));
-				String to = this.currentState.getBoard().getBox(selected[0], selected[1]);
-				//System.out.println("il random ha scelto to: "+to);
-
-				a.setFrom(from);
-				a.setTo(to);
+				System.out.println(rules.getPlayer(state) + "  playing ... ");
+				selectedAction = search.makeDecision(state);
+				System.out.println("mossa fatta");
+				
 
 				try {
-					rules.checkMove(state, a);
+					rules.checkMove(state, selectedAction);
+					state.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.WHITE);
 					done = true;
 				} catch (Exception e) {}
 			}
-			System.out.println("Mossa scelta: " + a.toString());
+			long fine = System.currentTimeMillis();
+			System.out.println("Mossa scelta: " + selectedAction.toString() + " in "+ (fine - inizio));
+			System.out.println(search.getMetrics().toString());
 
 			try {
-				StreamUtils.writeString(out, this.gson.toJson(a));
+				StreamUtils.writeString(out, this.gson.toJson(selectedAction));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -228,67 +193,40 @@ public class ClientTablut implements Runnable{
 		}
 	}
 
-	public void imBlack(State state, TablutGame rules){
-
-		List<int[]> blackPawns = new ArrayList<int[]>();
-		List<int[]> emptyPawns = new ArrayList<int[]>();
+	public void imBlack(State state, TablutGame rules, AdversarialSearch<State, Action> search){
 				
 		if (this.currentState.getTurn().equals(Turn.BLACK)) {//per ora lasciamo così
 			
-			int[] buf;
-			Board boardGame = state.getBoard();
-			for (int i=0;i< boardGame.getLength();i++){
-				for(int j=0; j<boardGame.getLength();j++){
-					Pawn curPawn = boardGame.getPawn(i, j);
-					if(curPawn.equalsPawn(Board.Pawn.BLACK.toString())){
-						buf = new int[2];
-						buf[0] = i;
-						buf[1] = j;
-						blackPawns.add(buf);
-					}else if (curPawn.equalsPawn(Board.Pawn.EMPTY.toString())){
-						buf = new int[2];
-						buf[0] = i;
-						buf[1] = j;
-						emptyPawns.add(buf);
-					}
-				}
-
-			}//for matrix
-			
-
-			int[] selected = new int[2]; // [0]: riga, [1]: colonna
+			long inizio = System.currentTimeMillis();
 			boolean done = false;
-			Action a = null;
+			Action selectedAction = null;
 
 			try {
-				a = new Action("z0", "z0" , State.Turn.BLACK);
+				selectedAction = new Action("z0", "z0" , State.Turn.BLACK);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 			while (!done) {
 
-				/** parametro selected da modificare con la parte di intelligenza, per ora random **/
+				/** parte di intelligenza **/
 
-				selected = blackPawns.get(new Random().nextInt(blackPawns.size() - 1));
-				String from = this.currentState.getBoard().getBox(selected[0], selected[1]);
-				//System.out.println("il random ha scelto from: "+from);
+				System.out.println(rules.getPlayer(state) + "  playing ... ");
+				selectedAction = search.makeDecision(state);
+				System.out.println("mossa fatta");
 				
-				selected = emptyPawns.get(new Random().nextInt(emptyPawns.size() - 1));
-				String to = this.currentState.getBoard().getBox(selected[0], selected[1]);
-				//System.out.println("il random ha scelto to: "+to);
-
-				a.setFrom(from);
-				a.setTo(to);
 
 				try {
-					rules.checkMove(state, a);
+					rules.checkMove(state, selectedAction);
+					state.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.BLACK);
 					done = true;
 				} catch (Exception e) {}
 			}
-			System.out.println("Mossa scelta: " + a.toString());
+			long fine = System.currentTimeMillis();
+			System.out.println("Mossa scelta: " + selectedAction.toString() + " in "+ (fine - inizio));
+			System.out.println(search.getMetrics().toString());
 
 			try {
-				StreamUtils.writeString(out, this.gson.toJson(a));
+				StreamUtils.writeString(out, this.gson.toJson(selectedAction));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -314,5 +252,4 @@ public class ClientTablut implements Runnable{
 		}
 
 	}
-		
 }

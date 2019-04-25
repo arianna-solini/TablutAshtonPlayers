@@ -313,7 +313,7 @@ public class TablutGame implements Game<State, Action, String> {
 								|| (board.getBox(rowTo, columnTo + 1).equals("e6")
 										&& board.getPawn(5, 3).equalsPawn("B")
 										&& board.getPawn(6, 4).equalsPawn("B"))
-								|| (!board.getBox(rowTo, columnTo - 1).equals("e5") // re
+								|| (!board.getBox(rowTo, columnTo - 1).equals("e5") //re
 															// fuori
 															// dalle
 															// zone
@@ -780,7 +780,7 @@ public class TablutGame implements Game<State, Action, String> {
 	@Override
 	public State getResult(State state, Action action) {
 		State result = state.clone();
-		result = movePawn(state, action);
+		result = movePawn(result, action);
 		return result;
 	}
 

@@ -1,19 +1,23 @@
-ArrayList che riempiamo man mano con gli stati della partita in modo da analizzarlo nel durante
-Cercare di ottimizzare con lambda expressions
-Fai una funzione che controlli le traiettorie possibili per la pedina(4 direzioni possibili ma di quanto in lunghezza?
-Togliere i Log
+.ArrayList che riempiamo man mano con gli stati della partita in modo da analizzarlo nel durante
+.Cercare di ottimizzare con lambda expressions
+.Sistemare le draw conditions
+.Sfruttare il multithreading
+
 
 **intelligenza**
-Usare la classe Prova.java come riferimento:
-.MinMax genera un albero troppo grande quindi usare tagli AlphaBeta 
-(classe AlphaBetaSearch<STATE,ACTION,PLAYER> o IterativeDeepeningAlphaBetaSearch<STATE,ACTION,PLAYER>)
-.Capire come inserire una strategia
+.Tenere conto delle pedine mangiate e magari tenere conto dell'ultima pedina dell'avversario spostata
 
-getActions:
-.Restituisce azioni possibili discriminando il player
-.Settare prima mossa white a mano
-.Preferire quelle in cui è possibile catturare
+EVALUATION
+Vedere se e come si può estendere la classe Iterative...AlphaBetaSearch
 
-.HashMap che ha come key la posizione "from" della pedina e come valore una lista delle posizioni "to" possibili
-basate sulle direzioni. Una volta mossa la pedina si andrà ad eliminare la key "from" e la relativa lista di "to"
-dall'HashMap per poi reinserire il nuovo "from" e ricalcolare la lista di "to" possibili.
+Nere - Attacco:
+.Cattura
+.Vicinanza al re (dopo un certo punto della partita?)
+
+Bianche - Difesa:
+.Cattura
+.Protezione Re
+
+
+
+
