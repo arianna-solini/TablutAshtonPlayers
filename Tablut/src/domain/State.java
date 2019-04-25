@@ -1,19 +1,26 @@
 package domain;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import domain.Board.Pawn;
+import domain.Board.Position;
 
 /**
- * Class for a State of a game We have a representation of the board
- * and the turn
+ * Class for a State of a game We have a representation of the board and the
+ * turn
  * 
  * @author Andrea Piretti
  *
  */
-public class State implements Serializable, Cloneable{
+public class State implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
+
 	/**
-	 * Turn represent the player that has to move or the end of the game(A win
-	 * by a player or a draw)
+	 * Turn represent the player that has to move or the end of the game(A win by a
+	 * player or a draw)
 	 * 
 	 * @author A.Piretti
 	 */
@@ -32,14 +39,94 @@ public class State implements Serializable, Cloneable{
 		public String toString() {
 			return turn;
 		}
-	}	
-	
+	}
+
 	protected Board board;
 	protected Turn turn;
+	private HashMap<String, ArrayList<String>> possibleWhiteActions = new HashMap<String, ArrayList<String>>();
+	private HashMap<String, ArrayList<String>> possibleBlackActions = new HashMap<String, ArrayList<String>>();
+
+	private void InitActions() {
+		HashMap<String, Position> positions = this.board.getPositions();
+		for (String box : positions.keySet()) {
+			if (positions.get(box).equals(Position.CITADEL)) {
+				this.possibleBlackActions.put(box, getPossibleTo(box));
+			}
+
+			else if (positions.get(box).equals(Position.STARTWHITE)) {
+				this.possibleWhiteActions.put(box, getPossibleTo(box));
+
+			} else if (positions.get(box).equals(Position.THRONE)) {
+				this.possibleWhiteActions.put(box, getPossibleTo(box));
+			}
+		}
+	}
+
+	private ArrayList<String> getPossibleTo(String from) {
+		int row = this.board.getRow(from);
+		int column = this.board.getColumn(from);
+		ArrayList<String> result = new ArrayList<String>();
+
+		// verso destra
+		for (int i = column + 1; i < 9; i++) {
+			if (this.board.getPawn(row, i) == Pawn.EMPTY) {
+				result.add(this.board.getBox(row, i));
+			}
+		}
+
+		// verso sinistra
+		for (int i = 0; i < column; i++) {
+			if (this.board.getPawn(row, i) == Pawn.EMPTY) {
+				result.add(this.board.getBox(row, i));
+			}
+		}
+
+		// verso l'alto
+		for (int i = 0; i < row; i++) {
+			if (this.board.getPawn(i, column) == Pawn.EMPTY) {
+				result.add(this.board.getBox(i, column));
+			}
+		}
+
+		// verso il basso
+		for (int i = row + 1; i < 9; i++) {
+			if (this.board.getPawn(i, column) == Pawn.EMPTY) {
+				result.add(this.board.getBox(i, column));
+			}
+		}
+		return result;
+	}
+
+	public void updatePossibleActions(String oldFrom, String newFrom, Turn turn) {
+		if (turn == Turn.BLACK) {
+			this.possibleBlackActions.remove(oldFrom);
+			this.possibleBlackActions.put(newFrom, getPossibleTo(newFrom));
+		}
+		if (turn == Turn.WHITE) {
+			this.possibleWhiteActions.remove(oldFrom);
+			this.possibleWhiteActions.put(newFrom, getPossibleTo(newFrom));
+		}
+	}
+
+	public ArrayList<Action> getActionList(Turn turn) throws IOException {
+		ArrayList<Action> result = new ArrayList<Action>();
+		if(turn == Turn.BLACK)
+			for(String from : this.possibleBlackActions.keySet())
+				for(String to : this.possibleBlackActions.get(from))
+					result.add(new Action(from, to, Turn.BLACK));
+
+		if(turn == Turn.WHITE)
+			for(String from : this.possibleWhiteActions.keySet())
+				for(String to : this.possibleWhiteActions.get(from))
+					result.add(new Action(from, to, Turn.WHITE));
+		
+		return result;
+	}
 
 	public State() {
 		this.board = new Board();
 		this.turn = Turn.BLACK;
+		InitActions();
 	}
 	
 	public State(Board board, Turn turn){
@@ -61,6 +148,14 @@ public class State implements Serializable, Cloneable{
 
 	public void setTurn(Turn turn) {
 		this.turn = turn;
+	}
+
+	public HashMap<String, ArrayList<String>> getPossibleWhiteActions(){
+		return this.possibleWhiteActions;
+	}
+
+	public HashMap<String, ArrayList<String>> getPossibleBlackActions(){
+		return this.possibleBlackActions;
 	}
 
 	public String boardString() {

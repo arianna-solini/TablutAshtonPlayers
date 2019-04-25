@@ -200,8 +200,6 @@ public class ClientTablut implements Runnable{
 					done = true;
 				} catch (Exception e) {}
 			}
-			// TODO Forse da togliere
-			currentState = new State(); 
 			System.out.println("Mossa scelta: " + a.toString());
 
 			try {
@@ -290,8 +288,6 @@ public class ClientTablut implements Runnable{
 					done = true;
 				} catch (Exception e) {}
 			}
-			// TODO Forse da togliere
-			currentState = new State();
 			System.out.println("Mossa scelta: " + a.toString());
 
 			try {
