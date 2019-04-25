@@ -177,7 +177,6 @@ public class ClientTablut implements Runnable{
 			try {
 				a = new Action("z0", "z0" , State.Turn.WHITE);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			while (!done) {
@@ -205,7 +204,6 @@ public class ClientTablut implements Runnable{
 			try {
 				StreamUtils.writeString(out, this.gson.toJson(a));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -265,7 +263,6 @@ public class ClientTablut implements Runnable{
 			try {
 				a = new Action("z0", "z0" , State.Turn.BLACK);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			while (!done) {
@@ -293,7 +290,6 @@ public class ClientTablut implements Runnable{
 			try {
 				StreamUtils.writeString(out, this.gson.toJson(a));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
