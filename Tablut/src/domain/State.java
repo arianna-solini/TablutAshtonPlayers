@@ -24,6 +24,7 @@ public class State implements Serializable, Cloneable {
 	 * 
 	 * @author A.Piretti
 	 */
+
 	public enum Turn {
 		WHITE("W"), BLACK("B"), WHITEWIN("WW"), BLACKWIN("BW"), DRAW("D");
 		private final String turn;
@@ -43,6 +44,7 @@ public class State implements Serializable, Cloneable {
 
 	protected Board board;
 	protected Turn turn;
+	private Action lastAction;
 	private HashMap<String, ArrayList<String>> possibleWhiteActions = new HashMap<String, ArrayList<String>>();
 	private HashMap<String, ArrayList<String>> possibleBlackActions = new HashMap<String, ArrayList<String>>();
 
@@ -59,6 +61,11 @@ public class State implements Serializable, Cloneable {
 			} else if (positions.get(box).equals(Position.THRONE)) {
 				this.possibleWhiteActions.put(box, getPossibleTo(box));
 			}
+		}
+		try {
+			this.lastAction = new Action("z0", "z0", Turn.BLACK);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -120,13 +127,57 @@ public class State implements Serializable, Cloneable {
 	public void updatePossibleActions(String oldFrom, String newFrom, Turn turn) {
 		if (turn == Turn.BLACK) {
 			this.possibleBlackActions.remove(oldFrom);
+			for(String from : this.possibleBlackActions.keySet())
+				this.possibleBlackActions.replace(from, getPossibleTo(from));
+
 			this.possibleBlackActions.put(newFrom, getPossibleTo(newFrom));
+			
 		}
 		if (turn == Turn.WHITE) {
 			this.possibleWhiteActions.remove(oldFrom);
+			for(String from : this.possibleWhiteActions.keySet())
+				this.possibleWhiteActions.replace(from, getPossibleTo(from));
+
 			this.possibleWhiteActions.put(newFrom, getPossibleTo(newFrom));
 		}
 	}
+
+	public void updatePossibleActions(Turn turn){
+		if (turn == Turn.BLACK) {
+			for(String from : this.possibleBlackActions.keySet())
+				this.possibleBlackActions.replace(from, getPossibleTo(from));
+			
+		}
+		if (turn == Turn.WHITE) {
+			for(String from : this.possibleWhiteActions.keySet())
+				this.possibleWhiteActions.replace(from, getPossibleTo(from));
+		}
+	}
+
+	public void eatenUpdate(Board board, Turn turn){
+		ArrayList<String> toRemove = new ArrayList<String>();
+		if (turn == Turn.BLACK){
+			for(String from : this.possibleBlackActions.keySet())
+				if(board.getPawn(board.getRow(from),board.getColumn(from)) != Pawn.BLACK)
+					toRemove.add(from);
+
+			for(String removing : toRemove)
+				this.possibleBlackActions.remove(removing);
+			
+		}
+		if (turn == Turn.WHITE){
+			for(String from : this.possibleWhiteActions.keySet()){
+				Pawn temp = board.getPawn(board.getRow(from),board.getColumn(from));
+				if(temp != Pawn.WHITE && temp != Pawn.KING)
+					toRemove.add(from);
+			}
+
+			for(String removing : toRemove)
+				this.possibleWhiteActions.remove(removing);
+		}
+	}
+
+
 
 	public ArrayList<Action> getActionList(Turn turn) throws IOException {
 		ArrayList<Action> result = new ArrayList<Action>();
@@ -168,6 +219,14 @@ public class State implements Serializable, Cloneable {
 
 	public void setTurn(Turn turn) {
 		this.turn = turn;
+	}
+
+	public Action getLastAction(){
+		return this.lastAction;
+	}
+
+	public void setLastAction(Action action){
+		this.lastAction = action;
 	}
 
 	public HashMap<String, ArrayList<String>> getPossibleWhiteActions(){

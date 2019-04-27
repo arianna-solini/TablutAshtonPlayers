@@ -47,7 +47,7 @@ public class Board implements Serializable {
 
 	public enum Pawn {
 
-		EMPTY("O"), WHITE("W"), BLACK("B"),  KING("K");
+		EMPTY("O"), WHITE("W"), BLACK("B"), KING("K"), THRONE("T");
 		private final String pawn;
 
 		private Pawn(String s) {

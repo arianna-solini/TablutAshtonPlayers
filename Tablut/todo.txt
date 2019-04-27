@@ -5,17 +5,14 @@
 
 
 **intelligenza**
-.Tenere conto delle pedine mangiate e magari tenere conto dell'ultima pedina dell'avversario spostata
-
-EVALUATION
-Vedere se e come si può estendere la classe Iterative...AlphaBetaSearch
+.Tenere conto delle pedine mangiate e magari tenere conto dell'ultima pedina dell'avversario spostata (mezzo fatto)
 
 Nere - Attacco:
-.Cattura
+.Cattura bianca = +2
 .Vicinanza al re (dopo un certo punto della partita?)
 
 Bianche - Difesa:
-.Cattura
+.Cattura = +2
 .Protezione Re
 
 

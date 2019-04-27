@@ -16,11 +16,10 @@ import java.security.InvalidParameterException;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import aima.core.search.adversarial.AdversarialSearch;
-import aima.core.search.adversarial.IterativeDeepeningAlphaBetaSearch;
+import ai.TimeLimitedSearch;
 import utils.StreamUtils;
 
-public class ClientTablut implements Runnable{
+public class ClientTablut implements Runnable {
 
 	private State.Turn player; 
 	private String name;
@@ -103,16 +102,23 @@ public class ClientTablut implements Runnable{
 
 		System.out.println("-----Inizio partita AshtonTablut-----");
 		TablutGame rules = new TablutGame(99, 0, "localLogs", "test", "test");
-		AdversarialSearch<State, Action> search = IterativeDeepeningAlphaBetaSearch.createFor(rules, 0, 1, 5);
+		TimeLimitedSearch search = new TimeLimitedSearch(rules, -20, 20, 5);
 		System.out.println("You are player " + this.player.toString() + "!");
 		State state = new State(); // istanziando State inizializzo anche la board (vedi costruttore)
 		state.setTurn(State.Turn.WHITE); //iniziano i bianchi
-
+		int counter = 0;
 		try{
 			while(true){
+				
 				StateGson temp =  this.gson.fromJson(StreamUtils.readString(in), StateGson.class);	//Avendo personalizzato state abbiamo introdotto StateGson per una lettura corretta
 				state.getBoard().setBoard(temp.getBoard());
-				state.setTurn(temp.getTurn()); 
+				state.setTurn(temp.getTurn());
+				//TODO Sistema l'alternanza dei giocatori stando fermo quando tocca all'altro
+				if(this.player == state.getTurn()){
+					counter++;
+					state.eatenUpdate(state.getBoard(), player);
+					state.updatePossibleActions(player);
+				}
 				this.currentState = state;
 				System.out.println("Current state:");
 				System.out.println(this.currentState.toString());
@@ -121,6 +127,8 @@ public class ClientTablut implements Runnable{
 				} catch (InterruptedException e) {}
 				if(this.player == Turn.WHITE){
 					imWhite(currentState, rules, search);
+					if(counter == 5) 
+						System.out.println("6 mosse");
 				}else if(this.player == Turn.BLACK){
 					imBlack(currentState, rules, search);
 				}
@@ -133,7 +141,7 @@ public class ClientTablut implements Runnable{
 
 	}//run
 
-	public void imWhite(State state, TablutGame rules, AdversarialSearch<State, Action> search){
+	public void imWhite(State state, TablutGame rules, TimeLimitedSearch search){
 				
 		if (this.currentState.getTurn().equals(Turn.WHITE)) {
 
@@ -153,19 +161,24 @@ public class ClientTablut implements Runnable{
 				
 				System.out.println(rules.getPlayer(state) + "  playing ... ");
 				selectedAction = search.makeDecision(state);
-				System.out.println("mossa fatta");
+				System.out.println(search.getMetrics().toString());
+				long fine = System.currentTimeMillis();
+				System.out.println("mossa fatta in " + (fine-inizio));
 				
 
 				try {
-					rules.checkMove(state, selectedAction);
-					state.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.WHITE);
+					State updatedState = rules.checkMove(state, selectedAction);
+					//rules.checkMove(state, selectedAction);
+					updatedState.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.WHITE);
+					//state.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.WHITE);
 					done = true;
-				} catch (Exception e) {}
+				} catch (Exception e) {
+					System.out.println("Eccezione: " + selectedAction.toString());
+					e.printStackTrace();
+				}
 			}
-			long fine = System.currentTimeMillis();
-			System.out.println("Mossa scelta: " + selectedAction.toString() + " in "+ (fine - inizio));
-			System.out.println(search.getMetrics().toString());
 
+			System.out.println("Mossa scelta: " + selectedAction.toString());
 			try {
 				StreamUtils.writeString(out, this.gson.toJson(selectedAction));
 			} catch (IOException e) {
@@ -193,7 +206,7 @@ public class ClientTablut implements Runnable{
 		}
 	}
 
-	public void imBlack(State state, TablutGame rules, AdversarialSearch<State, Action> search){
+	public void imBlack(State state, TablutGame rules, TimeLimitedSearch search){
 				
 		if (this.currentState.getTurn().equals(Turn.BLACK)) {//per ora lasciamo così
 			

@@ -59,66 +59,46 @@ public class TablutGame implements Game<State, Action, String> {
 		case WHITE:
 			switch (d) {
 			case DOWN:
-				return (rowTo < board.getLength() - 2
-						&& board.getPawn(rowTo + 1, columnTo).equalsPawn("B")
+				return (rowTo < board.getLength() - 2 && board.getPawn(rowTo + 1, columnTo).equalsPawn("B")
 						&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("W")
-								|| (board.getPositions().get(board.getBox(rowTo + 2,
-										columnTo)) == Position.THRONE)
+								|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
 								|| board.getPawn(rowTo + 2, columnTo).equalsPawn("K")
-								|| ((board.getPositions().get(board.getBox(rowTo + 2,
-										columnTo)) == Position.CITADEL)
+								|| ((board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)
 										// &&!(board.getPawn(rowTo+2,
 										// columnTo).equalsPawn("B"))
-										&& !(columnTo == 8 && rowTo + 2 == 4)
-										&& !(columnTo == 4 && rowTo + 2 == 0)
-										&& !(columnTo == 4 && rowTo + 2 == 8)
-										&& !(columnTo == 0
-												&& rowTo + 2 == 4))));
+										&& !(columnTo == 8 && rowTo + 2 == 4) && !(columnTo == 4 && rowTo + 2 == 0)
+										&& !(columnTo == 4 && rowTo + 2 == 8) && !(columnTo == 0 && rowTo + 2 == 4))));
 
 			case UP:
-				return (rowTo > 1 && board.getPawn(rowTo - 1, columnTo).equalsPawn("B") && (board
-						.getPawn(rowTo - 2, columnTo).equalsPawn("W")
-						|| (board.getPositions().get(
-								board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
-						|| board.getPawn(rowTo - 2, columnTo).equalsPawn("K")
-						|| ((board.getPositions().get(
-								board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)
-								// &&!(board.getPawn(rowTo-2, columnTo).equalsPawn("B"))
-								&& !(columnTo == 8 && rowTo - 2 == 4)
-								&& !(columnTo == 4 && rowTo - 2 == 0)
-								&& !(columnTo == 4 && rowTo - 2 == 8)
-								&& !(columnTo == 0 && rowTo - 2 == 4))));
+				return (rowTo > 1 && board.getPawn(rowTo - 1, columnTo).equalsPawn("B")
+						&& (board.getPawn(rowTo - 2, columnTo).equalsPawn("W")
+								|| (board.getPositions().get(board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
+								|| board.getPawn(rowTo - 2, columnTo).equalsPawn("K")
+								|| ((board.getPositions().get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)
+										// &&!(board.getPawn(rowTo-2, columnTo).equalsPawn("B"))
+										&& !(columnTo == 8 && rowTo - 2 == 4) && !(columnTo == 4 && rowTo - 2 == 0)
+										&& !(columnTo == 4 && rowTo - 2 == 8) && !(columnTo == 0 && rowTo - 2 == 4))));
 
 			case RIGHT:
-				return (columnTo < board.getLength() - 2
-						&& board.getPawn(rowTo, columnTo + 1).equalsPawn("B")
+				return (columnTo < board.getLength() - 2 && board.getPawn(rowTo, columnTo + 1).equalsPawn("B")
 						&& (board.getPawn(rowTo, columnTo + 2).equalsPawn("W")
-								|| (board.getPositions().get(board.getBox(rowTo,
-										columnTo + 2)) == Position.THRONE)
+								|| (board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE)
 								|| board.getPawn(rowTo, columnTo + 2).equalsPawn("K")
-								|| ((board.getPositions().get(board.getBox(rowTo,
-										columnTo + 2)) == Position.CITADEL)
+								|| ((board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)
 										// &&!(board.getPawn(rowTo,
 										// columnTo+2).equalsPawn("B"))
-										&& !(columnTo + 2 == 8 && rowTo == 4)
-										&& !(columnTo + 2 == 4 && rowTo == 0)
-										&& !(columnTo + 2 == 4 && rowTo == 8)
-										&& !(columnTo + 2 == 0
-												&& rowTo == 4))));
+										&& !(columnTo + 2 == 8 && rowTo == 4) && !(columnTo + 2 == 4 && rowTo == 0)
+										&& !(columnTo + 2 == 4 && rowTo == 8) && !(columnTo + 2 == 0 && rowTo == 4))));
 
 			case LEFT:
-				return (columnTo > 1 && board.getPawn(rowTo, columnTo - 1).equalsPawn("B") && (board
-						.getPawn(rowTo, columnTo - 2).equalsPawn("W")
-						|| (board.getPositions().get(
-								board.getBox(rowTo, columnTo - 2)) == Position.THRONE)
-						|| board.getPawn(rowTo, columnTo - 2).equalsPawn("K")
-						|| ((board.getPositions().get(
-								board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)
-								// &&!(board.getPawn(rowTo, columnTo-2).equalsPawn("B"))
-								&& !(columnTo - 2 == 8 && rowTo == 4)
-								&& !(columnTo - 2 == 4 && rowTo == 0)
-								&& !(columnTo - 2 == 4 && rowTo == 8)
-								&& !(columnTo - 2 == 0 && rowTo == 4))));
+				return (columnTo > 1 && board.getPawn(rowTo, columnTo - 1).equalsPawn("B")
+						&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("W")
+								|| (board.getPositions().get(board.getBox(rowTo, columnTo - 2)) == Position.THRONE)
+								|| board.getPawn(rowTo, columnTo - 2).equalsPawn("K")
+								|| ((board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)
+										// &&!(board.getPawn(rowTo, columnTo-2).equalsPawn("B"))
+										&& !(columnTo - 2 == 8 && rowTo == 4) && !(columnTo - 2 == 4 && rowTo == 0)
+										&& !(columnTo - 2 == 4 && rowTo == 8) && !(columnTo - 2 == 0 && rowTo == 4))));
 
 			default:
 				return false;
@@ -127,40 +107,28 @@ public class TablutGame implements Game<State, Action, String> {
 		case BLACK:
 			switch (d) {
 			case DOWN:
-				return (rowTo < board.getLength() - 2
-						&& board.getPawn(rowTo + 1, columnTo).equalsPawn("W")
+				return (rowTo < board.getLength() - 2 && board.getPawn(rowTo + 1, columnTo).equalsPawn("W")
 						&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("B")
-								|| (board.getPositions().get(board.getBox(rowTo + 2,
-										columnTo)) == Position.THRONE)
-								|| (board.getPositions().get(board.getBox(rowTo + 2,
-										columnTo)) == Position.CITADEL)));
+								|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
+								|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)));
 
 			case UP:
 				return (rowTo > 1 && board.getPawn(rowTo - 1, columnTo).equalsPawn("W")
 						&& (board.getPawn(rowTo - 2, columnTo).equalsPawn("B")
-								|| (board.getPositions().get(board.getBox(rowTo - 2,
-										columnTo)) == Position.THRONE)
-								|| (board.getPositions().get(board.getBox(rowTo - 2,
-										columnTo)) == Position.CITADEL)));
+								|| (board.getPositions().get(board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
+								|| (board.getPositions().get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)));
 
 			case RIGHT:
-				return (columnTo < board.getLength() - 2
-						&& board.getPawn(rowTo, columnTo + 1).equalsPawn("W")
+				return (columnTo < board.getLength() - 2 && board.getPawn(rowTo, columnTo + 1).equalsPawn("W")
 						&& (board.getPawn(rowTo, columnTo + 2).equalsPawn("B")
-								|| board.getPositions()
-										.get(board.getBox(rowTo, columnTo
-												+ 2)) == Position.THRONE
-								|| (board.getPositions().get(board.getBox(rowTo,
-										columnTo + 2)) == Position.CITADEL)));
+								|| board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE
+								|| (board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)));
 
 			case LEFT:
-				return (rowTo < board.getLength() - 2
-						&& board.getPawn(rowTo + 1, columnTo).equalsPawn("W")
+				return (rowTo < board.getLength() - 2 && board.getPawn(rowTo + 1, columnTo).equalsPawn("W")
 						&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("B")
-								|| (board.getPositions().get(board.getBox(rowTo + 2,
-										columnTo)) == Position.THRONE)
-								|| (board.getPositions().get(board.getBox(rowTo + 2,
-										columnTo)) == Position.CITADEL)));
+								|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
+								|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)));
 
 			default:
 				return false;
@@ -175,162 +143,121 @@ public class TablutGame implements Game<State, Action, String> {
 
 		switch (t) {
 		case WHITE:
-			return (rowTo == 0 || rowTo == board.getLength() - 1 || columnTo == 0
-					|| columnTo == board.getLength() - 1)
+			return (rowTo == 0 || rowTo == board.getLength() - 1 || columnTo == 0 || columnTo == board.getLength() - 1)
 					&& (board.getPawn(rowTo, columnTo).equalsPawn("K"));
 
 		case BLACK:
 			switch (d) {
 			case DOWN:
-				return (rowTo < board.getLength() - 2
-						&& board.getPawn(rowTo + 1, columnTo).equalsPawn("K") // re sotto
+				return (rowTo < board.getLength() - 2 && board.getPawn(rowTo + 1, columnTo).equalsPawn("K") // re sotto
 						&& ((board.getBox(rowTo + 1, columnTo).equals("e5") // re sul trono
-								&& board.getPawn(5, 4).equalsPawn("B")
-								&& board.getPawn(4, 5).equalsPawn("B")
+								&& board.getPawn(5, 4).equalsPawn("B") && board.getPawn(4, 5).equalsPawn("B")
 								&& board.getPawn(4, 3).equalsPawn("B"))
 								|| (board.getBox(rowTo + 1, columnTo).equals("e4") // re
-															// adiacente
-															// al
-															// trono
-										&& board.getPawn(3, 3).equalsPawn("B")
-										&& board.getPawn(3, 5).equalsPawn("B"))
+										// adiacente
+										// al
+										// trono
+										&& board.getPawn(3, 3).equalsPawn("B") && board.getPawn(3, 5).equalsPawn("B"))
 								|| (board.getBox(rowTo + 1, columnTo).equals("d5")
-										&& board.getPawn(4, 2).equalsPawn("B")
-										&& board.getPawn(5, 3).equalsPawn("B"))
+										&& board.getPawn(4, 2).equalsPawn("B") && board.getPawn(5, 3).equalsPawn("B"))
 								|| (board.getBox(rowTo + 1, columnTo).equals("f5")
-										&& board.getPawn(4, 6).equalsPawn("B")
-										&& board.getPawn(5, 5).equalsPawn("B"))
+										&& board.getPawn(4, 6).equalsPawn("B") && board.getPawn(5, 5).equalsPawn("B"))
 								|| (!board.getBox(rowTo + 1, columnTo).equals("d5") // re
-															// fuori
-															// dalle
-															// zone
-															// del
-															// trono
-										&& !board.getBox(rowTo + 1, columnTo)
-												.equals("e4")
-										&& !board.getBox(rowTo + 1, columnTo)
-												.equals("f5")
-										&& !board.getBox(rowTo + 1, columnTo)
-												.equals("e5")
-										&& board.getPawn(rowTo + 2, columnTo)
-												.equalsPawn("B")
-										|| (board.getPositions().get(
-												board.getBox(rowTo + 2,
-														columnTo)) == Position.CITADEL)))
+										// fuori
+										// dalle
+										// zone
+										// del
+										// trono
+										&& !board.getBox(rowTo + 1, columnTo).equals("e4")
+										&& !board.getBox(rowTo + 1, columnTo).equals("f5")
+										&& !board.getBox(rowTo + 1, columnTo).equals("e5")
+										&& board.getPawn(rowTo + 2, columnTo).equalsPawn("B")
+										|| (board.getPositions()
+												.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)))
 
 				);
 
 			case UP:
 				return (rowTo > 1 && board.getPawn(rowTo - 1, columnTo).equalsPawn("K") // re sopra
 						&& ((board.getBox(rowTo - 1, columnTo).equals("e5") // re sul trono
-								&& board.getPawn(3, 4).equalsPawn("B")
-								&& board.getPawn(4, 5).equalsPawn("B")
+								&& board.getPawn(3, 4).equalsPawn("B") && board.getPawn(4, 5).equalsPawn("B")
 								&& board.getPawn(4, 3).equalsPawn("B"))
 								|| (board.getBox(rowTo - 1, columnTo).equals("e6") // re
-															// adiacente
-															// al
-															// trono
-										&& board.getPawn(5, 3).equalsPawn("B")
-										&& board.getPawn(5, 5).equalsPawn("B"))
+										// adiacente
+										// al
+										// trono
+										&& board.getPawn(5, 3).equalsPawn("B") && board.getPawn(5, 5).equalsPawn("B"))
 								|| (board.getBox(rowTo - 1, columnTo).equals("d5")
-										&& board.getPawn(4, 2).equalsPawn("B")
-										&& board.getPawn(3, 3).equalsPawn("B"))
+										&& board.getPawn(4, 2).equalsPawn("B") && board.getPawn(3, 3).equalsPawn("B"))
 								|| (board.getBox(rowTo - 1, columnTo).equals("f5")
-										&& board.getPawn(4, 4).equalsPawn("B")
-										&& board.getPawn(3, 5).equalsPawn("B"))
+										&& board.getPawn(4, 4).equalsPawn("B") && board.getPawn(3, 5).equalsPawn("B"))
 								|| (!board.getBox(rowTo - 1, columnTo).equals("d5") // re
-															// fuori
-															// dalle
-															// zone
-															// del
-															// trono
-										&& !board.getBox(rowTo - 1, columnTo)
-												.equals("e4")
-										&& !board.getBox(rowTo - 1, columnTo)
-												.equals("f5")
-										&& !board.getBox(rowTo - 1, columnTo)
-												.equals("e5")
-										&& board.getPawn(rowTo - 2, columnTo)
-												.equalsPawn("B")
-										|| (board.getPositions().get(
-												board.getBox(rowTo - 2,
-														columnTo)) == Position.CITADEL))));
+										// fuori
+										// dalle
+										// zone
+										// del
+										// trono
+										&& !board.getBox(rowTo - 1, columnTo).equals("e4")
+										&& !board.getBox(rowTo - 1, columnTo).equals("f5")
+										&& !board.getBox(rowTo - 1, columnTo).equals("e5")
+										&& board.getPawn(rowTo - 2, columnTo).equalsPawn("B")
+										|| (board.getPositions()
+												.get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL))));
 
 			case RIGHT:
-				return (columnTo < board.getLength() - 2
-						&& board.getPawn(rowTo, columnTo + 1).equalsPawn("K") // re sulla destra
+				return (columnTo < board.getLength() - 2 && board.getPawn(rowTo, columnTo + 1).equalsPawn("K") // re
+																												// sulla
+																												// destra
 						&& ((board.getBox(rowTo, columnTo + 1).equals("e5") // re sul trono
-								&& board.getPawn(3, 4).equalsPawn("B")
-								&& board.getPawn(4, 5).equalsPawn("B")
+								&& board.getPawn(3, 4).equalsPawn("B") && board.getPawn(4, 5).equalsPawn("B")
 								&& board.getPawn(5, 4).equalsPawn("B"))
 								|| (board.getBox(rowTo, columnTo + 1).equals("e4") // re
-															// adiacente
-															// al
-															// trono
-										&& board.getPawn(2, 4).equalsPawn("B")
-										&& board.getPawn(3, 5).equalsPawn("B"))
+										// adiacente
+										// al
+										// trono
+										&& board.getPawn(2, 4).equalsPawn("B") && board.getPawn(3, 5).equalsPawn("B"))
 								|| (board.getBox(rowTo, columnTo + 1).equals("e6")
-										&& board.getPawn(5, 5).equalsPawn("B")
-										&& board.getPawn(6, 4).equalsPawn("B"))
+										&& board.getPawn(5, 5).equalsPawn("B") && board.getPawn(6, 4).equalsPawn("B"))
 								|| (board.getBox(rowTo, columnTo + 1).equals("d5")
-										&& board.getPawn(3, 3).equalsPawn("B")
-										&& board.getPawn(3, 5).equalsPawn("B"))
+										&& board.getPawn(3, 3).equalsPawn("B") && board.getPawn(3, 5).equalsPawn("B"))
 								|| (!board.getBox(rowTo, columnTo + 1).equals("d5") // re
-															// fuori
-															// dalle
-															// zone
-															// del
-															// trono
-										&& !board.getBox(rowTo, columnTo + 1)
-												.equals("e6")
-										&& !board.getBox(rowTo, columnTo + 1)
-												.equals("e4")
-										&& !board.getBox(rowTo, columnTo + 1)
-												.equals("e5")
-										&& (board.getPawn(rowTo, columnTo + 2)
-												.equalsPawn("B")
-												|| (board.getPositions()
-														.get(board.getBox(
-																rowTo,
-																columnTo + 2)) == Position.CITADEL)))));
+										// fuori
+										// dalle
+										// zone
+										// del
+										// trono
+										&& !board.getBox(rowTo, columnTo + 1).equals("e6")
+										&& !board.getBox(rowTo, columnTo + 1).equals("e4")
+										&& !board.getBox(rowTo, columnTo + 1).equals("e5")
+										&& (board.getPawn(rowTo, columnTo + 2).equalsPawn("B") || (board.getPositions()
+												.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)))));
 
 			case LEFT:
 				return (columnTo > 1 && board.getPawn(rowTo, columnTo - 1).equalsPawn("K") // re sulla
-														// sinistra
+				// sinistra
 						&& ((board.getBox(rowTo, columnTo - 1).equals("e5") // re sul trono
-								&& board.getPawn(3, 4).equalsPawn("B")
-								&& board.getPawn(4, 3).equalsPawn("B")
+								&& board.getPawn(3, 4).equalsPawn("B") && board.getPawn(4, 3).equalsPawn("B")
 								&& board.getPawn(5, 4).equalsPawn("B"))
 								|| (board.getBox(rowTo, columnTo - 1).equals("e4") // re
-															// adiacente
-															// al
-															// trono
-										&& board.getPawn(2, 4).equalsPawn("B")
-										&& board.getPawn(3, 3).equalsPawn("B"))
+										// adiacente
+										// al
+										// trono
+										&& board.getPawn(2, 4).equalsPawn("B") && board.getPawn(3, 3).equalsPawn("B"))
 								|| (board.getBox(rowTo, columnTo - 1).equals("f5")
-										&& board.getPawn(3, 5).equalsPawn("B")
-										&& board.getPawn(5, 5).equalsPawn("B"))
+										&& board.getPawn(3, 5).equalsPawn("B") && board.getPawn(5, 5).equalsPawn("B"))
 								|| (board.getBox(rowTo, columnTo + 1).equals("e6")
-										&& board.getPawn(5, 3).equalsPawn("B")
-										&& board.getPawn(6, 4).equalsPawn("B"))
-								|| (!board.getBox(rowTo, columnTo - 1).equals("e5") //re
-															// fuori
-															// dalle
-															// zone
-															// del
-															// trono
-										&& !board.getBox(rowTo, columnTo - 1)
-												.equals("e6")
-										&& !board.getBox(rowTo, columnTo - 1)
-												.equals("e4")
-										&& !board.getBox(rowTo, columnTo - 1)
-												.equals("f5")
-										&& (board.getPawn(rowTo, columnTo - 2)
-												.equalsPawn("B")
-												|| (board.getPositions()
-														.get(board.getBox(
-																rowTo,
-																columnTo - 2)) == Position.CITADEL)))));
+										&& board.getPawn(5, 3).equalsPawn("B") && board.getPawn(6, 4).equalsPawn("B"))
+								|| (!board.getBox(rowTo, columnTo - 1).equals("e5") // re
+										// fuori
+										// dalle
+										// zone
+										// del
+										// trono
+										&& !board.getBox(rowTo, columnTo - 1).equals("e6")
+										&& !board.getBox(rowTo, columnTo - 1).equals("e4")
+										&& !board.getBox(rowTo, columnTo - 1).equals("f5")
+										&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("B") || (board.getPositions()
+												.get(board.getBox(rowTo, columnTo - 2)) == Position.CITADEL)))));
 
 			default:
 				return false;
@@ -342,9 +269,9 @@ public class TablutGame implements Game<State, Action, String> {
 
 	}
 
-	public State checkMove(State state, Action a) throws BoardException, ActionException, StopException,
-			PawnException, DiagonalException, ClimbingException, ThroneException, OccupitedException,
-			ClimbingCitadelException, CitadelException {
+	public State checkMove(State state, Action a)
+			throws BoardException, ActionException, StopException, PawnException, DiagonalException, ClimbingException,
+			ThroneException, OccupitedException, ClimbingCitadelException, CitadelException {
 
 		Board board = state.getBoard();
 
@@ -357,9 +284,8 @@ public class TablutGame implements Game<State, Action, String> {
 		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
 
 		// controllo se sono fuori dal tabellone
-		if (columnFrom > board.getLength() - 1 || rowFrom > board.getLength() - 1
-				|| rowTo > board.getLength() - 1 || columnTo > board.getLength() || columnFrom < 0
-				|| rowFrom < 0 || rowTo < 0 || columnTo < 0) {
+		if (columnFrom > board.getLength() - 1 || rowFrom > board.getLength() - 1 || rowTo > board.getLength() - 1
+				|| columnTo > board.getLength() || columnFrom < 0 || rowFrom < 0 || rowTo < 0 || columnTo < 0) {
 			throw new BoardException(a);
 		}
 
@@ -418,16 +344,14 @@ public class TablutGame implements Game<State, Action, String> {
 			if (columnFrom > columnTo) {
 				for (int i = columnTo; i < columnFrom; i++) {
 					if (!board.getPawn(rowFrom, i).equalsPawn(Pawn.EMPTY.toString())) {
-						if (board.getPositions().get(board.getBox(rowFrom, i))
-								.equalsPosition(Position.THRONE.toString())) {
+						if (board.getPositions().get(board.getBox(rowFrom, i)) == Position.THRONE) {
 							throw new ClimbingException(a);
 						} else {
 							throw new ClimbingException(a);
 						}
 					}
 					if (board.getPositions().get(board.getBox(rowFrom, i)) == Position.CITADEL
-							&& board.getPositions().get(board.getBox(rowFrom,
-									columnFrom)) != Position.CITADEL) {
+							&& board.getPositions().get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
 						throw new ClimbingCitadelException(a);
 					}
 				}
@@ -442,8 +366,7 @@ public class TablutGame implements Game<State, Action, String> {
 						}
 					}
 					if (board.getPositions().get(board.getBox(rowFrom, i)) == Position.CITADEL
-							&& board.getPositions().get(board.getBox(rowFrom,
-									columnFrom)) != Position.CITADEL) {
+							&& board.getPositions().get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
 						throw new ClimbingCitadelException(a);
 					}
 				}
@@ -460,8 +383,7 @@ public class TablutGame implements Game<State, Action, String> {
 						}
 					}
 					if (board.getPositions().get(board.getBox(i, columnFrom)) == Position.CITADEL
-							&& board.getPositions().get(board.getBox(rowFrom,
-									columnFrom)) != Position.CITADEL) {
+							&& board.getPositions().get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
 						throw new ClimbingCitadelException(a);
 					}
 				}
@@ -476,8 +398,7 @@ public class TablutGame implements Game<State, Action, String> {
 						}
 					}
 					if (board.getPositions().get(board.getBox(i, columnFrom)) == Position.CITADEL
-							&& board.getPositions().get(board.getBox(rowFrom,
-									columnFrom)) != Position.CITADEL) {
+							&& board.getPositions().get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
 						throw new ClimbingCitadelException(a);
 					}
 				}
@@ -720,6 +641,8 @@ public class TablutGame implements Game<State, Action, String> {
 		} else {
 			state.setTurn(State.Turn.WHITE);
 		}
+		//setto l'ultima azione eseguita
+		state.setLastAction(a);
 		return state;
 	}
 
@@ -765,7 +688,7 @@ public class TablutGame implements Game<State, Action, String> {
 
 	@Override
 	public String getPlayer(State state) {
-		if (state.getTurn() == Turn.WHITE){
+		if (state.getTurn() == Turn.WHITE) {
 			return "W";
 		} else {
 			return "B";
@@ -774,7 +697,7 @@ public class TablutGame implements Game<State, Action, String> {
 
 	@Override
 	public String[] getPlayers() {
-		return new String[] {Board.Pawn.WHITE.toString(), Board.Pawn.BLACK.toString()};
+		return new String[] { Board.Pawn.WHITE.toString(), Board.Pawn.BLACK.toString() };
 	}
 
 	@Override
@@ -791,9 +714,9 @@ public class TablutGame implements Game<State, Action, String> {
 		
 		if (isTerminal(state)){
 			if(player.equals(""+actual.charAt(0))){
-				return 1; //If I win
+				return 20; //If I win
 			} else {
-				return 0; //If I lose
+				return -20; //If I lose
 			}
 		}
 		return -1;
