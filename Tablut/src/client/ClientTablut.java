@@ -21,7 +21,7 @@ import utils.StreamUtils;
 
 public class ClientTablut implements Runnable {
 
-	private State.Turn player; 
+	private Turn player; 
 	private String name;
 	private Socket playerSocket;
 	private DataInputStream in;
@@ -36,10 +36,10 @@ public class ClientTablut implements Runnable {
 		this.gson = new Gson();
 
 		if(player.equalsIgnoreCase("white")){
-			this.player = State.Turn.WHITE;
+			this.player = Turn.WHITE;
 			port = 5800;
 		}else if(player.equalsIgnoreCase("black")){
-			this.player = State.Turn.BLACK;
+			this.player = Turn.BLACK;
 			port = 5801;
 		}
 
@@ -57,24 +57,21 @@ public class ClientTablut implements Runnable {
     public static void main(String[] args) throws Exception {
         
         String player = null;
-		String name = null;
+	String name = null;
 		
-        /* CONTROLLO ARGOMENTI */
+        //Checks Argument
 		try {
 			if (args.length == 2) {
-                name = args[0];
-                player = args[1];
-				if (!(name.equalsIgnoreCase("aiofdtiger")))
-				{ 
-                    System.out.println("Wrong team name, it's AIofDtiger or aiofdtiger\n");
-                    System.exit(1);
+                		name = args[0];
+                		player = args[1];
+				if (!(name.equalsIgnoreCase("aiofdtiger"))){ 
+                   			 System.out.println("Wrong team name, it's AIofDtiger or aiofdtiger\n");
+                   			 System.exit(1);
 				}
-				if (!(player.equalsIgnoreCase("white") || player.equalsIgnoreCase("black"))){
-					
+				if (!(player.equalsIgnoreCase("white") || player.equalsIgnoreCase("black"))){	
 					System.out.println("You must specify which player you are (WHITE or BLACK)\n");
-                    System.exit(2);
+                    			System.exit(2);
 				}
-				
 			} else {
 				System.out.println("Usage: <TeamName> [White|Black] \n");// Usage
 				System.out.println("Client: closing...");
@@ -104,8 +101,7 @@ public class ClientTablut implements Runnable {
 		TablutGame rules = new TablutGame(99, 0, "localLogs", "test", "test");
 		TimeLimitedSearch search = new TimeLimitedSearch(rules, -20, 20, 5);
 		System.out.println("You are player " + this.player.toString() + "!");
-		State state = new State(); // istanziando State inizializzo anche la board (vedi costruttore)
-		state.setTurn(State.Turn.WHITE); //iniziano i bianchi
+		State state = new State();
 		int counter = 0;
 		try{
 			while(true){
@@ -150,7 +146,7 @@ public class ClientTablut implements Runnable {
 			Action selectedAction = null;
 
 			try {
-				selectedAction = new Action("z0", "z0" , State.Turn.WHITE);
+				selectedAction = new Action("z0", "z0" , Turn.WHITE);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -186,21 +182,21 @@ public class ClientTablut implements Runnable {
 			}
 
 		// Turno dell'avversario
-		}else if (state.getTurn().equals(State.Turn.BLACK)) {
+		}else if (state.getTurn().equals(Turn.BLACK)) {
 			System.out.println("Waiting for your opponent move... ");
 		}
 		// ho vinto
-		else if (state.getTurn().equals(State.Turn.WHITEWIN)) {
+		else if (state.getTurn().equals(Turn.WHITEWIN)) {
 			System.out.println("YOU WIN!");
 			System.exit(0);
 		}
 		// ho perso
-		else if (state.getTurn().equals(State.Turn.BLACKWIN)) {
+		else if (state.getTurn().equals(Turn.BLACKWIN)) {
 			System.out.println("YOU LOSE!");
 			System.exit(0);
 		}
 		// pareggio
-		else if (state.getTurn().equals(State.Turn.DRAW)) {
+		else if (state.getTurn().equals(Turn.DRAW)) {
 			System.out.println("DRAW!");
 			System.exit(0);
 		}
@@ -215,7 +211,7 @@ public class ClientTablut implements Runnable {
 			Action selectedAction = null;
 
 			try {
-				selectedAction = new Action("z0", "z0" , State.Turn.BLACK);
+				selectedAction = new Action("z0", "z0" , Turn.BLACK);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -244,22 +240,22 @@ public class ClientTablut implements Runnable {
 				e.printStackTrace();
 			}
 
-		// Turno dell'avversario
-		}else if (state.getTurn().equals(State.Turn.WHITE)) {
+		// Opponent turn
+		}else if (state.getTurn().equals(Turn.WHITE)) {
 			System.out.println("Waiting for your opponent move... ");
 		}
-		// ho vinto
-		else if (state.getTurn().equals(State.Turn.BLACKWIN)) {
+		// Win
+		else if (state.getTurn().equals(Turn.BLACKWIN)) {
 			System.out.println("YOU WIN!");
 			System.exit(0);
 		}
-		// ho perso
-		else if (state.getTurn().equals(State.Turn.WHITEWIN)) {
+		// Lost
+		else if (state.getTurn().equals(Turn.WHITEWIN)) {
 			System.out.println("YOU LOSE!");
 			System.exit(0);
 		}
-		// pareggio
-		else if (state.getTurn().equals(State.Turn.DRAW)) {
+		// Draw
+		else if (state.getTurn().equals(Turn.DRAW)) {
 			System.out.println("DRAW!");
 			System.exit(0);
 		}

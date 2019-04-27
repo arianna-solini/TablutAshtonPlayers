@@ -69,6 +69,13 @@ public class State implements Serializable, Cloneable {
 		}
 	}
 
+	/**
+	 * Calculates the possible moves for a pawn from a specified position of the board
+	 * @param from The string which represents the current position of the pawn
+	 * @return An ArrayList of strings which represents  the possible future positions of the pawn
+	 * @authors R.Vasumini, A.Solini
+	 */
+
 	private ArrayList<String> getPossibleTo(String from) {
 		int row = this.board.getRow(from);
 		int column = this.board.getColumn(from);
@@ -196,7 +203,7 @@ public class State implements Serializable, Cloneable {
 
 	public State() {
 		this.board = new Board();
-		this.turn = Turn.BLACK;
+		this.turn = Turn.WHITE;
 		initActions();
 	}
 	
