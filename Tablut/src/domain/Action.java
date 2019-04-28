@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.InvalidParameterException;
 
+import domain.State.Turn;
+
 /**
  * this class represents an action of a player
  * 
@@ -18,7 +20,7 @@ public class Action implements Serializable {
 	private String to;
 	private State.Turn turn;
 
-	public Action(String from, String to, State.Turn t) throws IOException {
+	public Action(String from, String to, Turn t) throws IOException {
 		if (from.length() != 2 || to.length() != 2) {
 			throw new InvalidParameterException("The FROM and TO string must have length=2");
 		} 

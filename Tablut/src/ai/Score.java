@@ -6,6 +6,10 @@ import domain.TablutGame;
 import domain.State.Turn;
 import domain.Board.Direction;
 
+/**
+ * Class used for calculate the score of an action
+ * @author R.Vasumini, A.Solini
+ */
 public class Score{
 
 	private State state;

@@ -5,6 +5,10 @@ import java.io.Serializable;
 import domain.Board.Pawn;
 import domain.State.Turn;
 
+/**
+ * Utility class which is used to read the Gson state sent by the server
+ * @author R.Vasumini, A.Solini
+ */
 public class StateGson implements Serializable{
 
 	private static final long serialVersionUID = 1L;
