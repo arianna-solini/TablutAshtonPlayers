@@ -108,7 +108,7 @@ public class TablutGame implements Game<State, Action, String> {
 						&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("W")
 							|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.THRONE)
 							|| board.getPawn(rowTo, columnTo - 2).equalsPawn("K")
-							|| ((positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)
+							|| ((positions.get(board.getBox(rowTo, columnTo - 2)) == Position.CITADEL)
 								// &&!(board.getPawn(rowTo, columnTo-2).equalsPawn("B"))
 								&& !(columnTo - 2 == 8 && rowTo == 4) 
 								&& !(columnTo - 2 == 4 && rowTo == 0)
@@ -143,11 +143,11 @@ public class TablutGame implements Game<State, Action, String> {
 							|| (positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)));
 
 			case LEFT:
-				return (rowTo < board.getLength() - 2 
-						&& board.getPawn(rowTo + 1, columnTo).equalsPawn("W")
-						&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("B")
-							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
-							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)));
+				return (columnTo > 1
+						&& board.getPawn(rowTo, columnTo - 1).equalsPawn("W")
+						&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("B")
+							|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.THRONE)
+							|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.CITADEL)));
 
 			default:
 				return false;
