@@ -164,9 +164,7 @@ public class ClientTablut implements Runnable {
 
 				try {
 					State updatedState = rules.checkMove(state, selectedAction);
-					//rules.checkMove(state, selectedAction);
 					updatedState.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.WHITE);
-					//state.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.WHITE);
 					done = true;
 				} catch (Exception e) {
 					System.out.println("Eccezione: " + selectedAction.toString());
@@ -181,21 +179,21 @@ public class ClientTablut implements Runnable {
 				e.printStackTrace();
 			}
 
-		// Turno dell'avversario
+		// Opponent turn
 		}else if (state.getTurn().equals(Turn.BLACK)) {
 			System.out.println("Waiting for your opponent move... ");
 		}
-		// ho vinto
+		// Win
 		else if (state.getTurn().equals(Turn.WHITEWIN)) {
 			System.out.println("YOU WIN!");
 			System.exit(0);
 		}
-		// ho perso
+		// Lost
 		else if (state.getTurn().equals(Turn.BLACKWIN)) {
 			System.out.println("YOU LOSE!");
 			System.exit(0);
 		}
-		// pareggio
+		// Draw
 		else if (state.getTurn().equals(Turn.DRAW)) {
 			System.out.println("DRAW!");
 			System.exit(0);
@@ -204,7 +202,7 @@ public class ClientTablut implements Runnable {
 
 	public void imBlack(State state, TablutGame rules, TimeLimitedSearch search){
 				
-		if (this.currentState.getTurn().equals(Turn.BLACK)) {//per ora lasciamo così
+		if (this.currentState.getTurn().equals(Turn.BLACK)) {
 			
 			long inizio = System.currentTimeMillis();
 			boolean done = false;
@@ -221,14 +219,19 @@ public class ClientTablut implements Runnable {
 
 				System.out.println(rules.getPlayer(state) + "  playing ... ");
 				selectedAction = search.makeDecision(state);
-				System.out.println("mossa fatta");
+				System.out.println(search.getMetrics().toString());
+				long fine = System.currentTimeMillis();
+				System.out.println("mossa fatta in " + (fine-inizio));
 				
 
 				try {
-					rules.checkMove(state, selectedAction);
-					state.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.BLACK);
+					State updatedState = rules.checkMove(state, selectedAction);
+					updatedState.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.BLACK);
 					done = true;
-				} catch (Exception e) {}
+				} catch (Exception e) {
+					System.out.println("Eccezione: " + selectedAction.toString());
+					e.printStackTrace();
+				}
 			}
 			long fine = System.currentTimeMillis();
 			System.out.println("Mossa scelta: " + selectedAction.toString() + " in "+ (fine - inizio));
