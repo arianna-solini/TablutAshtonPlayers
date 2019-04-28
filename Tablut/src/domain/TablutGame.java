@@ -2,6 +2,7 @@ package domain;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import aima.core.search.adversarial.Game;
 
@@ -12,12 +13,8 @@ import domain.State.Turn;
 import exceptions.*;
 
 /**
- * 
  * Game engine inspired by the Ashton Rules of Tablut
- * 
- * 
  * @author A. Piretti, Andrea Galassi
- *
  */
 public class TablutGame implements Game<State, Action, String> {
 
@@ -39,13 +36,11 @@ public class TablutGame implements Game<State, Action, String> {
 
 	// TODO: Draw conditions are not working
 
-	public TablutGame(int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName,
-			String blackName) {
-		this(new State(), repeated_moves_allowed, cache_size, logs_folder, whiteName, blackName);
+	public TablutGame(int repeated_moves_allowed, int cache_size) {
+		this(new State(), repeated_moves_allowed, cache_size);
 	}
 
-	public TablutGame(State state, int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName,
-			String blackName) {
+	public TablutGame(State state, int repeated_moves_allowed, int cache_size) {
 		super();
 		this.repeated_moves_allowed = repeated_moves_allowed;
 		this.cache_size = cache_size;
@@ -61,8 +56,10 @@ public class TablutGame implements Game<State, Action, String> {
 	 * @param d Direction to control
 	 * @param t Player which tries to capture
 	 * @return {@code true} if the conditions are favorable to capture, {@code false} otherwhise
+	 * @author R.Vasumini, A.Solini
 	 */
 	public boolean checkCaptureConditions(Board board, int rowTo, int columnTo, Direction d, Turn t) {
+		HashMap<String, Position> positions = board.getPositions();
 		switch (t) {
 		case WHITE:
 			switch (d) {
@@ -70,9 +67,9 @@ public class TablutGame implements Game<State, Action, String> {
 				return (rowTo < board.getLength() - 2 
 						&& board.getPawn(rowTo + 1, columnTo).equalsPawn("B")
 						&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("W")
-							|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
+							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
 							|| board.getPawn(rowTo + 2, columnTo).equalsPawn("K")
-							|| ((board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)
+							|| ((positions.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)
 								// &&!(board.getPawn(rowTo+2, columnTo).equalsPawn("B"))
 								&& !(columnTo == 8 && rowTo + 2 == 4) 
 								&& !(columnTo == 4 && rowTo + 2 == 0)
@@ -83,9 +80,9 @@ public class TablutGame implements Game<State, Action, String> {
 				return (rowTo > 1 
 						&& board.getPawn(rowTo - 1, columnTo).equalsPawn("B")
 						&& (board.getPawn(rowTo - 2, columnTo).equalsPawn("W")
-							|| (board.getPositions().get(board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
+							|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
 							|| board.getPawn(rowTo - 2, columnTo).equalsPawn("K")
-							|| ((board.getPositions().get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)
+							|| ((positions.get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)
 								// &&!(board.getPawn(rowTo-2, columnTo).equalsPawn("B"))
 								&& !(columnTo == 8 && rowTo - 2 == 4) 
 								&& !(columnTo == 4 && rowTo - 2 == 0)
@@ -96,9 +93,9 @@ public class TablutGame implements Game<State, Action, String> {
 				return (columnTo < board.getLength() - 2 
 						&& board.getPawn(rowTo, columnTo + 1).equalsPawn("B")
 						&& (board.getPawn(rowTo, columnTo + 2).equalsPawn("W")
-							|| (board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE)
+							|| (positions.get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE)
 							|| board.getPawn(rowTo, columnTo + 2).equalsPawn("K")
-							|| ((board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)
+							|| ((positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)
 								// &&!(board.getPawn(rowTo, columnTo+2).equalsPawn("B"))
 								&& !(columnTo + 2 == 8 && rowTo == 4) 
 								&& !(columnTo + 2 == 4 && rowTo == 0)
@@ -109,9 +106,9 @@ public class TablutGame implements Game<State, Action, String> {
 				return (columnTo > 1 
 						&& board.getPawn(rowTo, columnTo - 1).equalsPawn("B")
 						&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("W")
-							|| (board.getPositions().get(board.getBox(rowTo, columnTo - 2)) == Position.THRONE)
+							|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.THRONE)
 							|| board.getPawn(rowTo, columnTo - 2).equalsPawn("K")
-							|| ((board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)
+							|| ((positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)
 								// &&!(board.getPawn(rowTo, columnTo-2).equalsPawn("B"))
 								&& !(columnTo - 2 == 8 && rowTo == 4) 
 								&& !(columnTo - 2 == 4 && rowTo == 0)
@@ -128,29 +125,29 @@ public class TablutGame implements Game<State, Action, String> {
 				return (rowTo < board.getLength() - 2 
 						&& board.getPawn(rowTo + 1, columnTo).equalsPawn("W")
 						&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("B")
-							|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
-							|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)));
+							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
+							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)));
 
 			case UP:
 				return (rowTo > 1 
 						&& board.getPawn(rowTo - 1, columnTo).equalsPawn("W")
 						&& (board.getPawn(rowTo - 2, columnTo).equalsPawn("B")
-							|| (board.getPositions().get(board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
-							|| (board.getPositions().get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)));
+							|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
+							|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)));
 
 			case RIGHT:
 				return (columnTo < board.getLength() - 2 
 						&& board.getPawn(rowTo, columnTo + 1).equalsPawn("W")
 						&& (board.getPawn(rowTo, columnTo + 2).equalsPawn("B")
-							|| board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE
-							|| (board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)));
+							|| positions.get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE
+							|| (positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)));
 
 			case LEFT:
 				return (rowTo < board.getLength() - 2 
 						&& board.getPawn(rowTo + 1, columnTo).equalsPawn("W")
 						&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("B")
-							|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
-							|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)));
+							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
+							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)));
 
 			default:
 				return false;
@@ -168,9 +165,11 @@ public class TablutGame implements Game<State, Action, String> {
 	 * @param d Direction to control
 	 * @param t Player which tries to win
 	 * @return {@code true} if the conditions are favorable to win, {@code false} otherwhise
+	 * @author R.Vasumini, A.Solini
 	 */
 
 	public boolean checkWin(Board board, int rowTo, int columnTo, Direction d, Turn t) {
+		HashMap<String, Position> positions = board.getPositions();
 		switch (t) {
 		case WHITE:
 			return (rowTo == 0 || rowTo == board.getLength() - 1 || columnTo == 0 || columnTo == board.getLength() - 1)
@@ -198,7 +197,7 @@ public class TablutGame implements Game<State, Action, String> {
 								&& !board.getBox(rowTo + 1, columnTo).equals("f5")
 								&& !board.getBox(rowTo + 1, columnTo).equals("e5")
 								&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("B")
-									|| (board.getPositions().get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL))))
+									|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL))))
 
 						);
 
@@ -222,7 +221,7 @@ public class TablutGame implements Game<State, Action, String> {
 								&& !board.getBox(rowTo - 1, columnTo).equals("f5")
 								&& !board.getBox(rowTo - 1, columnTo).equals("e5")
 								&& (board.getPawn(rowTo - 2, columnTo).equalsPawn("B")
-									|| (board.getPositions().get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL))))
+									|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL))))
 						);
 
 			case RIGHT:
@@ -245,7 +244,7 @@ public class TablutGame implements Game<State, Action, String> {
 								&& !board.getBox(rowTo, columnTo + 1).equals("e4")
 								&& !board.getBox(rowTo, columnTo + 1).equals("e5")
 								&& (board.getPawn(rowTo, columnTo + 2).equalsPawn("B") 
-									|| (board.getPositions().get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL))))
+									|| (positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL))))
 						);
 
 			case LEFT:
@@ -268,7 +267,7 @@ public class TablutGame implements Game<State, Action, String> {
 								&& !board.getBox(rowTo, columnTo - 1).equals("e4")
 								&& !board.getBox(rowTo, columnTo - 1).equals("f5")
 								&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("B") 
-									|| (board.getPositions().get(board.getBox(rowTo, columnTo - 2)) == Position.CITADEL))))
+									|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.CITADEL))))
 						);
 
 			default:
@@ -286,6 +285,7 @@ public class TablutGame implements Game<State, Action, String> {
 		ClimbingException, ThroneException, OccupitedException, ClimbingCitadelException, CitadelException {
 
 		Board board = state.getBoard();
+		HashMap<String, Position> positions = board.getPositions();
 
 		// Checks strings length 
 		if (a.getTo().length() != 2 || a.getFrom().length() != 2) {
@@ -302,7 +302,7 @@ public class TablutGame implements Game<State, Action, String> {
 		}
 
 		// Checks if i try to go on the throne
-		if (board.getPositions().get(board.getBox(rowTo, columnTo)) == Position.THRONE) {
+		if (positions.get(board.getBox(rowTo, columnTo)) == Position.THRONE) {
 			throw new ThroneException(a);
 		}
 
@@ -310,12 +310,12 @@ public class TablutGame implements Game<State, Action, String> {
 		if (!board.getPawn(rowTo, columnTo).equalsPawn(Pawn.EMPTY.toString())) {
 			throw new OccupitedException(a);
 		}
-		if (board.getPositions().get(board.getBox(rowTo, columnTo)) == Position.CITADEL
-				&& board.getPositions().get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
+		if (positions.get(board.getBox(rowTo, columnTo)) == Position.CITADEL
+				&& positions.get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
 			throw new CitadelException(a);
 		}
-		if (board.getPositions().get(board.getBox(rowTo, columnTo)) == Position.CITADEL
-				&& board.getPositions().get(board.getBox(rowFrom, columnFrom)) == Position.CITADEL) {
+		if (positions.get(board.getBox(rowTo, columnTo)) == Position.CITADEL
+				&& positions.get(board.getBox(rowFrom, columnFrom)) == Position.CITADEL) {
 			if (rowFrom == rowTo) {
 				if (columnFrom - columnTo > 5 || columnFrom - columnTo < -5) {
 					throw new CitadelException(a);
@@ -356,29 +356,28 @@ public class TablutGame implements Game<State, Action, String> {
 			if (columnFrom > columnTo) {
 				for (int i = columnTo; i < columnFrom; i++) {
 					if (!board.getPawn(rowFrom, i).equalsPawn(Pawn.EMPTY.toString())) {
-						if (board.getPositions().get(board.getBox(rowFrom, i)) == Position.THRONE) {
+						if (positions.get(board.getBox(rowFrom, i)) == Position.THRONE) {
 							throw new ClimbingException(a);
 						} else {
 							throw new ClimbingException(a);
 						}
 					}
-					if (board.getPositions().get(board.getBox(rowFrom, i)) == Position.CITADEL
-							&& board.getPositions().get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
+					if (positions.get(board.getBox(rowFrom, i)) == Position.CITADEL
+							&& positions.get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
 						throw new ClimbingCitadelException(a);
 					}
 				}
 			} else {
 				for (int i = columnFrom + 1; i <= columnTo; i++) {
 					if (!board.getPawn(rowFrom, i).equalsPawn(Pawn.EMPTY.toString())) {
-						if (board.getPositions().get(board.getBox(rowTo, columnTo))
-								.equalsPosition(Position.THRONE.toString())) {
+						if (positions.get(board.getBox(rowTo, columnTo)) == Position.THRONE) {
 							throw new ClimbingException(a);
 						} else {
 							throw new ClimbingException(a);
 						}
 					}
-					if (board.getPositions().get(board.getBox(rowFrom, i)) == Position.CITADEL
-							&& board.getPositions().get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
+					if (positions.get(board.getBox(rowFrom, i)) == Position.CITADEL
+							&& positions.get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
 						throw new ClimbingCitadelException(a);
 					}
 				}
@@ -387,30 +386,30 @@ public class TablutGame implements Game<State, Action, String> {
 			if (rowFrom > rowTo) {
 				for (int i = rowTo; i < rowFrom; i++) {
 					if (!board.getPawn(i, columnFrom).equalsPawn(Pawn.EMPTY.toString())) {
-						if (board.getPositions().get(board.getBox(i, columnFrom))
+						if (positions.get(board.getBox(i, columnFrom))
 								.equalsPosition(Position.THRONE.toString())) {
 							throw new ClimbingException(a);
 						} else {
 							throw new ClimbingException(a);
 						}
 					}
-					if (board.getPositions().get(board.getBox(i, columnFrom)) == Position.CITADEL
-							&& board.getPositions().get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
+					if (positions.get(board.getBox(i, columnFrom)) == Position.CITADEL
+							&& positions.get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
 						throw new ClimbingCitadelException(a);
 					}
 				}
 			} else {
 				for (int i = rowFrom + 1; i <= rowTo; i++) {
 					if (!board.getPawn(i, columnFrom).equalsPawn(Pawn.EMPTY.toString())) {
-						if (board.getPositions().get(board.getBox(i, columnFrom))
+						if (positions.get(board.getBox(i, columnFrom))
 								.equalsPosition(Position.THRONE.toString())) {
 							throw new ClimbingException(a);
 						} else {
 							throw new ClimbingException(a);
 						}
 					}
-					if (board.getPositions().get(board.getBox(i, columnFrom)) == Position.CITADEL
-							&& board.getPositions().get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
+					if (positions.get(board.getBox(i, columnFrom)) == Position.CITADEL
+							&& positions.get(board.getBox(rowFrom, columnFrom)) != Position.CITADEL) {
 						throw new ClimbingCitadelException(a);
 					}
 				}
@@ -432,33 +431,24 @@ public class TablutGame implements Game<State, Action, String> {
 			this.drawConditions.clear();
 		}
 
-		// controllo pareggio
+		// Controls draw conditions
 		int trovati = 0;
 		for (State s : drawConditions) {
 
 			System.out.println(s.toString());
 
 			if (s.equals(state)) {
-				// DEBUG: //
-				// System.out.println("UGUALI:");
-				// System.out.println("STATO VECCHIO:\t" + s.toLinearString());
-				// System.out.println("STATO NUOVO:\t" +
-				// state.toLinearString());
-
 				trovati++;
 				if (trovati > repeated_moves_allowed) {
 					state.setTurn(State.Turn.DRAW);
 					break;
 				}
 			} else {
-				// DEBUG: //
-				// System.out.println("DIVERSI:");
-				// System.out.println("STATO VECCHIO:\t" + s.toLinearString());
-				// System.out.println("STATO NUOVO:\t" +
-				// state.toLinearString());
+
 			}
 		}
 		if (trovati > 0) {
+
 		}
 		if (cache_size >= 0 && this.drawConditions.size() > cache_size) {
 			this.drawConditions.remove(0);
@@ -713,9 +703,9 @@ public class TablutGame implements Game<State, Action, String> {
 		
 		if (isTerminal(state)){
 			if(player.equals(""+actual.charAt(0))){
-				return 20; //If I win
+				return 10; //If I win
 			} else {
-				return -20; //If I lose
+				return -10; //If I lose
 			}
 		}
 		return -1;

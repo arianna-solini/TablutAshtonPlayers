@@ -1,11 +1,5 @@
 package client;
 
-import domain.Action;
-import domain.State;
-import domain.StateGson;
-import domain.TablutGame;
-import domain.State.Turn;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,6 +10,11 @@ import java.security.InvalidParameterException;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import domain.Action;
+import domain.State;
+import domain.StateGson;
+import domain.TablutGame;
+import domain.State.Turn;
 import ai.TimeLimitedSearch;
 import utils.StreamUtils;
 
@@ -58,7 +57,6 @@ public class ClientTablut implements Runnable {
         
         String player = null;
 	String name = null;
-		
         //Checks Argument
 		try {
 			if (args.length == 2) {
@@ -97,41 +95,34 @@ public class ClientTablut implements Runnable {
 			System.exit(1);
 		}
 
-		System.out.println("-----Inizio partita AshtonTablut-----");
-		TablutGame rules = new TablutGame(99, 0, "localLogs", "test", "test");
-		TimeLimitedSearch search = new TimeLimitedSearch(rules, -20, 20, 5);
+		System.out.println("/ASHTON TABLUT\\");
+		TablutGame rules = new TablutGame(99, 0);
+		TimeLimitedSearch search = new TimeLimitedSearch(rules, -10, 10, 5);
 		System.out.println("You are player " + this.player.toString() + "!");
 		State state = new State();
-		int counter = 0;
 		try{
-			while(true){
-				
+			while(true){		
 				StateGson temp =  this.gson.fromJson(StreamUtils.readString(in), StateGson.class);	//Avendo personalizzato state abbiamo introdotto StateGson per una lettura corretta
 				state.getBoard().setBoard(temp.getBoard());
 				state.setTurn(temp.getTurn());
 				//TODO Sistema l'alternanza dei giocatori stando fermo quando tocca all'altro
 				if(this.player == state.getTurn()){
-					counter++;
 					state.eatenUpdate(state.getBoard(), player);
 					state.updatePossibleActions(player);
 				}
 				this.currentState = state;
 				System.out.println("Current state:");
 				System.out.println(this.currentState.toString());
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {}
+
 				if(this.player == Turn.WHITE){
 					imWhite(currentState, rules, search);
-					if(counter == 5) 
-						System.out.println("6 mosse");
 				}else if(this.player == Turn.BLACK){
 					imBlack(currentState, rules, search);
 				}
 			}
 
-		}catch(JsonSyntaxException | IOException e1){
-			e1.printStackTrace();
+		}catch(JsonSyntaxException | IOException e){
+			e.printStackTrace();
 			System.exit(2);
 		}
 
@@ -147,20 +138,19 @@ public class ClientTablut implements Runnable {
 
 			try {
 				selectedAction = new Action("z0", "z0" , Turn.WHITE);
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 
 			while (!done) {
 
-				/** parte di intelligenza **/
+				/** AI**/
 				
 				System.out.println(rules.getPlayer(state) + "  playing ... ");
 				selectedAction = search.makeDecision(state);
 				System.out.println(search.getMetrics().toString());
 				long fine = System.currentTimeMillis();
 				System.out.println("mossa fatta in " + (fine-inizio));
-				
 
 				try {
 					State updatedState = rules.checkMove(state, selectedAction);
@@ -210,12 +200,13 @@ public class ClientTablut implements Runnable {
 
 			try {
 				selectedAction = new Action("z0", "z0" , Turn.BLACK);
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+
 			while (!done) {
 
-				/** parte di intelligenza **/
+				/** AI**/
 
 				System.out.println(rules.getPlayer(state) + "  playing ... ");
 				selectedAction = search.makeDecision(state);
@@ -223,7 +214,6 @@ public class ClientTablut implements Runnable {
 				long fine = System.currentTimeMillis();
 				System.out.println("mossa fatta in " + (fine-inizio));
 				
-
 				try {
 					State updatedState = rules.checkMove(state, selectedAction);
 					updatedState.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.BLACK);
@@ -262,6 +252,5 @@ public class ClientTablut implements Runnable {
 			System.out.println("DRAW!");
 			System.exit(0);
 		}
-
 	}
 }

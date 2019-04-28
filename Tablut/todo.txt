@@ -6,6 +6,9 @@
 
 **intelligenza**
 .Tenere conto delle pedine mangiate e magari tenere conto dell'ultima pedina dell'avversario spostata (mezzo fatto)
+. fare funzione che controlla se il re va in una cella dove è possibile scappare in due vie (senza esser mangiato)
+.fare funzione che controlla la vicinanza al re e celle libere attorno a lui
+.fare funzione che chiuda le uscite al re
 
 Nere - Attacco:
 .Cattura bianca = +2
@@ -14,6 +17,8 @@ Nere - Attacco:
 Bianche - Difesa:
 .Cattura = +2
 .Protezione Re
+
+Ridurre le chiamate a funzione, soprattutto in tablutgame -> checkmove
 
 
 

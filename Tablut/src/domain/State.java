@@ -24,7 +24,6 @@ public class State implements Serializable, Cloneable {
 	 * 
 	 * @author A.Piretti
 	 */
-
 	public enum Turn {
 		WHITE("W"), BLACK("B"), WHITEWIN("WW"), BLACKWIN("BW"), DRAW("D");
 		private final String turn;
@@ -47,7 +46,11 @@ public class State implements Serializable, Cloneable {
 	private Action lastAction;
 	private HashMap<String, ArrayList<String>> possibleWhiteActions = new HashMap<String, ArrayList<String>>();
 	private HashMap<String, ArrayList<String>> possibleBlackActions = new HashMap<String, ArrayList<String>>();
-
+	
+	/**
+	 * Initializes the possible white and black actions at the beginning of the game
+	 * @author R.Vasumini, A.Solini
+	 */
 	private void initActions() {
 		HashMap<String, Position> positions = this.board.getPositions();
 		for (String box : positions.keySet()) {
@@ -73,9 +76,8 @@ public class State implements Serializable, Cloneable {
 	 * Calculates the possible moves for a pawn from a specified position of the board
 	 * @param from The string which represents the current position of the pawn
 	 * @return An ArrayList of strings which represents  the possible future positions of the pawn
-	 * @authors R.Vasumini, A.Solini
+	 * @author R.Vasumini, A.Solini
 	 */
-
 	private ArrayList<String> getPossibleTo(String from) {
 		int row = this.board.getRow(from);
 		int column = this.board.getColumn(from);
@@ -131,6 +133,13 @@ public class State implements Serializable, Cloneable {
 		return result;
 	}
 
+	/**
+	 * Method which updates the possible actions' map of the choosen player changing the position of a moved pawn
+	 * @param oldFrom Pawn's old position
+	 * @param newFrom Pawn's new position
+	 * @param turn Current player
+	 * @author R.Vasumini, A.Solini
+	 */
 	public void updatePossibleActions(String oldFrom, String newFrom, Turn turn) {
 		if (turn == Turn.BLACK) {
 			this.possibleBlackActions.remove(oldFrom);
@@ -149,6 +158,11 @@ public class State implements Serializable, Cloneable {
 		}
 	}
 
+	/**
+	 * Method which updates the possible actions' map of the choosen player 
+	 * @param turn Current player
+	 * @Author R.Vasumini, A.Solini
+	 */
 	public void updatePossibleActions(Turn turn){
 		if (turn == Turn.BLACK) {
 			for(String from : this.possibleBlackActions.keySet())
@@ -161,6 +175,12 @@ public class State implements Serializable, Cloneable {
 		}
 	}
 
+	/**
+	 * Method which updates the possible actions' map of the choosen player  checking if  some of his pawns have been eaten
+	 * @param board Current board
+	 * @param turn Current player
+	 * @author R.Vasumini, A.Solini
+	 */
 	public void eatenUpdate(Board board, Turn turn){
 		ArrayList<String> toRemove = new ArrayList<String>();
 		if (turn == Turn.BLACK){
@@ -184,8 +204,12 @@ public class State implements Serializable, Cloneable {
 		}
 	}
 
-
-
+	/**
+	 * @param turn Current player
+	 * @return An {@code ArrayList<Action>} of the current player's possible moves
+	 * @throws IOException
+	 * @author R.Vasumini, A.Solini
+	 */
 	public ArrayList<Action> getActionList(Turn turn) throws IOException {
 		ArrayList<Action> result = new ArrayList<Action>();
 		if(turn == Turn.BLACK)
@@ -261,14 +285,14 @@ public class State implements Serializable, Cloneable {
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 
-		// board
+		// Board
 		result.append("");
 		result.append(this.boardString());
 
 		result.append("-");
 		result.append("\n");
 
-		// TURNO
+		// Turn
 		result.append(this.turn.toString());
 
 		return result.toString();
@@ -277,7 +301,7 @@ public class State implements Serializable, Cloneable {
 	public String toLinearString() {
 		StringBuffer result = new StringBuffer();
 
-		// board
+		// Board
 		result.append("");
 		result.append(this.boardString().replace("\n", ""));
 		result.append(this.turn.toString());
@@ -326,16 +350,13 @@ public class State implements Serializable, Cloneable {
 	@Override
 	public State clone() {
 		State result = new State();
-
 		Board oldboard = this.board;
 		Board newboard = result.getBoard();
 
-		for (int i = 0; i < this.board.getBoard().length; i++) {
-			for (int j = 0; j < this.board.getBoard()[i].length; j++) {
+		for (int i = 0; i < this.board.getBoard().length; i++) 
+			for (int j = 0; j < this.board.getBoard()[i].length; j++) 
 				newboard.setPawn(i, j, oldboard.getPawn(i, j));
-			}
-		}
-
+				
 		result.setBoard(newboard);
 		result.setTurn(this.turn);
 		return result;
