@@ -14,6 +14,20 @@ import domain.State.Turn;
  */
 public class Action implements Serializable {
 
+	public enum Direction {
+		LEFT("L"), RIGHT("R"), UP("U"), DOWN("D"), ANY("A");
+		private final String direction;
+		private Direction(String s) {
+			direction = s;
+		}
+		public boolean equalsDirection(String otherDirection) {
+			return (otherDirection == null) ? false : direction.equals(otherDirection);
+		}
+		public String toString() {
+			return direction;
+		}
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	private String from;
@@ -85,6 +99,23 @@ public class Action implements Serializable {
 	 */
 	public int getRowTo() {
 		return Integer.parseInt(this.to.charAt(1) + "") - 1;
+	}
+
+	/**
+	 * @return The Direction of the action
+	 * @author R.Vasumini, A.Solini
+	 */
+	public Direction getDirection(){
+		if(this.getRowFrom() == this.getRowTo())
+			if(this.getColumnFrom() > this.getColumnTo())
+				return Direction.LEFT;
+			else
+				return Direction.RIGHT;
+		else
+			if(this.getRowFrom() > this.getRowTo())
+				return Direction.UP;
+			else
+				return Direction.DOWN;
 	}
 
 }

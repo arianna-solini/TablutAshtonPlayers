@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import aima.core.search.adversarial.Game;
 
-import domain.Board.Direction;
+import domain.Action.Direction;
 import domain.Board.Pawn;
 import domain.Board.Position;
 import domain.State.Turn;

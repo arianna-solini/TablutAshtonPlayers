@@ -7,20 +7,6 @@ public class Board implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public enum Direction {
-		LEFT("L"), RIGHT("R"), UP("U"), DOWN("D"), ANY("A");
-		private final String direction;
-		private Direction(String s) {
-			direction = s;
-		}
-		public boolean equalsDirection(String otherDirection) {
-			return (otherDirection == null) ? false : direction.equals(otherDirection);
-		}
-		public String toString() {
-			return direction;
-		}
-	}
-
 	public enum Position{
 		THRONE("T"), CITADEL("C"), GOAL("G"), STARTWHITE("S");
 		private final String position;
