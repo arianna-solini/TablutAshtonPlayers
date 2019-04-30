@@ -615,24 +615,22 @@ public class TablutGame implements Game<State, Action, String> {
 		try{
 			result = movePawn(result, action);
 			if(action.getTurn() == Turn.WHITE){
-				result = checkCaptureWhite(result, action);
-				if(result.getTurn() == Turn.WHITEWIN)
-					return result;
+				result = checkCaptureWhite(result, action);			
 				result.setOldNumBlack(result.getNumBlack());
 				result.eatenUpdate(result.getBoard(), Turn.BLACK);
 				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.WHITE);
 				result.updatePossibleActions(Turn.BLACK);
-				result.setTurn(Turn.BLACK);
+				if(!(result.getTurn() == Turn.WHITEWIN))
+					result.setTurn(Turn.BLACK);
 			}
 			else if(action.getTurn() == Turn.BLACK){
-				result = checkCaptureBlack(result, action);
-				if(result.getTurn() == Turn.BLACKWIN)
-					return result;
+				result = checkCaptureBlack(result, action);					
 				result.setOldNumWhite(result.getNumWhite());
 				result.eatenUpdate(result.getBoard(), Turn.WHITE);
 				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.BLACK);
 				result.updatePossibleActions(Turn.WHITE);
-				result.setTurn(Turn.WHITE);
+				if(!(result.getTurn() == Turn.BLACKWIN))
+					result.setTurn(Turn.WHITE);
 			}
 		} catch(Exception e){
 			e.printStackTrace();

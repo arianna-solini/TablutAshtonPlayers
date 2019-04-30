@@ -42,7 +42,7 @@ public class Score{
 			case "W" :
 				//ArrayList<Action> possibleWinActions = state.canKingWin(game);
 				scoreWhite += (state.getNumWhite() - state.getNumBlack());
-				scoreWhite += state.numWhiteNearTheKing(state);
+				//scoreWhite += state.numWhiteNearTheKing(state);
 				/*if(possibleWinActions.size()>0)
 					scoreWhite+=20;*/
 				
@@ -54,7 +54,7 @@ public class Score{
 				
 			case "B":
 				scoreBlack += (state.getNumBlack() - state.getNumWhite());
-				scoreBlack+= state.numBlackNearTheKing(state);
+				//scoreBlack += state.numBlackNearTheKing(state);
 				
 				
 				return scoreBlack;

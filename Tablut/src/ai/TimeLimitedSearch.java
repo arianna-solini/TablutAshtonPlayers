@@ -214,6 +214,8 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	 * Primitive operation for action ordering. This implementation preserves
 	 * the original order (provided by the game).
 	 */
+	//TODO implementandola sfruttando depth, magari tenendosi in memoria in Time Limited Search una struttura di ActionStore per livello
+	//ottimizzo le ricerche, perché per ora ordiniamo solo quelle a depth 0
 	public List<Action> orderActions(State state, List<Action> actions, String player, int depth) {
 		return actions;
 	}

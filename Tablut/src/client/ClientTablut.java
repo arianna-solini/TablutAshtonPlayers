@@ -107,17 +107,19 @@ public class ClientTablut implements Runnable {
 				StateGson temp =  this.gson.fromJson(StreamUtils.readString(in), StateGson.class);	//Avendo personalizzato state abbiamo introdotto StateGson per una lettura corretta
 				state.getBoard().setBoard(temp.getBoard());
 				state.setTurn(temp.getTurn());
+				
 				//TODO Sistema l'alternanza dei giocatori stando fermo quando tocca all'altro
 				//If it's my turn I've to check if a pawn of mine has been eaten and update my PossibleActions
 				if(this.player == state.getTurn() && countTurn != 1){
-					if(this.player == Turn.WHITE)
-						state.setOldNumWhite(state.getNumWhite());
-					else
-						state.setOldNumBlack(state.getNumBlack());
-
 					state.eatenUpdate(state.getBoard(), player);
 					state.updatePossibleActions(player);
 				}
+
+				if(this.player == Turn.WHITE)
+					state.setOldNumWhite(state.getNumWhite());
+				else
+					state.setOldNumBlack(state.getNumBlack());
+
 				this.currentState = state;
 				System.out.println("Current state:");
 				System.out.println(this.currentState.toString());
