@@ -456,6 +456,22 @@ public class TablutGame implements Game<State, Action, String> {
 		return state;
 	}
 
+	private State movePawn(State state, Action a) {
+		Board board = state.getBoard();
+		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
+		int rowFrom = a.getRowFrom(), columnFrom = a.getColumnFrom();
+		Pawn pawn = board.getPawn(rowFrom, columnFrom);
+		Board newBoard = board;
+		newBoard.removePawn(rowFrom, columnFrom);
+		// metto nel nuovo tabellone la pedina mossa
+		newBoard.setPawn(rowTo, columnTo, pawn);
+		// aggiorno il tabellone
+		state.setBoard(newBoard);
+		//setto l'ultima azione eseguita
+		state.setLastAction(a);
+		return state;
+	}
+
 	private State checkCaptureWhite(State state, Action a) {
 		boolean captured = false;
 		Board board = state.getBoard();
@@ -528,22 +544,6 @@ public class TablutGame implements Game<State, Action, String> {
 			|| checkWin(board, rowTo, columnTo, Direction.LEFT, Turn.BLACK)) ;
 	}
 
-	private State movePawn(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		int rowFrom = a.getRowFrom(), columnFrom = a.getColumnFrom();
-		Pawn pawn = board.getPawn(rowFrom, columnFrom);
-		Board newBoard = board;
-		newBoard.removePawn(rowFrom, columnFrom);
-		// metto nel nuovo tabellone la pedina mossa
-		newBoard.setPawn(rowTo, columnTo, pawn);
-		// aggiorno il tabellone
-		state.setBoard(newBoard);
-		//setto l'ultima azione eseguita
-		state.setLastAction(a);
-		return state;
-	}
-
 	public int getmovesWithoutCapturing() {
 		return movesWithoutCapturing;
 	}
@@ -608,6 +608,22 @@ public class TablutGame implements Game<State, Action, String> {
 		State result = state.clone();
 		try{
 			result = movePawn(result, action);
+			if(action.getTurn() == Turn.WHITE){
+				result = checkCaptureWhite(result, action);
+				result.setOldNumBlack(result.getNumBlack());
+				result.eatenUpdate(result.getBoard(), Turn.BLACK);
+				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.WHITE);
+				result.updatePossibleActions(Turn.BLACK);
+				result.setTurn(Turn.BLACK);
+			}
+			else if(action.getTurn() == Turn.BLACK){
+				result = checkCaptureBlack(result, action);
+				result.setOldNumWhite(result.getNumWhite());
+				result.eatenUpdate(result.getBoard(), Turn.WHITE);
+				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.BLACK);
+				result.updatePossibleActions(Turn.WHITE);
+				result.setTurn(Turn.WHITE);
+			}
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -618,21 +634,19 @@ public class TablutGame implements Game<State, Action, String> {
 	public double getUtility(State state, String player) {
 		
 		String actual = state.getTurn().toString();
-		
-		if (isTerminal(state)){
-			if(player.equals(""+actual.charAt(0))){
-				return 10; //If I win
-			} else {
-				return -10; //If I lose
-			}
-		}
-		return -1;
-
+		if(player.equals(""+actual.charAt(0)))
+			return 10; //If I win
+		else 
+			return -10; //If I lose
 	}
 
 	@Override
 	public boolean isTerminal(State state) {
-		return this.checkBlackWin(state, state.getLastAction()) || this.checkWhiteWin(state, state.getLastAction());
+		//TODO ottimizzare questo controllo provvisorio
+		if(state.getLastAction().getFrom().equals("z0"))
+			return false;
+		else
+			return this.checkBlackWin(state, state.getLastAction()) || this.checkWhiteWin(state, state.getLastAction());
 
 	}
 

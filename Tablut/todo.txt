@@ -18,6 +18,8 @@ Bianche - Difesa:
 .Cattura = +2
 .Protezione Re
 
+spostare la enum Direction da Board a Action, in generale pensare a riordinare il codice e decidere dove far stare la roba
+
 
 
 

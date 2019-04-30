@@ -125,11 +125,11 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		}
 	}
 
-	// returns a utility value
+	// returns a utility value, the opponent uses this method
 	public double minValue(State state, String player, double alpha, double beta, int depth) {
 		updateMetrics(depth);
 		if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
-			return eval(state, player);
+			return -eval(state, getOtherPlayer(player));
 		} else {
 			double value = Double.POSITIVE_INFINITY;
 			//Current actions are calculated from the passed simulation state
@@ -199,8 +199,15 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			return game.getUtility(state, player);
 		} else {
 			heuristicEvaluationUsed = true;
-			return score.calculateScore(player, game);
+			return score.calculateScore(game);
 		}
+	}
+
+	public String getOtherPlayer(String player){
+		if(player.equals("W"))
+			return "B";
+		else 
+			return "W";
 	}
 
 	/**
