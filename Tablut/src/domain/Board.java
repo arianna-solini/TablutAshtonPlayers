@@ -141,6 +141,10 @@ public class Board implements Serializable {
 		return this.board[row][column];
 	}
 
+	public Pawn getPawn(String position){
+		return this.board[this.getRow(position)][this.getColumn(position)];
+	}
+
 	/**
 	 * This function remove a specified pawn from the board
 	 * @param row represents the row of the specific box
@@ -152,6 +156,46 @@ public class Board implements Serializable {
 
 	public void setPawn(int row, int column, Pawn pawn){
 		this.board[row][column] = pawn;
+	}
+
+	public void setPawn(String position, Pawn pawn){
+		this.board[this.getRow(position)][this.getColumn(position)] = pawn;
+	}
+
+	public Pawn getPawnDown(String position){
+		return this.board[this.getRow(position)+1][this.getColumn(position)];
+	}
+
+	public Pawn getPawnUp(String position){
+		return this.board[this.getRow(position)-1][this.getColumn(position)];
+	}
+
+	public Pawn getPawnLeft(String position){
+		return this.board[this.getRow(position)][this.getColumn(position)-1];
+	}
+
+	public Pawn getPawnRight(String position){
+		return this.board[this.getRow(position)][this.getColumn(position)+1];
+	}
+
+	public boolean isLineEmpty(int row){
+		boolean isEmpty = true;
+		for(int i = 0; i < 9; i++)
+			if(this.board[row][i] !=Pawn.EMPTY){
+				isEmpty = false;
+				break;
+			}
+		return isEmpty;
+	}
+
+	public boolean isColumnEmpty(int column){
+		boolean isEmpty = true;
+		for(int i = 0; i < 9; i++)
+			if(this.board[i][column] !=Pawn.EMPTY){
+				isEmpty = false;
+				break;
+			}
+		return isEmpty;
 	}
 
 	public  int getLength(){

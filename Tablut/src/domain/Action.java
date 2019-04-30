@@ -7,7 +7,7 @@ import java.security.InvalidParameterException;
 import domain.State.Turn;
 
 /**
- * this class represents an action of a player
+ * This class represents an action of a player
  * 
  * @author A.Piretti
  * 
@@ -61,11 +61,11 @@ public class Action implements Serializable {
 		this.to = to;
 	}
 
-	public State.Turn getTurn() {
+	public Turn getTurn() {
 		return turn;
 	}
 
-	public void setTurn(State.Turn turn) {
+	public void setTurn(Turn turn) {
 		this.turn = turn;
 	}
 

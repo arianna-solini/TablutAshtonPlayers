@@ -1,5 +1,8 @@
 package ai;
 
+import java.util.ArrayList;
+
+import domain.Action;
 import domain.Board;
 import domain.State;
 import domain.TablutGame;
@@ -37,7 +40,12 @@ public class Score{
 		int rowTo = this.state.getLastAction().getRowTo(), columnTo = this.state.getLastAction().getColumnTo();
 		switch (player){
 			case "W" :
-				scoreWhite += state.getNumWhite() - state.getNumBlack();
+				//ArrayList<Action> possibleWinActions = state.canKingWin(game);
+				scoreWhite += (state.getNumWhite() - state.getNumBlack());
+				scoreWhite += state.numWhiteNearTheKing(state);
+				/*if(possibleWinActions.size()>0)
+					scoreWhite+=20;*/
+				
 				
 				
 				
@@ -45,7 +53,8 @@ public class Score{
 				return scoreWhite;
 				
 			case "B":
-				scoreBlack += state.getNumBlack() - state.getNumWhite();
+				scoreBlack += (state.getNumBlack() - state.getNumWhite());
+				scoreBlack+= state.numBlackNearTheKing(state);
 				
 				
 				return scoreBlack;

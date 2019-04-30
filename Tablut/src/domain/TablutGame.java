@@ -465,6 +465,8 @@ public class TablutGame implements Game<State, Action, String> {
 		newBoard.removePawn(rowFrom, columnFrom);
 		// metto nel nuovo tabellone la pedina mossa
 		newBoard.setPawn(rowTo, columnTo, pawn);
+		if(pawn == Pawn.KING)
+			state.setCurrentKingPosition(a.getTo());
 		// aggiorno il tabellone
 		state.setBoard(newBoard);
 		//setto l'ultima azione eseguita
@@ -497,6 +499,8 @@ public class TablutGame implements Game<State, Action, String> {
 			this.movesWithoutCapturing = 0;
 		else
 			this.movesWithoutCapturing++;
+		if(checkWhiteWin(state, a))
+			state.setTurn(Turn.WHITEWIN);
 
 		return state;
 	}
@@ -525,6 +529,8 @@ public class TablutGame implements Game<State, Action, String> {
 			this.movesWithoutCapturing = 0;
 		else
 			this.movesWithoutCapturing++;
+		if(checkBlackWin(state, a))
+			state.setTurn(Turn.BLACKWIN);
 
 		return state;
 	}
@@ -610,6 +616,8 @@ public class TablutGame implements Game<State, Action, String> {
 			result = movePawn(result, action);
 			if(action.getTurn() == Turn.WHITE){
 				result = checkCaptureWhite(result, action);
+				if(result.getTurn() == Turn.WHITEWIN)
+					return result;
 				result.setOldNumBlack(result.getNumBlack());
 				result.eatenUpdate(result.getBoard(), Turn.BLACK);
 				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.WHITE);
@@ -618,6 +626,8 @@ public class TablutGame implements Game<State, Action, String> {
 			}
 			else if(action.getTurn() == Turn.BLACK){
 				result = checkCaptureBlack(result, action);
+				if(result.getTurn() == Turn.BLACKWIN)
+					return result;
 				result.setOldNumWhite(result.getNumWhite());
 				result.eatenUpdate(result.getBoard(), Turn.WHITE);
 				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.BLACK);
@@ -634,20 +644,19 @@ public class TablutGame implements Game<State, Action, String> {
 	public double getUtility(State state, String player) {
 		
 		String actual = state.getTurn().toString();
-		if(player.equals(""+actual.charAt(0)))
-			return 10; //If I win
+		if(player.equalsIgnoreCase(""+actual.charAt(0)))
+			return 50; //If I win
 		else 
-			return -10; //If I lose
+			return -50; //If I lose
 	}
 
 	@Override
 	public boolean isTerminal(State state) {
-		//TODO ottimizzare questo controllo provvisorio
-		if(state.getLastAction().getFrom().equals("z0"))
-			return false;
+		Turn turn = state.getTurn();
+		if(turn == Turn.BLACKWIN || turn == Turn.WHITEWIN)
+			return true;
 		else
-			return this.checkBlackWin(state, state.getLastAction()) || this.checkWhiteWin(state, state.getLastAction());
-
+			return false;
 	}
 
 }

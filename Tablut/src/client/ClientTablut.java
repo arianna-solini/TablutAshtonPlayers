@@ -94,10 +94,10 @@ public class ClientTablut implements Runnable {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
+		
 		System.out.println("/ASHTON TABLUT\\");
 		TablutGame rules = new TablutGame(99, 0);
-		TimeLimitedSearch search = new TimeLimitedSearch(rules, -10, 10, 20);
+		TimeLimitedSearch search = new TimeLimitedSearch(rules, -50, 50, 20);
 		System.out.println("You are player " + this.player.toString() + "!");
 		State state = new State();
 		int countTurn = 0;
