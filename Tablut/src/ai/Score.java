@@ -6,6 +6,8 @@ import domain.Action;
 import domain.Board;
 import domain.State;
 import domain.TablutGame;
+import domain.Action.Direction;
+import domain.State.Turn;
 //TODO decidere se farla statica
 /**
  * Class used for calculate the score of an action
@@ -38,27 +40,23 @@ public class Score{
 	public double calculateScore(TablutGame game){
 		Board board = state.getBoard();
 		//TODO lastAction potrebbe essere usata per vedere se certe pedine avversarie si stanno muovendo in una certa direzione
-		//int rowTo = this.state.getLastAction().getRowTo(), columnTo = this.state.getLastAction().getColumnTo();
+		int rowTo = this.state.getLastAction().getRowTo(), columnTo = this.state.getLastAction().getColumnTo();
 		switch (player){
 			case "W" :
 				ArrayList<Action> possibleWinActions = new ArrayList<Action>();
 				possibleWinActions = game.canKingWin(state);
 				scoreWhite += (state.getNumWhite() - state.getNumBlack());
-				//scoreWhite += state.numWhiteNearTheKing(state);
 				if(possibleWinActions != null)
-					scoreWhite+=20;
-				
-				
-				
-				
-
+					scoreWhite += 20;
+				if(game.numBlackNearTheKing(state) > 2)
+					scoreWhite -= 2;
 				return scoreWhite;
 				
 			case "B":
 				scoreBlack += (state.getNumBlack() - state.getNumWhite());
-				//scoreBlack += state.numBlackNearTheKing(state);
-				
-				
+				scoreBlack += game.numBlackNearTheKing(state)/2;
+				if (board.isColumnEmpty(columnTo) || board.isRowEmpty(rowTo))
+					scoreBlack += 2;
 				return scoreBlack;
 
 			default:
