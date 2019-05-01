@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import aima.core.search.adversarial.Game;
 
-import domain.Board.Direction;
+import domain.Action.Direction;
 import domain.Board.Pawn;
 import domain.Board.Position;
 import domain.State.Turn;
@@ -48,6 +48,7 @@ public class TablutGame implements Game<State, Action, String> {
 		drawConditions = new ArrayList<State>();
 
 	}
+
 	/**
 	 * Method which controls if a pawn will capture an adversarial pawn given the following parameters:
 	 * @param board Current board
@@ -157,6 +158,7 @@ public class TablutGame implements Game<State, Action, String> {
 			return false;
 		}
 	}
+
 	/**
 	 * Method which controls the win of a specified player given the following parameters: 
 	 * @param board Current board
@@ -167,7 +169,6 @@ public class TablutGame implements Game<State, Action, String> {
 	 * @return {@code true} if the conditions are favorable to win, {@code false} otherwhise
 	 * @author R.Vasumini, A.Solini
 	 */
-
 	public boolean checkWin(Board board, int rowTo, int columnTo, Direction d, Turn t) {
 		HashMap<String, Position> positions = board.getPositions();
 		switch (t) {
@@ -420,12 +421,12 @@ public class TablutGame implements Game<State, Action, String> {
 		state = this.movePawn(state, a);
 
 		// Checks if  the move involves a capture
-		if (state.getTurn().equalsTurn("W")) {
+		if (state.getTurn().equalsTurn("B")) {
 			state = this.checkCaptureBlack(state, a);
-		} else if (state.getTurn().equalsTurn("B")) {
+		} else if (state.getTurn().equalsTurn("W")) {
 			state = this.checkCaptureWhite(state, a);
 		}
-
+		/*
 		// If something has been captured, clear cache for draws
 		if (this.movesWithoutCapturing == 0) {
 			this.drawConditions.clear();
@@ -443,171 +444,15 @@ public class TablutGame implements Game<State, Action, String> {
 					state.setTurn(State.Turn.DRAW);
 					break;
 				}
-			} else {
-
 			}
 		}
-		if (trovati > 0) {
 
-		}
 		if (cache_size >= 0 && this.drawConditions.size() > cache_size) {
 			this.drawConditions.remove(0);
 		}
 		this.drawConditions.add(state.clone());
-		System.out.println("Stato:\n" + state.toString());
+		System.out.println("Stato:\n" + state.toString());*/
 
-		return state;
-	}
-
-	private State checkCaptureWhiteRight(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkCaptureConditions(board, rowTo, columnTo, Direction.RIGHT, Turn.WHITE)) {
-			board.removePawn(rowTo, columnTo + 1);
-			this.movesWithoutCapturing = -1;
-		}
-		return state;
-	}
-
-	private State checkCaptureWhiteLeft(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkCaptureConditions(board, rowTo, columnTo, Direction.LEFT, Turn.WHITE)) {
-			board.removePawn(rowTo, columnTo - 1);
-			this.movesWithoutCapturing = -1;
-		}
-		return state;
-	}
-
-	private State checkCaptureWhiteUp(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkCaptureConditions(board, rowTo, columnTo, Direction.UP, Turn.WHITE)) {
-			board.removePawn(rowTo - 1, columnTo);
-			this.movesWithoutCapturing = -1;
-		}
-		return state;
-	}
-
-	private State checkCaptureWhiteDown(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkCaptureConditions(board, rowTo, columnTo, Direction.DOWN, Turn.WHITE)) {
-			board.removePawn(rowTo + 1, columnTo);
-			this.movesWithoutCapturing = -1;
-		}
-		return state;
-	}
-
-	private State checkWhiteWin(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkWin(board, rowTo, columnTo, Direction.ANY, Turn.WHITE)) {
-			state.setTurn(State.Turn.WHITEWIN);
-		}
-		return state;
-	}
-
-	private State checkCaptureWhite(State state, Action a) {
-		checkCaptureWhiteRight(state, a);
-		checkCaptureWhiteLeft(state, a);
-		checkCaptureWhiteUp(state, a);
-		checkCaptureWhiteDown(state, a);
-		checkWhiteWin(state, a);
-
-		this.movesWithoutCapturing++;
-		return state;
-	}
-
-	private State checkCaptureBlackKingLeft(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkWin(board, rowTo, columnTo, Direction.LEFT, Turn.BLACK)) {
-			state.setTurn(State.Turn.BLACKWIN);
-		}
-		return state;
-	}
-
-	private State checkCaptureBlackKingRight(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkWin(board, rowTo, columnTo, Direction.RIGHT, Turn.BLACK)) {
-			state.setTurn(State.Turn.BLACKWIN);
-		}
-		return state;
-	}
-
-	private State checkCaptureBlackKingDown(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkWin(board, rowTo, columnTo, Direction.DOWN, Turn.BLACK)) {
-			state.setTurn(State.Turn.BLACKWIN);
-		}
-		return state;
-	}
-
-	private State checkCaptureBlackKingUp(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (rowTo > 1 && board.getPawn(rowTo - 1, columnTo).equalsPawn("K")) {
-			state.setTurn(State.Turn.BLACKWIN);
-		}
-		return state;
-	}
-
-	private State checkCaptureBlackPawnRight(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkCaptureConditions(board, rowTo, columnTo, Direction.RIGHT, Turn.BLACK)) {
-			board.removePawn(rowTo, columnTo + 1);
-			this.movesWithoutCapturing = -1;
-		}
-
-		return state;
-	}
-
-	private State checkCaptureBlackPawnLeft(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkCaptureConditions(board, rowTo, columnTo, Direction.LEFT, Turn.BLACK)) {
-			board.removePawn(rowTo, columnTo - 1);
-			this.movesWithoutCapturing = -1;
-		}
-		return state;
-	}
-
-	private State checkCaptureBlackPawnUp(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkCaptureConditions(board, rowTo, columnTo, Direction.UP, Turn.BLACK)) {
-			board.removePawn(rowTo - 1, columnTo);
-			this.movesWithoutCapturing = -1;
-		}
-		return state;
-	}
-
-	private State checkCaptureBlackPawnDown(State state, Action a) {
-		Board board = state.getBoard();
-		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
-		if (checkCaptureConditions(board, rowTo, columnTo, Direction.DOWN, Turn.BLACK)) {
-			board.removePawn(rowTo + 1, columnTo);
-			this.movesWithoutCapturing = -1;
-		}
-		return state;
-	}
-
-	private State checkCaptureBlack(State state, Action a) {
-
-		this.checkCaptureBlackPawnRight(state, a);
-		this.checkCaptureBlackPawnLeft(state, a);
-		this.checkCaptureBlackPawnUp(state, a);
-		this.checkCaptureBlackPawnDown(state, a);
-		this.checkCaptureBlackKingRight(state, a);
-		this.checkCaptureBlackKingLeft(state, a);
-		this.checkCaptureBlackKingDown(state, a);
-		this.checkCaptureBlackKingUp(state, a);
-
-		this.movesWithoutCapturing++;
 		return state;
 	}
 
@@ -617,22 +462,93 @@ public class TablutGame implements Game<State, Action, String> {
 		int rowFrom = a.getRowFrom(), columnFrom = a.getColumnFrom();
 		Pawn pawn = board.getPawn(rowFrom, columnFrom);
 		Board newBoard = board;
-		// State newState = new State();
-		// libero una casella qualunque
-		newBoard.getBoard()[rowFrom][columnFrom] = Pawn.EMPTY;
+		newBoard.removePawn(rowFrom, columnFrom);
 		// metto nel nuovo tabellone la pedina mossa
-		newBoard.getBoard()[rowTo][columnTo] = pawn;
+		newBoard.setPawn(rowTo, columnTo, pawn);
+		if(pawn == Pawn.KING)
+			state.setCurrentKingPosition(a.getTo());
 		// aggiorno il tabellone
 		state.setBoard(newBoard);
-		// cambio il turno
-		if (state.getTurn() == Turn.WHITE) {
-			state.setTurn(State.Turn.BLACK);
-		} else {
-			state.setTurn(State.Turn.WHITE);
-		}
 		//setto l'ultima azione eseguita
 		state.setLastAction(a);
+		state.incrementTurnNumber();
 		return state;
+	}
+
+	private State checkCaptureWhite(State state, Action a) {
+		boolean captured = false;
+		Board board = state.getBoard();
+		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
+		
+		if (checkCaptureConditions(board, rowTo, columnTo, Direction.DOWN, Turn.WHITE)) {
+			board.removePawn(rowTo + 1, columnTo);
+			captured = true;
+		}
+		if (checkCaptureConditions(board, rowTo, columnTo, Direction.UP, Turn.WHITE)) {
+			board.removePawn(rowTo - 1, columnTo);
+			captured = true;
+		}
+		if (checkCaptureConditions(board, rowTo, columnTo, Direction.LEFT, Turn.WHITE)) {
+			board.removePawn(rowTo, columnTo - 1);
+			captured = true;
+		}
+		if (checkCaptureConditions(board, rowTo, columnTo, Direction.RIGHT, Turn.WHITE)) {
+			board.removePawn(rowTo, columnTo + 1);
+			captured = true;	
+		}
+		if(captured)
+			this.movesWithoutCapturing = 0;
+		else
+			this.movesWithoutCapturing++;
+		if(checkWhiteWin(state, a))
+			state.setTurn(Turn.WHITEWIN);
+
+		return state;
+	}
+
+	private State checkCaptureBlack(State state, Action a) {
+		boolean captured = false;
+		Board board = state.getBoard();
+		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
+		if (checkCaptureConditions(board, rowTo, columnTo, Direction.RIGHT, Turn.BLACK)) {
+			board.removePawn(rowTo, columnTo + 1);
+			captured = true;
+		}
+		if (checkCaptureConditions(board, rowTo, columnTo, Direction.LEFT, Turn.BLACK)) {
+			board.removePawn(rowTo, columnTo - 1);
+			captured = true;
+		}
+		if (checkCaptureConditions(board, rowTo, columnTo, Direction.UP, Turn.BLACK)) {
+			board.removePawn(rowTo - 1, columnTo);
+			captured = true;
+		}
+		if (checkCaptureConditions(board, rowTo, columnTo, Direction.DOWN, Turn.BLACK)) {
+			board.removePawn(rowTo + 1, columnTo);
+			captured = true;
+		}
+		if (captured)
+			this.movesWithoutCapturing = 0;
+		else
+			this.movesWithoutCapturing++;
+		if(checkBlackWin(state, a))
+			state.setTurn(Turn.BLACKWIN);
+
+		return state;
+	}
+
+	private boolean checkWhiteWin(State state, Action a){
+		Board board = state.getBoard();
+		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
+		return checkWin(board, rowTo, columnTo, Direction.ANY, Turn.WHITE);
+	}
+
+	private boolean checkBlackWin(State state, Action a){
+		Board board = state.getBoard();
+		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
+		return (checkWin(board, rowTo, columnTo, Direction.DOWN, Turn.BLACK)
+			|| checkWin(board, rowTo, columnTo, Direction.UP, Turn.BLACK)
+			|| checkWin(board, rowTo, columnTo, Direction.RIGHT, Turn.BLACK)
+			|| checkWin(board, rowTo, columnTo, Direction.LEFT, Turn.BLACK)) ;
 	}
 
 	public int getmovesWithoutCapturing() {
@@ -689,10 +605,37 @@ public class TablutGame implements Game<State, Action, String> {
 		return new String[] { Board.Pawn.WHITE.toString(), Board.Pawn.BLACK.toString() };
 	}
 
+	/**
+	 * @param state The state in which the action is to be simulated
+	 * @param action The action to simulate
+	 * @return A clone of the specified state in which the action is simulated
+	 */
 	@Override
 	public State getResult(State state, Action action) {
 		State result = state.clone();
-		result = movePawn(result, action);
+		try{
+			result = movePawn(result, action);
+			if(action.getTurn() == Turn.WHITE){
+				result = checkCaptureWhite(result, action);			
+				result.setOldNumBlack(result.getNumBlack());
+				result.eatenUpdate(result.getBoard(), Turn.BLACK);
+				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.WHITE);
+				result.updatePossibleActions(Turn.BLACK);
+				if(!(result.getTurn() == Turn.WHITEWIN))
+					result.setTurn(Turn.BLACK);
+			}
+			else if(action.getTurn() == Turn.BLACK){
+				result = checkCaptureBlack(result, action);					
+				result.setOldNumWhite(result.getNumWhite());
+				result.eatenUpdate(result.getBoard(), Turn.WHITE);
+				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.BLACK);
+				result.updatePossibleActions(Turn.WHITE);
+				if(!(result.getTurn() == Turn.BLACKWIN))
+					result.setTurn(Turn.WHITE);
+			}
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 		return result;
 	}
 	//TODO Controllare se bisogna controllare lo stato o utilizzare checkwin
@@ -700,26 +643,19 @@ public class TablutGame implements Game<State, Action, String> {
 	public double getUtility(State state, String player) {
 		
 		String actual = state.getTurn().toString();
-		
-		if (isTerminal(state)){
-			if(player.equals(""+actual.charAt(0))){
-				return 10; //If I win
-			} else {
-				return -10; //If I lose
-			}
-		}
-		return -1;
-
+		if(player.equalsIgnoreCase(""+actual.charAt(0)))
+			return 50; //If I win
+		else 
+			return -50; //If I lose
 	}
 
 	@Override
 	public boolean isTerminal(State state) {
-		Turn actual = state.getTurn();
-		if ( actual == Turn.WHITEWIN || actual == Turn.BLACKWIN || actual == Turn.DRAW ){
+		Turn turn = state.getTurn();
+		if(turn == Turn.BLACKWIN || turn == Turn.WHITEWIN)
 			return true;
-		} else {
+		else
 			return false;
-		}
 	}
 
 }

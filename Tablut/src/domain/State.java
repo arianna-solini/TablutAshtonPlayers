@@ -46,6 +46,9 @@ public class State implements Serializable, Cloneable {
 	private Action lastAction;
 	private HashMap<String, ArrayList<String>> possibleWhiteActions = new HashMap<String, ArrayList<String>>();
 	private HashMap<String, ArrayList<String>> possibleBlackActions = new HashMap<String, ArrayList<String>>();
+	private int oldNumWhite, oldNumBlack;
+	private String currentKingPosition;
+	private int turnNumber;
 	
 	/**
 	 * Initializes the possible white and black actions at the beginning of the game
@@ -67,10 +70,16 @@ public class State implements Serializable, Cloneable {
 		}
 		try {
 			this.lastAction = new Action("z0", "z0", Turn.BLACK);
+			this.oldNumBlack = 16;
+			this.oldNumWhite = 9;
+			this.currentKingPosition = "e5";
+			this.turnNumber = 1;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
+	
 
 	/**
 	 * Calculates the possible moves for a pawn from a specified position of the board
@@ -134,27 +143,22 @@ public class State implements Serializable, Cloneable {
 	}
 
 	/**
-	 * Method which updates the possible actions' map of the choosen player changing the position of a moved pawn
+	 * Method which updates the possible actions' map of the choosen player changing the position of a moved pawn, 
+	 * notice that  it doesn't change the possible actions but only the key "from" associated to the pawn
 	 * @param oldFrom Pawn's old position
 	 * @param newFrom Pawn's new position
 	 * @param turn Current player
 	 * @author R.Vasumini, A.Solini
 	 */
-	public void updatePossibleActions(String oldFrom, String newFrom, Turn turn) {
+	public void updatePossibleActionsKeySet(String oldFrom, String newFrom, Turn turn) {
 		if (turn == Turn.BLACK) {
 			this.possibleBlackActions.remove(oldFrom);
-			for(String from : this.possibleBlackActions.keySet())
-				this.possibleBlackActions.replace(from, getPossibleTo(from));
-
-			this.possibleBlackActions.put(newFrom, getPossibleTo(newFrom));
+			this.possibleBlackActions.put(newFrom, null);
 			
 		}
 		if (turn == Turn.WHITE) {
 			this.possibleWhiteActions.remove(oldFrom);
-			for(String from : this.possibleWhiteActions.keySet())
-				this.possibleWhiteActions.replace(from, getPossibleTo(from));
-
-			this.possibleWhiteActions.put(newFrom, getPossibleTo(newFrom));
+			this.possibleWhiteActions.put(newFrom, null);
 		}
 	}
 
@@ -267,6 +271,96 @@ public class State implements Serializable, Cloneable {
 	public HashMap<String, ArrayList<String>> getPossibleBlackActions(){
 		return this.possibleBlackActions;
 	}
+
+	//TODO decidere in che classe posizionare questi metodi utilizzati in Score
+	/////////////////////////////////////////////////////////////////////////////////////
+
+	public int getOldNumWhite() {
+		return oldNumWhite;
+	}
+
+	public void setOldNumWhite(int oldNumWhite) {
+		this.oldNumWhite = oldNumWhite;
+	}
+
+	public int getOldNumBlack() {
+		return oldNumBlack;
+	}
+
+	public void setOldNumBlack(int oldNumBlack) {
+		this.oldNumBlack = oldNumBlack;
+	}
+
+	public int getNumWhite(){
+		return getPossibleWhiteActions().keySet().size();
+	}
+
+	public int getNumBlack(){
+		return getPossibleBlackActions().keySet().size();
+	}
+	
+	public int numWhiteNearTheKing(State state){
+		int result = 0;
+
+		if(board.getPawnDown(this.currentKingPosition) == Pawn.WHITE)
+			result++;
+		if(board.getPawnUp(this.currentKingPosition) == Pawn.WHITE)
+			result++;
+		if(board.getPawnLeft(this.currentKingPosition) == Pawn.WHITE)
+			result++;
+		if(board.getPawnRight(this.currentKingPosition) == Pawn.WHITE)
+			result++;
+
+		return result;
+	}
+
+	public int numBlackNearTheKing(State state){
+		int result = 0;
+
+		if(board.getPawnDown(this.currentKingPosition) == Pawn.BLACK)
+			result++;
+		if(board.getPawnUp(this.currentKingPosition) == Pawn.BLACK)
+			result++;
+		if(board.getPawnLeft(this.currentKingPosition) == Pawn.BLACK)
+			result++;
+		if(board.getPawnRight(this.currentKingPosition) == Pawn.BLACK)
+			result++;
+
+		return result;
+	}
+
+	public ArrayList<Action> canKingWin(TablutGame game){
+		ArrayList<Action> result = new ArrayList<Action>();
+		if(this.possibleWhiteActions.get(this.currentKingPosition) != null){
+			for(String to :  this.possibleWhiteActions.get(this.currentKingPosition))
+				if(board.isColumnEmpty(board.getColumn(to))){
+					try {
+						result.add(new Action(this.currentKingPosition, to, Turn.WHITE));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+		} 
+		return result;
+	}
+
+	public void setCurrentKingPosition(String newPosition){
+		this.currentKingPosition = newPosition;
+	}
+
+	public String getCurrentKingPosition(){
+		return this.currentKingPosition;
+	}
+	
+	public void incrementTurnNumber(){
+		this.turnNumber++;
+	}
+
+	public int getTurnNumber(){
+		return this.turnNumber;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////
 
 	public String boardString() {
 		StringBuffer result = new StringBuffer();

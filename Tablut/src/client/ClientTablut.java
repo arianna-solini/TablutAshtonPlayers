@@ -94,22 +94,34 @@ public class ClientTablut implements Runnable {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
+		
 		System.out.println("/ASHTON TABLUT\\");
 		TablutGame rules = new TablutGame(99, 0);
-		TimeLimitedSearch search = new TimeLimitedSearch(rules, -10, 10, 5);
+		TimeLimitedSearch search = new TimeLimitedSearch(rules, -50, 50, 20);
 		System.out.println("You are player " + this.player.toString() + "!");
 		State state = new State();
+		int countTurn = 0;
 		try{
-			while(true){		
+			while(true){
+				countTurn++;		
 				StateGson temp =  this.gson.fromJson(StreamUtils.readString(in), StateGson.class);	//Avendo personalizzato state abbiamo introdotto StateGson per una lettura corretta
 				state.getBoard().setBoard(temp.getBoard());
 				state.setTurn(temp.getTurn());
+				
+				
 				//TODO Sistema l'alternanza dei giocatori stando fermo quando tocca all'altro
-				if(this.player == state.getTurn()){
+				//If it's my turn I've to check if a pawn of mine has been eaten and update my PossibleActions
+				if(this.player == state.getTurn() && state.getTurnNumber() != 1){
 					state.eatenUpdate(state.getBoard(), player);
 					state.updatePossibleActions(player);
+					state.incrementTurnNumber();
 				}
+
+				if(this.player == Turn.WHITE)
+					state.setOldNumWhite(state.getNumWhite());
+				else
+					state.setOldNumBlack(state.getNumBlack());
+
 				this.currentState = state;
 				System.out.println("Current state:");
 				System.out.println(this.currentState.toString());
@@ -154,7 +166,8 @@ public class ClientTablut implements Runnable {
 
 				try {
 					State updatedState = rules.checkMove(state, selectedAction);
-					updatedState.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.WHITE);
+					//After my move updates the key "from" of the moved pawn
+					updatedState.updatePossibleActionsKeySet(selectedAction.getFrom(), selectedAction.getTo(), Turn.WHITE);
 					done = true;
 				} catch (Exception e) {
 					System.out.println("Eccezione: " + selectedAction.toString());
@@ -216,7 +229,8 @@ public class ClientTablut implements Runnable {
 				
 				try {
 					State updatedState = rules.checkMove(state, selectedAction);
-					updatedState.updatePossibleActions(selectedAction.getFrom(), selectedAction.getTo(), Turn.BLACK);
+					//After my move updates the key "from" of the moved pawn
+					updatedState.updatePossibleActionsKeySet(selectedAction.getFrom(), selectedAction.getTo(), Turn.BLACK);
 					done = true;
 				} catch (Exception e) {
 					System.out.println("Eccezione: " + selectedAction.toString());

@@ -84,12 +84,15 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			heuristicEvaluationUsed = false;
 			ActionStore<Action> newResults = new ActionStore<>();
 			for (Action action : results) {
+				//minValue calculus are based on the simulated action's state obtained by game.getResult
 				double value = minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
 				if (timer.timeOutOccurred())
 					break; // exit from action loop
 				newResults.add(action, value);
 			}
 			if (newResults.size() > 0) {
+				//In the next iteration results will be checked from the best to the worst action thanks to ActionStore's newResults
+				//The actions in results are always the same, only their position in the list will change thanks to the iterative deep search
 				results = newResults.actions;
 				if (!timer.timeOutOccurred()) {
 					if (hasSafeWinner(newResults.utilValues.get(0)))
@@ -110,7 +113,9 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			return eval(state, player);
 		} else {
 			double value = Double.NEGATIVE_INFINITY;
+			//Current actions are calculated from the passed simulation state
 			for (Action action : orderActions(state, game.getActions(state), player, depth)) {
+				//Same as in makeDecision method's minValue
 				value = Math.max(value, minValue(game.getResult(state, action), player, alpha, beta, depth + 1));
 				if (value >= beta)
 					return value;
@@ -120,14 +125,16 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		}
 	}
 
-	// returns an utility value
+	// returns a utility value, the opponent uses this method
 	public double minValue(State state, String player, double alpha, double beta, int depth) {
 		updateMetrics(depth);
 		if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
-			return eval(state, player);
+			return -eval(state, getOtherPlayer(player));
 		} else {
 			double value = Double.POSITIVE_INFINITY;
+			//Current actions are calculated from the passed simulation state
 			for (Action action : orderActions(state, game.getActions(state), player, depth)) {
+				//Same as in makeDecision method's minValue
 				value = Math.min(value, maxValue(game.getResult(state, action), player, alpha, beta, depth + 1));
 				if (value <= alpha)
 					return value;
@@ -165,7 +172,8 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	 * always false.
 	 */
 	protected boolean isSignificantlyBetter(double newUtility, double utility) {
-		//return newUtility > utility ? true : false;
+		//newUtility - 5 is an exemple
+		//return newUtility - 5 > utility ? true : false;
 		return false;
 	}
 
@@ -191,14 +199,23 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			return game.getUtility(state, player);
 		} else {
 			heuristicEvaluationUsed = true;
-			return score.calculateScore(player, game);
+			return score.calculateScore(game);
 		}
+	}
+
+	public String getOtherPlayer(String player){
+		if(player.equals("W"))
+			return "B";
+		else 
+			return "W";
 	}
 
 	/**
 	 * Primitive operation for action ordering. This implementation preserves
 	 * the original order (provided by the game).
 	 */
+	//TODO implementandola sfruttando depth, magari tenendosi in memoria in Time Limited Search una struttura di ActionStore per livello
+	//ottimizzo le ricerche, perché per ora ordiniamo solo quelle a depth 0
 	public List<Action> orderActions(State state, List<Action> actions, String player, int depth) {
 		return actions;
 	}
