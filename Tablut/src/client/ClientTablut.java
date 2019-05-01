@@ -108,11 +108,13 @@ public class ClientTablut implements Runnable {
 				state.getBoard().setBoard(temp.getBoard());
 				state.setTurn(temp.getTurn());
 				
+				
 				//TODO Sistema l'alternanza dei giocatori stando fermo quando tocca all'altro
 				//If it's my turn I've to check if a pawn of mine has been eaten and update my PossibleActions
-				if(this.player == state.getTurn() && countTurn != 1){
+				if(this.player == state.getTurn() && state.getTurnNumber() != 1){
 					state.eatenUpdate(state.getBoard(), player);
 					state.updatePossibleActions(player);
+					state.incrementTurnNumber();
 				}
 
 				if(this.player == Turn.WHITE)

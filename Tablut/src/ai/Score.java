@@ -40,11 +40,12 @@ public class Score{
 		int rowTo = this.state.getLastAction().getRowTo(), columnTo = this.state.getLastAction().getColumnTo();
 		switch (player){
 			case "W" :
-				//ArrayList<Action> possibleWinActions = state.canKingWin(game);
+				ArrayList<Action> possibleWinActions = new ArrayList<Action>();
+				possibleWinActions = state.canKingWin(game);
 				scoreWhite += (state.getNumWhite() - state.getNumBlack());
 				//scoreWhite += state.numWhiteNearTheKing(state);
-				/*if(possibleWinActions.size()>0)
-					scoreWhite+=20;*/
+				if(possibleWinActions != null)
+					scoreWhite+=20;
 				
 				
 				

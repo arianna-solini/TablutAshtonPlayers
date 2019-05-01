@@ -471,6 +471,7 @@ public class TablutGame implements Game<State, Action, String> {
 		state.setBoard(newBoard);
 		//setto l'ultima azione eseguita
 		state.setLastAction(a);
+		state.incrementTurnNumber();
 		return state;
 	}
 

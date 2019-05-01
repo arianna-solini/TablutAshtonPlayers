@@ -48,6 +48,7 @@ public class State implements Serializable, Cloneable {
 	private HashMap<String, ArrayList<String>> possibleBlackActions = new HashMap<String, ArrayList<String>>();
 	private int oldNumWhite, oldNumBlack;
 	private String currentKingPosition;
+	private int turnNumber;
 	
 	/**
 	 * Initializes the possible white and black actions at the beginning of the game
@@ -72,6 +73,7 @@ public class State implements Serializable, Cloneable {
 			this.oldNumBlack = 16;
 			this.oldNumWhite = 9;
 			this.currentKingPosition = "e5";
+			this.turnNumber = 1;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -329,14 +331,16 @@ public class State implements Serializable, Cloneable {
 
 	public ArrayList<Action> canKingWin(TablutGame game){
 		ArrayList<Action> result = new ArrayList<Action>();
-		for(String to :  this.possibleWhiteActions.get(this.currentKingPosition))
-			if(board.isColumnEmpty(board.getColumn(to)))
-				try {
-					result.add(new Action(this.currentKingPosition, to, Turn.WHITE));
-				} catch (IOException e) {
-					e.printStackTrace();
+		if(this.possibleWhiteActions.get(this.currentKingPosition) != null){
+			for(String to :  this.possibleWhiteActions.get(this.currentKingPosition))
+				if(board.isColumnEmpty(board.getColumn(to))){
+					try {
+						result.add(new Action(this.currentKingPosition, to, Turn.WHITE));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-		
+		} 
 		return result;
 	}
 
@@ -346,6 +350,14 @@ public class State implements Serializable, Cloneable {
 
 	public String getCurrentKingPosition(){
 		return this.currentKingPosition;
+	}
+	
+	public void incrementTurnNumber(){
+		this.turnNumber++;
+	}
+
+	public int getTurnNumber(){
+		return this.turnNumber;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
