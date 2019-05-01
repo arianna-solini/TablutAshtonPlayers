@@ -7,13 +7,14 @@ import java.security.InvalidParameterException;
 import domain.State.Turn;
 
 /**
- * This class represents an action of a player
- * 
- * @author A.Piretti
- * 
- */
+* This class represents an action of a player
+* @author A.Piretti
+*/
 public class Action implements Serializable {
 
+	/**
+	 * Enum which represents the direction of an action
+	 */
 	public enum Direction {
 		LEFT("L"), RIGHT("R"), UP("U"), DOWN("D"), ANY("A");
 		private final String direction;
@@ -32,7 +33,7 @@ public class Action implements Serializable {
 
 	private String from;
 	private String to;
-	private State.Turn turn;
+	private Turn turn;
 
 	public Action(String from, String to, Turn t) throws IOException {
 		if (from.length() != 2 || to.length() != 2) {

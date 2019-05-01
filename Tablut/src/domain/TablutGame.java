@@ -18,35 +18,12 @@ import exceptions.*;
  */
 public class TablutGame implements Game<State, Action, String> {
 
-	/**
-	 * Number of repeated states that can occur before a draw
-	 */
-	private int repeated_moves_allowed;
-
-	/**
-	 * Number of states kept in memory. negative value means infinite.
-	 */
-	private int cache_size;
-	/**
-	 * Counter for the moves without capturing that have occurred
-	 */
-	private int movesWithoutCapturing;
-	private List<State> drawConditions;
 	private State initialState = new State();
+	private int movesWithoutCapturing;
 
-	// TODO: Draw conditions are not working
-
-	public TablutGame(int repeated_moves_allowed, int cache_size) {
-		this(new State(), repeated_moves_allowed, cache_size);
-	}
-
-	public TablutGame(State state, int repeated_moves_allowed, int cache_size) {
+	//TODO pensare a come fare un nostro eventuale costruttore di  TablutGame e se implementare il pareggio
+	public TablutGame(){
 		super();
-		this.repeated_moves_allowed = repeated_moves_allowed;
-		this.cache_size = cache_size;
-		this.movesWithoutCapturing = 0;
-		drawConditions = new ArrayList<State>();
-
 	}
 
 	/**
@@ -54,7 +31,7 @@ public class TablutGame implements Game<State, Action, String> {
 	 * @param board Current board
 	 * @param rowTo arrival row
 	 * @param columnTo arrival column
-	 * @param d Direction to control
+	 * @param d Direction to control, NOT THE ACTION'S DIRECTION
 	 * @param t Player which tries to capture
 	 * @return {@code true} if the conditions are favorable to capture, {@code false} otherwhise
 	 * @author R.Vasumini, A.Solini
@@ -164,7 +141,7 @@ public class TablutGame implements Game<State, Action, String> {
 	 * @param board Current board
 	 * @param rowTo arrival row
 	 * @param columnTo arrival column
-	 * @param d Direction to control
+	 * @param d Direction to control, NOT THE ACTION'S DIRECTION
 	 * @param t Player which tries to win
 	 * @return {@code true} if the conditions are favorable to win, {@code false} otherwhise
 	 * @author R.Vasumini, A.Solini
@@ -426,32 +403,6 @@ public class TablutGame implements Game<State, Action, String> {
 		} else if (state.getTurn().equalsTurn("W")) {
 			state = this.checkCaptureWhite(state, a);
 		}
-		/*
-		// If something has been captured, clear cache for draws
-		if (this.movesWithoutCapturing == 0) {
-			this.drawConditions.clear();
-		}
-
-		// Controls draw conditions
-		int trovati = 0;
-		for (State s : drawConditions) {
-
-			System.out.println(s.toString());
-
-			if (s.equals(state)) {
-				trovati++;
-				if (trovati > repeated_moves_allowed) {
-					state.setTurn(State.Turn.DRAW);
-					break;
-				}
-			}
-		}
-
-		if (cache_size >= 0 && this.drawConditions.size() > cache_size) {
-			this.drawConditions.remove(0);
-		}
-		this.drawConditions.add(state.clone());
-		System.out.println("Stato:\n" + state.toString());*/
 
 		return state;
 	}
@@ -462,15 +413,18 @@ public class TablutGame implements Game<State, Action, String> {
 		int rowFrom = a.getRowFrom(), columnFrom = a.getColumnFrom();
 		Pawn pawn = board.getPawn(rowFrom, columnFrom);
 		Board newBoard = board;
+
 		newBoard.removePawn(rowFrom, columnFrom);
-		// metto nel nuovo tabellone la pedina mossa
+		// Puts the pawn moved in the board
 		newBoard.setPawn(rowTo, columnTo, pawn);
+		//If the moved pawn is the king, changes his current position
 		if(pawn == Pawn.KING)
 			state.setCurrentKingPosition(a.getTo());
-		// aggiorno il tabellone
+		// Updates the board
 		state.setBoard(newBoard);
-		//setto l'ultima azione eseguita
+		//Updates last action
 		state.setLastAction(a);
+		//Increments the turn number since the action is done
 		state.incrementTurnNumber();
 		return state;
 	}
@@ -536,13 +490,13 @@ public class TablutGame implements Game<State, Action, String> {
 		return state;
 	}
 
-	private boolean checkWhiteWin(State state, Action a){
+	public boolean checkWhiteWin(State state, Action a){
 		Board board = state.getBoard();
 		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
 		return checkWin(board, rowTo, columnTo, Direction.ANY, Turn.WHITE);
 	}
 
-	private boolean checkBlackWin(State state, Action a){
+	public boolean checkBlackWin(State state, Action a){
 		Board board = state.getBoard();
 		int rowTo = a.getRowTo(), columnTo = a.getColumnTo();
 		return (checkWin(board, rowTo, columnTo, Direction.DOWN, Turn.BLACK)
@@ -551,31 +505,77 @@ public class TablutGame implements Game<State, Action, String> {
 			|| checkWin(board, rowTo, columnTo, Direction.LEFT, Turn.BLACK)) ;
 	}
 
-	public int getmovesWithoutCapturing() {
-		return movesWithoutCapturing;
+	/**
+	 * Checks how many white pawns are near the king, the position checked are only Down, Up, Right and Left, not the diagonals
+	 * @return Number of white pawns near the king
+	 * @author R.Vasumini, A.Solini
+	 */
+	public int numWhiteNearTheKing(State state){
+		int result = 0;
+		Board board = state.getBoard();
+		String currentKingPosition = state.getCurrentKingPosition();
+
+		if(board.getPawnDown(currentKingPosition) == Pawn.WHITE)
+			result++;
+		if(board.getPawnUp(currentKingPosition) == Pawn.WHITE)
+			result++;
+		if(board.getPawnLeft(currentKingPosition) == Pawn.WHITE)
+			result++;
+		if(board.getPawnRight(currentKingPosition) == Pawn.WHITE)
+			result++;
+
+		return result;
 	}
 
-	@SuppressWarnings("unused")
-	private void setmovesWithoutCapturing(int movesWithoutCapturing) {
-		this.movesWithoutCapturing = movesWithoutCapturing;
+	/**
+	 * Checks how many black pawns are near the king, the position checked are only Down, Up, Right and Left, not the diagonals
+	 * @return Number of black pawns near the king
+	 * @author R.Vasumini, A.Solini
+	 */
+	public int numBlackNearTheKing(State state){
+		int result = 0;
+		Board board = state.getBoard();
+		String currentKingPosition = state.getCurrentKingPosition();
+
+		if(board.getPawnDown(currentKingPosition) == Pawn.BLACK)
+			result++;
+		if(board.getPawnUp(currentKingPosition) == Pawn.BLACK)
+			result++;
+		if(board.getPawnLeft(currentKingPosition) == Pawn.BLACK)
+			result++;
+		if(board.getPawnRight(currentKingPosition) == Pawn.BLACK)
+			result++;
+
+		return result;
 	}
 
-	public int getRepeated_moves_allowed() {
-		return repeated_moves_allowed;
+	/**
+	 * @return An ArrayList of Action that can make the King escape and win
+	 * @author R.Vasumini, A.Solini
+	 */
+	public ArrayList<Action> canKingWin(State state){
+		ArrayList<Action> result = new ArrayList<Action>();
+		Board board = state.getBoard();
+		String currentKingPosition = state.getCurrentKingPosition();
+		HashMap<String, ArrayList<String>> possibleWhiteActions = state.getPossibleBlackActions();
+		
+		//Checks if the king has possible actions to do
+		if(possibleWhiteActions.get(currentKingPosition) != null){
+			for(String to :  possibleWhiteActions.get(currentKingPosition)){
+				try{
+					//Checks if the column or the row in which the king can go is empty, if it is the king the next turn can win unless is captured
+					if(board.isColumnEmpty(board.getColumn(to)))
+						result.add(new Action(currentKingPosition, to, Turn.WHITE));
+					if(board.isRowEmpty(board.getRow(to)))
+						result.add(new Action(currentKingPosition, to, Turn.WHITE));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}	
+		} 
+		return result;
 	}
-
-	public int getCache_size() {
-		return cache_size;
-	}
-
-	public List<State> getDrawConditions() {
-		return drawConditions;
-	}
-
-	public void clearDrawConditions() {
-		drawConditions.clear();
-	}
-
+	
 	@Override
 	public List<Action> getActions(State state) {
 		try {
@@ -609,6 +609,7 @@ public class TablutGame implements Game<State, Action, String> {
 	 * @param state The state in which the action is to be simulated
 	 * @param action The action to simulate
 	 * @return A clone of the specified state in which the action is simulated
+	 * @author R.Vasumini, A.Solini
 	 */
 	@Override
 	public State getResult(State state, Action action) {

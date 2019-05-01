@@ -37,11 +37,12 @@ public class Score{
 
 	public double calculateScore(TablutGame game){
 		Board board = state.getBoard();
-		int rowTo = this.state.getLastAction().getRowTo(), columnTo = this.state.getLastAction().getColumnTo();
+		//TODO lastAction potrebbe essere usata per vedere se certe pedine avversarie si stanno muovendo in una certa direzione
+		//int rowTo = this.state.getLastAction().getRowTo(), columnTo = this.state.getLastAction().getColumnTo();
 		switch (player){
 			case "W" :
 				ArrayList<Action> possibleWinActions = new ArrayList<Action>();
-				possibleWinActions = state.canKingWin(game);
+				possibleWinActions = game.canKingWin(state);
 				scoreWhite += (state.getNumWhite() - state.getNumBlack());
 				//scoreWhite += state.numWhiteNearTheKing(state);
 				if(possibleWinActions != null)

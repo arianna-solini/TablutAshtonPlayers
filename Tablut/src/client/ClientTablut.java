@@ -131,7 +131,7 @@ public class ClientTablut implements Runnable {
 			System.exit(1);
 		}
 		State state = new State();
-		TablutGame rules = new TablutGame(99, 0);
+		TablutGame rules = new TablutGame();
 		TimeLimitedSearch search = new TimeLimitedSearch(rules, minValue, maxValue, searchTime);
 		System.out.println("/ASHTON TABLUT\\");
 		System.out.println("You are player " + this.player.toString() + "!");
