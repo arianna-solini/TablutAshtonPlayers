@@ -20,6 +20,11 @@ Bianche - Difesa:
 
 spostare la enum Direction da Board a Action, in generale pensare a riordinare il codice e decidere dove far stare la roba
 
+il re nella checkKingWin controlla se ha la riga/colonna vuota ma non controlla se compiendo quell azione può venir mangiato, quindi il controllo non è completo,
+meglio mantenere checkKingWin così com'è e completare il controllo altrove (?)
+
+possiamo usare numBlackNearTheKing e lo stesso per white come controlli a seconda della posizione del re ( sul trono, vicino al trono o fuori)
+
 
 
 

@@ -10,8 +10,8 @@ import domain.State;
 import domain.TablutGame;
 
 /**
- * Alternative implementation of IterativeDeepeningAlphaBetaSearch of aima library:
- * 
+ * Alternative implementation of IterativeDeepeningAlphaBetaSearch of aima library
+ * <p>
  * Implements an iterative deepening Minimax search with alpha-beta pruning and
  * action ordering. Maximal computation time is specified in seconds.
  */

@@ -9,33 +9,25 @@ import domain.Board.Pawn;
 import domain.Board.Position;
 
 /**
- * Class for a State of a game We have a representation of the board and the
- * turn
- * 
+ * Class for the State of the game, we have a representation of the board and the turn
  * @author Andrea Piretti
- *
  */
 public class State implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Turn represent the player that has to move or the end of the game(A win by a
-	 * player or a draw)
-	 * 
+	 * Turn represents the player that has to move or the end of the game (A win by a player or a draw)
 	 * @author A.Piretti
 	 */
 	public enum Turn {
 		WHITE("W"), BLACK("B"), WHITEWIN("WW"), BLACKWIN("BW"), DRAW("D");
 		private final String turn;
-
 		private Turn(String s) {
 			turn = s;
 		}
-
 		public boolean equalsTurn(String otherName) {
 			return (otherName == null) ? false : turn.equals(otherName);
 		}
-
 		public String toString() {
 			return turn;
 		}
@@ -44,17 +36,27 @@ public class State implements Serializable, Cloneable {
 	protected Board board;
 	protected Turn turn;
 	private Action lastAction;
-	private HashMap<String, ArrayList<String>> possibleWhiteActions = new HashMap<String, ArrayList<String>>();
-	private HashMap<String, ArrayList<String>> possibleBlackActions = new HashMap<String, ArrayList<String>>();
 	private int oldNumWhite, oldNumBlack;
 	private String currentKingPosition;
 	private int turnNumber;
+	private HashMap<String, ArrayList<String>> possibleWhiteActions = new HashMap<String, ArrayList<String>>();
+	private HashMap<String, ArrayList<String>> possibleBlackActions = new HashMap<String, ArrayList<String>>();
+
+	public State() {
+		this.board = new Board();
+		this.turn = Turn.WHITE;
+		init();
+	}
 	
 	/**
-	 * Initializes the possible white and black actions at the beginning of the game
+	 * Initializes the possible white and black actions at the beginning of the game and other utility values
 	 * @author R.Vasumini, A.Solini
 	 */
-	private void initActions() {
+	private void init() {
+		this.oldNumBlack = 16;
+		this.oldNumWhite = 9;
+		this.currentKingPosition = "e5";
+		this.turnNumber = 1;
 		HashMap<String, Position> positions = this.board.getPositions();
 		for (String box : positions.keySet()) {
 			if (positions.get(box).equals(Position.CITADEL)) {
@@ -68,18 +70,13 @@ public class State implements Serializable, Cloneable {
 				this.possibleWhiteActions.put(box, getPossibleTo(box));
 			}
 		}
+		//Set an initial action for the lastAction value which will be replaces every turn
 		try {
 			this.lastAction = new Action("z0", "z0", Turn.BLACK);
-			this.oldNumBlack = 16;
-			this.oldNumWhite = 9;
-			this.currentKingPosition = "e5";
-			this.turnNumber = 1;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-	
 
 	/**
 	 * Calculates the possible moves for a pawn from a specified position of the board
@@ -92,7 +89,7 @@ public class State implements Serializable, Cloneable {
 		int column = this.board.getColumn(from);
 		ArrayList<String> result = new ArrayList<String>();
 		HashMap<String, Position> positions = this.board.getPositions();
-		// verso destra
+		// to the right...
 		for (int i = column + 1; i < 9; i++) {
 			if (this.board.getPawn(row, i) == Pawn.EMPTY 
 				&& (positions.get(this.board.getBox(row, i)) != Position.CITADEL || positions.get(from) == Position.CITADEL)
@@ -104,7 +101,7 @@ public class State implements Serializable, Cloneable {
 			}
 		}
 
-		// verso sinistra
+		// to the left...		(... we will fight to the death, to the edge of the earth. It's a brave new world from the last to the first)
 		for (int i = column - 1; i > -1; i--) {
 			if (this.board.getPawn(row, i) == Pawn.EMPTY 
 				&& (positions.get(this.board.getBox(row, i)) != Position.CITADEL || positions.get(from) == Position.CITADEL)
@@ -116,7 +113,7 @@ public class State implements Serializable, Cloneable {
 			}
 		}
 
-		// verso l'alto
+		// upward
 		for (int i = row - 1; i > -1; i--) {
 			if (this.board.getPawn(i, column) == Pawn.EMPTY  
 				&& (positions.get(this.board.getBox(i, column)) != Position.CITADEL || positions.get(from) == Position.CITADEL)
@@ -128,7 +125,7 @@ public class State implements Serializable, Cloneable {
 			}
 		}
 
-		// verso il basso
+		// downward
 		for (int i = row + 1; i < 9; i++) {
 			if (this.board.getPawn(i, column) == Pawn.EMPTY  
 				&& (positions.get(this.board.getBox(i, column)) != Position.CITADEL || positions.get(from) == Position.CITADEL)
@@ -229,17 +226,6 @@ public class State implements Serializable, Cloneable {
 		return result;
 	}
 
-	public State() {
-		this.board = new Board();
-		this.turn = Turn.WHITE;
-		initActions();
-	}
-	
-	public State(Board board, Turn turn){
-		this.board = board;
-		this.turn = turn;
-	}
-
 	public Board getBoard() {
 		return board;
 	}
@@ -256,112 +242,121 @@ public class State implements Serializable, Cloneable {
 		this.turn = turn;
 	}
 
+	/**
+	 * @return The action that brought to this state
+	 * @author R.Vasumini, A.Solini
+	 */
 	public Action getLastAction(){
 		return this.lastAction;
 	}
 
+	/**
+	 * @param action the action that brought to this state
+	 * @author R.Vasumini, A.Solini
+	 */
 	public void setLastAction(Action action){
 		this.lastAction = action;
 	}
 
+	/**
+	 * @return A map of the possible actions that white pawns can do at the current state
+	 * @author R.Vasumini, A.Solini
+	 */
 	public HashMap<String, ArrayList<String>> getPossibleWhiteActions(){
 		return this.possibleWhiteActions;
 	}
 
+	/**
+	 * @return A map of the possible actions that black pawns can do at the current state
+	 * @author R.Vasumini, A.Solini
+	 */
 	public HashMap<String, ArrayList<String>> getPossibleBlackActions(){
 		return this.possibleBlackActions;
 	}
 
-	//TODO decidere in che classe posizionare questi metodi utilizzati in Score
-	/////////////////////////////////////////////////////////////////////////////////////
-
+	/**
+	 * @return The number of black pawns in the board in the previous turn
+	 * @author R.Vasumini, A.Solini
+	 */
 	public int getOldNumWhite() {
 		return oldNumWhite;
 	}
 
+	/**
+	 * @param oldNumWhite the previous number of  white pawns in the board
+	 * @author R.Vasumini, A.Solini
+	 */
 	public void setOldNumWhite(int oldNumWhite) {
 		this.oldNumWhite = oldNumWhite;
 	}
 
+	/**
+	 * @return The number of black pawns in the board in the previous turn
+	 * @author R.Vasumini, A.Solini
+	 */
 	public int getOldNumBlack() {
 		return oldNumBlack;
 	}
 
+	/**
+	 * @param oldNumWhite the previous number of  black pawns in the board
+	 * @author R.Vasumini, A.Solini
+	 */
 	public void setOldNumBlack(int oldNumBlack) {
 		this.oldNumBlack = oldNumBlack;
 	}
 
+	/**
+	 * @return The actual number of white pawns in the board
+	 * @author R.Vasumini, A.Solini
+	 */
 	public int getNumWhite(){
 		return getPossibleWhiteActions().keySet().size();
 	}
 
+	/**
+	 * @return The actual number of black pawns in the board
+	 * @author R.Vasumini, A.Solini
+	 */
 	public int getNumBlack(){
 		return getPossibleBlackActions().keySet().size();
 	}
-	
-	public int numWhiteNearTheKing(State state){
-		int result = 0;
 
-		if(board.getPawnDown(this.currentKingPosition) == Pawn.WHITE)
-			result++;
-		if(board.getPawnUp(this.currentKingPosition) == Pawn.WHITE)
-			result++;
-		if(board.getPawnLeft(this.currentKingPosition) == Pawn.WHITE)
-			result++;
-		if(board.getPawnRight(this.currentKingPosition) == Pawn.WHITE)
-			result++;
-
-		return result;
-	}
-
-	public int numBlackNearTheKing(State state){
-		int result = 0;
-
-		if(board.getPawnDown(this.currentKingPosition) == Pawn.BLACK)
-			result++;
-		if(board.getPawnUp(this.currentKingPosition) == Pawn.BLACK)
-			result++;
-		if(board.getPawnLeft(this.currentKingPosition) == Pawn.BLACK)
-			result++;
-		if(board.getPawnRight(this.currentKingPosition) == Pawn.BLACK)
-			result++;
-
-		return result;
-	}
-
-	public ArrayList<Action> canKingWin(TablutGame game){
-		ArrayList<Action> result = new ArrayList<Action>();
-		if(this.possibleWhiteActions.get(this.currentKingPosition) != null){
-			for(String to :  this.possibleWhiteActions.get(this.currentKingPosition))
-				if(board.isColumnEmpty(board.getColumn(to))){
-					try {
-						result.add(new Action(this.currentKingPosition, to, Turn.WHITE));
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-		} 
-		return result;
-	}
-
+	/**
+	 * @param newPosition the new position of the king in the board
+	 * @author R.Vasumini, A.Solini
+	 */
 	public void setCurrentKingPosition(String newPosition){
 		this.currentKingPosition = newPosition;
 	}
 
+	/**
+	 * @return The king current position on the board
+	 * @author R.Vasumini, A.Solini
+	 */
 	public String getCurrentKingPosition(){
 		return this.currentKingPosition;
 	}
 	
+	/**
+	 * Increments by one the turn number
+	 * @author R.Vasumini, A.Solini
+	 */
 	public void incrementTurnNumber(){
 		this.turnNumber++;
 	}
 
+	/**
+	 * @return The current turn number
+	 * @author R.Vasumini, A.Solini
+	 */
 	public int getTurnNumber(){
 		return this.turnNumber;
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////
-
+	/**
+	 * @return A string representing the board
+	 */
 	public String boardString() {
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < this.board.getLength(); i++) {
@@ -375,6 +370,9 @@ public class State implements Serializable, Cloneable {
 		return result.toString();
 	}
 
+	/**
+	 * Modified toString function for the class State
+	 */
 	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();
@@ -391,7 +389,10 @@ public class State implements Serializable, Cloneable {
 
 		return result.toString();
 	}
-	
+
+	/**
+	 * @return A string of the State without newline characters
+	 */	
 	public String toLinearString() {
 		StringBuffer result = new StringBuffer();
 
@@ -403,6 +404,9 @@ public class State implements Serializable, Cloneable {
 		return result.toString();
 	}
 
+	/**
+	 * Modified equals function for State class
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -432,6 +436,9 @@ public class State implements Serializable, Cloneable {
 		return true;
 	}
 
+	/**
+	 * Modified hashcode function for State class
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -441,6 +448,9 @@ public class State implements Serializable, Cloneable {
 		return result;
 	}
 
+	/**
+	 * Clones the State
+	 */
 	@Override
 	public State clone() {
 		State result = new State();
