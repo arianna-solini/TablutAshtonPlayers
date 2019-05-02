@@ -48,8 +48,6 @@ public class ClientTablut implements Runnable {
 	 */
 	private State currentState;
 	private  final static  int searchTime = 20;    
-	private final static int minValue = -50;
-	private final static int maxValue = 50;
 
 	public ClientTablut(String player, String name) throws UnknownHostException, IOException {
 		
@@ -132,7 +130,7 @@ public class ClientTablut implements Runnable {
 		}
 		State state = new State();
 		TablutGame rules = new TablutGame();
-		TimeLimitedSearch search = new TimeLimitedSearch(rules, minValue, maxValue, searchTime);
+		TimeLimitedSearch search = new TimeLimitedSearch(rules, TablutGame.minValue, TablutGame.maxValue, searchTime);
 		System.out.println("/ASHTON TABLUT\\");
 		System.out.println("You are player " + this.player.toString() + "!");
 		try{
@@ -193,7 +191,7 @@ public class ClientTablut implements Runnable {
 				System.out.println("Ricerca della mossa effettuata in " + (fine-inizio) + "ms");
 				try {
 					//Checks move validity and executes it
-					state = rules.checkMove(state, selectedAction);
+					state = rules.makeMove(state, selectedAction);
 					//After my move updates the key "from" of the moved pawn
 					state.updatePossibleActionsKeySet(selectedAction.getFrom(), selectedAction.getTo(), player);
 					done = true;
