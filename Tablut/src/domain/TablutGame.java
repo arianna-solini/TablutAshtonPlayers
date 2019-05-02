@@ -45,12 +45,12 @@ public class TablutGame implements Game<State, Action, String> {
 			switch (d) {
 			case DOWN:
 				return (rowTo < board.getLength() - 2 
-						&& board.getPawn(rowTo + 1, columnTo).equalsPawn("B")
-						&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("W")
+						&& board.getPawn(rowTo + 1, columnTo) == Pawn.BLACK
+						&& (board.getPawn(rowTo + 2, columnTo) == Pawn.WHITE
 							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
-							|| board.getPawn(rowTo + 2, columnTo).equalsPawn("K")
+							|| board.getPawn(rowTo + 2, columnTo) == Pawn.KING
 							|| ((positions.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)
-								// &&!(board.getPawn(rowTo+2, columnTo).equalsPawn("B"))
+								// &&!(board.getPawn(rowTo+2, columnTo) == Pawn.BLACK)
 								&& !(columnTo == 8 && rowTo + 2 == 4) 
 								&& !(columnTo == 4 && rowTo + 2 == 0)
 								&& !(columnTo == 4 && rowTo + 2 == 8) 
@@ -58,12 +58,12 @@ public class TablutGame implements Game<State, Action, String> {
 
 			case UP:
 				return (rowTo > 1 
-						&& board.getPawn(rowTo - 1, columnTo).equalsPawn("B")
-						&& (board.getPawn(rowTo - 2, columnTo).equalsPawn("W")
+						&& board.getPawn(rowTo - 1, columnTo) == Pawn.BLACK
+						&& (board.getPawn(rowTo - 2, columnTo) == Pawn.WHITE
 							|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
-							|| board.getPawn(rowTo - 2, columnTo).equalsPawn("K")
+							|| board.getPawn(rowTo - 2, columnTo) == Pawn.KING
 							|| ((positions.get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)
-								// &&!(board.getPawn(rowTo-2, columnTo).equalsPawn("B"))
+								// &&!(board.getPawn(rowTo-2, columnTo) == Pawn.BLACK)
 								&& !(columnTo == 8 && rowTo - 2 == 4) 
 								&& !(columnTo == 4 && rowTo - 2 == 0)
 								&& !(columnTo == 4 && rowTo - 2 == 8) 
@@ -71,12 +71,12 @@ public class TablutGame implements Game<State, Action, String> {
 
 			case RIGHT:
 				return (columnTo < board.getLength() - 2 
-						&& board.getPawn(rowTo, columnTo + 1).equalsPawn("B")
-						&& (board.getPawn(rowTo, columnTo + 2).equalsPawn("W")
+						&& board.getPawn(rowTo, columnTo + 1) == Pawn.BLACK
+						&& (board.getPawn(rowTo, columnTo + 2) == Pawn.WHITE
 							|| (positions.get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE)
-							|| board.getPawn(rowTo, columnTo + 2).equalsPawn("K")
+							|| board.getPawn(rowTo, columnTo + 2) == Pawn.KING
 							|| ((positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)
-								// &&!(board.getPawn(rowTo, columnTo+2).equalsPawn("B"))
+								// &&!(board.getPawn(rowTo, columnTo+2) == Pawn.BLACK)
 								&& !(columnTo + 2 == 8 && rowTo == 4) 
 								&& !(columnTo + 2 == 4 && rowTo == 0)
 								&& !(columnTo + 2 == 4 && rowTo == 8) 
@@ -84,12 +84,12 @@ public class TablutGame implements Game<State, Action, String> {
 
 			case LEFT:
 				return (columnTo > 1 
-						&& board.getPawn(rowTo, columnTo - 1).equalsPawn("B")
-						&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("W")
+						&& board.getPawn(rowTo, columnTo - 1) == Pawn.BLACK
+						&& (board.getPawn(rowTo, columnTo - 2) == Pawn.WHITE
 							|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.THRONE)
-							|| board.getPawn(rowTo, columnTo - 2).equalsPawn("K")
+							|| board.getPawn(rowTo, columnTo - 2) == Pawn.KING
 							|| ((positions.get(board.getBox(rowTo, columnTo - 2)) == Position.CITADEL)
-								// &&!(board.getPawn(rowTo, columnTo-2).equalsPawn("B"))
+								// &&!(board.getPawn(rowTo, columnTo-2) == Pawn.BLACK)
 								&& !(columnTo - 2 == 8 && rowTo == 4) 
 								&& !(columnTo - 2 == 4 && rowTo == 0)
 								&& !(columnTo - 2 == 4 && rowTo == 8) 
@@ -103,29 +103,29 @@ public class TablutGame implements Game<State, Action, String> {
 			switch (d) {
 			case DOWN:
 				return (rowTo < board.getLength() - 2 
-						&& board.getPawn(rowTo + 1, columnTo).equalsPawn("W")
-						&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("B")
+						&& board.getPawn(rowTo + 1, columnTo) == Pawn.WHITE
+						&& (board.getPawn(rowTo + 2, columnTo) == Pawn.BLACK
 							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
 							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)));
 
 			case UP:
 				return (rowTo > 1 
-						&& board.getPawn(rowTo - 1, columnTo).equalsPawn("W")
-						&& (board.getPawn(rowTo - 2, columnTo).equalsPawn("B")
+						&& board.getPawn(rowTo - 1, columnTo) == Pawn.WHITE
+						&& (board.getPawn(rowTo - 2, columnTo) == Pawn.BLACK
 							|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
 							|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)));
 
 			case RIGHT:
 				return (columnTo < board.getLength() - 2 
-						&& board.getPawn(rowTo, columnTo + 1).equalsPawn("W")
-						&& (board.getPawn(rowTo, columnTo + 2).equalsPawn("B")
+						&& board.getPawn(rowTo, columnTo + 1) == Pawn.WHITE
+						&& (board.getPawn(rowTo, columnTo + 2) == Pawn.BLACK
 							|| positions.get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE
 							|| (positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)));
 
 			case LEFT:
 				return (columnTo > 1
-						&& board.getPawn(rowTo, columnTo - 1).equalsPawn("W")
-						&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("B")
+						&& board.getPawn(rowTo, columnTo - 1) == Pawn.WHITE
+						&& (board.getPawn(rowTo, columnTo - 2) == Pawn.BLACK
 							|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.THRONE)
 							|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.CITADEL)));
 
@@ -153,100 +153,100 @@ public class TablutGame implements Game<State, Action, String> {
 		switch (t) {
 		case WHITE:
 			return (rowTo == 0 || rowTo == board.getLength() - 1 || columnTo == 0 || columnTo == board.getLength() - 1)
-					&& (board.getPawn(rowTo, columnTo).equalsPawn("K"));
+					&& (board.getPawn(rowTo, columnTo) == Pawn.KING);
 
 		case BLACK:
 			switch (d) {
 			case DOWN:
-				return (rowTo < board.getLength() - 2 && board.getPawn(rowTo + 1, columnTo).equalsPawn("K")
+				return (rowTo < board.getLength() - 2 && board.getPawn(rowTo + 1, columnTo) == Pawn.KING
 						&& ((board.getBox(rowTo + 1, columnTo).equals("e5") // king on the throne
-							&& board.getPawn(5, 4).equalsPawn("B") 
-							&& board.getPawn(4, 5).equalsPawn("B")
-							&& board.getPawn(4, 3).equalsPawn("B"))
+							&& board.getPawn(5, 4) == Pawn.BLACK 
+							&& board.getPawn(4, 5) == Pawn.BLACK
+							&& board.getPawn(4, 3) == Pawn.BLACK)
 							|| (board.getBox(rowTo + 1, columnTo).equals("e4") // king near the throne
-								&& board.getPawn(3, 3).equalsPawn("B") 
-								&& board.getPawn(3, 5).equalsPawn("B"))
+								&& board.getPawn(3, 3) == Pawn.BLACK 
+								&& board.getPawn(3, 5) == Pawn.BLACK)
 							|| (board.getBox(rowTo + 1, columnTo).equals("d5")
-								&& board.getPawn(4, 2).equalsPawn("B") 
-								&& board.getPawn(5, 3).equalsPawn("B"))
+								&& board.getPawn(4, 2) == Pawn.BLACK 
+								&& board.getPawn(5, 3) == Pawn.BLACK)
 							|| (board.getBox(rowTo + 1, columnTo).equals("f5")
-								&& board.getPawn(4, 6).equalsPawn("B") 
-								&& board.getPawn(5, 5).equalsPawn("B"))
+								&& board.getPawn(4, 6) == Pawn.BLACK 
+								&& board.getPawn(5, 5) == Pawn.BLACK)
 							|| (!board.getBox(rowTo + 1, columnTo).equals("d5") // king outside the throne areas
 								&& !board.getBox(rowTo + 1, columnTo).equals("e4")
 								&& !board.getBox(rowTo + 1, columnTo).equals("f5")
 								&& !board.getBox(rowTo + 1, columnTo).equals("e5")
-								&& (board.getPawn(rowTo + 2, columnTo).equalsPawn("B")
+								&& (board.getPawn(rowTo + 2, columnTo) == Pawn.BLACK
 									|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL))))
 
 						);
 
 			case UP:
-				return (rowTo > 1 && board.getPawn(rowTo - 1, columnTo).equalsPawn("K")
+				return (rowTo > 1 && board.getPawn(rowTo - 1, columnTo) == Pawn.KING
 						&& ((board.getBox(rowTo - 1, columnTo).equals("e5") // king on the throne
-							&& board.getPawn(3, 4).equalsPawn("B") 
-							&& board.getPawn(4, 5).equalsPawn("B")
-							&& board.getPawn(4, 3).equalsPawn("B"))
+							&& board.getPawn(3, 4) == Pawn.BLACK 
+							&& board.getPawn(4, 5) == Pawn.BLACK
+							&& board.getPawn(4, 3) == Pawn.BLACK)
 							|| (board.getBox(rowTo - 1, columnTo).equals("e6") // king near the throne
-								&& board.getPawn(5, 3).equalsPawn("B") 
-								&& board.getPawn(5, 5).equalsPawn("B"))
+								&& board.getPawn(5, 3) == Pawn.BLACK 
+								&& board.getPawn(5, 5) == Pawn.BLACK)
 							|| (board.getBox(rowTo - 1, columnTo).equals("d5")
-								&& board.getPawn(4, 2).equalsPawn("B") 
-								&& board.getPawn(3, 3).equalsPawn("B"))
+								&& board.getPawn(4, 2) == Pawn.BLACK 
+								&& board.getPawn(3, 3) == Pawn.BLACK)
 							|| (board.getBox(rowTo - 1, columnTo).equals("f5")
-								&& board.getPawn(4, 4).equalsPawn("B") 
-								&& board.getPawn(3, 5).equalsPawn("B"))
+								&& board.getPawn(4, 4) == Pawn.BLACK 
+								&& board.getPawn(3, 5) == Pawn.BLACK)
 							|| (!board.getBox(rowTo - 1, columnTo).equals("d5") // king outside the throne areas
 								&& !board.getBox(rowTo - 1, columnTo).equals("e4")
 								&& !board.getBox(rowTo - 1, columnTo).equals("f5")
 								&& !board.getBox(rowTo - 1, columnTo).equals("e5")
-								&& (board.getPawn(rowTo - 2, columnTo).equalsPawn("B")
+								&& (board.getPawn(rowTo - 2, columnTo) == Pawn.BLACK
 									|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL))))
 						);
 
 			case RIGHT:
-				return (columnTo < board.getLength() - 2 && board.getPawn(rowTo, columnTo + 1).equalsPawn("K")
+				return (columnTo < board.getLength() - 2 && board.getPawn(rowTo, columnTo + 1) == Pawn.KING
 						&& ((board.getBox(rowTo, columnTo + 1).equals("e5") // king on the throne
-							&& board.getPawn(3, 4).equalsPawn("B") 
-							&& board.getPawn(4, 5).equalsPawn("B")
-							&& board.getPawn(5, 4).equalsPawn("B"))
+							&& board.getPawn(3, 4) == Pawn.BLACK 
+							&& board.getPawn(4, 5) == Pawn.BLACK
+							&& board.getPawn(5, 4) == Pawn.BLACK)
 							|| (board.getBox(rowTo, columnTo + 1).equals("e4") // king near the throne
-								&& board.getPawn(2, 4).equalsPawn("B") 
-								&& board.getPawn(3, 5).equalsPawn("B"))
+								&& board.getPawn(2, 4) == Pawn.BLACK 
+								&& board.getPawn(3, 5) == Pawn.BLACK)
 							|| (board.getBox(rowTo, columnTo + 1).equals("e6")
-								&& board.getPawn(5, 5).equalsPawn("B") 
-								&& board.getPawn(6, 4).equalsPawn("B"))
+								&& board.getPawn(5, 5) == Pawn.BLACK 
+								&& board.getPawn(6, 4) == Pawn.BLACK)
 							|| (board.getBox(rowTo, columnTo + 1).equals("d5")
-								&& board.getPawn(3, 3).equalsPawn("B") 
-								&& board.getPawn(3, 5).equalsPawn("B"))
+								&& board.getPawn(3, 3) == Pawn.BLACK 
+								&& board.getPawn(3, 5) == Pawn.BLACK)
 							|| (!board.getBox(rowTo, columnTo + 1).equals("d5") // king outside the throne areas
 								&& !board.getBox(rowTo, columnTo + 1).equals("e6")
 								&& !board.getBox(rowTo, columnTo + 1).equals("e4")
 								&& !board.getBox(rowTo, columnTo + 1).equals("e5")
-								&& (board.getPawn(rowTo, columnTo + 2).equalsPawn("B") 
+								&& (board.getPawn(rowTo, columnTo + 2) == Pawn.BLACK 
 									|| (positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL))))
 						);
 
 			case LEFT:
-				return (columnTo > 1 && board.getPawn(rowTo, columnTo - 1).equalsPawn("K") 
+				return (columnTo > 1 && board.getPawn(rowTo, columnTo - 1) == Pawn.KING 
 						&& ((board.getBox(rowTo, columnTo - 1).equals("e5") // king on the throne
-							&& board.getPawn(3, 4).equalsPawn("B") 
-							&& board.getPawn(4, 3).equalsPawn("B")
-							&& board.getPawn(5, 4).equalsPawn("B"))
+							&& board.getPawn(3, 4) == Pawn.BLACK 
+							&& board.getPawn(4, 3) == Pawn.BLACK
+							&& board.getPawn(5, 4) == Pawn.BLACK)
 							|| (board.getBox(rowTo, columnTo - 1).equals("e4") // king near the throne
-								&& board.getPawn(2, 4).equalsPawn("B") 
-								&& board.getPawn(3, 3).equalsPawn("B"))
+								&& board.getPawn(2, 4) == Pawn.BLACK 
+								&& board.getPawn(3, 3) == Pawn.BLACK)
 							|| (board.getBox(rowTo, columnTo - 1).equals("f5")
-								&& board.getPawn(3, 5).equalsPawn("B") 
-								&& board.getPawn(5, 5).equalsPawn("B"))
+								&& board.getPawn(3, 5) == Pawn.BLACK 
+								&& board.getPawn(5, 5) == Pawn.BLACK)
 							|| (board.getBox(rowTo, columnTo + 1).equals("e6")
-								&& board.getPawn(5, 3).equalsPawn("B") 
-								&& board.getPawn(6, 4).equalsPawn("B"))
+								&& board.getPawn(5, 3) == Pawn.BLACK 
+								&& board.getPawn(6, 4) == Pawn.BLACK)
 							|| (!board.getBox(rowTo, columnTo - 1).equals("e5") // king outside the throne areas
 								&& !board.getBox(rowTo, columnTo - 1).equals("e6")
 								&& !board.getBox(rowTo, columnTo - 1).equals("e4")
 								&& !board.getBox(rowTo, columnTo - 1).equals("f5")
-								&& (board.getPawn(rowTo, columnTo - 2).equalsPawn("B") 
+								&& (board.getPawn(rowTo, columnTo - 2) == Pawn.BLACK 
 									|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.CITADEL))))
 						);
 
