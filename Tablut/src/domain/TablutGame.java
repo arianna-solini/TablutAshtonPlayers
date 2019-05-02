@@ -23,13 +23,13 @@ public class TablutGame implements Game<State, Action, String> {
 	private State initialState = new State();
 	private int movesWithoutCapturing;
 
-	//TODO pensare action come fare un nostro eventuale costruttore di  TablutGame e se implementare il pareggio
+	//TODO pensare a come fare un nostro eventuale costruttore di  TablutGame e se implementare il pareggio
 	public TablutGame(){
 		super();
 	}
 
 	/**
-	 * Method which controls if action pawn will capture an adversarial pawn given the following parameters:
+	 * Method which controls if a pawn will capture an adversarial pawn given the following parameters:
 	 * @param board Current board
 	 * @param rowTo arrival row
 	 * @param columnTo arrival column
@@ -139,7 +139,7 @@ public class TablutGame implements Game<State, Action, String> {
 	}
 
 	/**
-	 * Method which controls the win of action specified player given the following parameters: 
+	 * Method which controls the win of a specified player given the following parameters: 
 	 * @param board Current board
 	 * @param rowTo arrival row
 	 * @param columnTo arrival column
@@ -262,7 +262,7 @@ public class TablutGame implements Game<State, Action, String> {
 
 	//TODO: eventuale cambiamento drastico: essendo fatte bene le azioni di mosse possibili potremmo evitarci questo controllo costoso
 	/**
-	 * Throws different exceptions if it encounters action problem in the action to be executed in the specified state
+	 * Throws different exceptions if it encounters a problem in the action to be executed in the specified state
 	 * @param state
 	 * @param action
 	 * @throws BoardException
@@ -345,7 +345,7 @@ public class TablutGame implements Game<State, Action, String> {
 			}
 		}
 
-		// Checks if I try to do action diagonal move
+		// Checks if I try to do a diagonal move
 		if (rowFrom != rowTo && columnFrom != columnTo) {
 			throw new DiagonalException(action);
 		}
@@ -428,7 +428,7 @@ public class TablutGame implements Game<State, Action, String> {
 		// Move checked, makes the move
 		state = this.movePawn(state, action);
 
-		// Checks if  the move involves action capture
+		// Checks if  the move involves a capture
 		if (turn == Turn.BLACK) {
 			state = this.checkCaptureBlack(state, action);
 		} else if (turn == Turn.WHITE) {
@@ -495,6 +495,7 @@ public class TablutGame implements Game<State, Action, String> {
 			this.movesWithoutCapturing = 0;
 		else
 			this.movesWithoutCapturing++;
+
 		if(checkWhiteWin(state, action))
 			state.setTurn(Turn.WHITEWIN);
 
@@ -531,6 +532,7 @@ public class TablutGame implements Game<State, Action, String> {
 			this.movesWithoutCapturing = 0;
 		else
 			this.movesWithoutCapturing++;
+
 		if(checkBlackWin(state, action))
 			state.setTurn(Turn.BLACKWIN);
 
@@ -688,7 +690,8 @@ public class TablutGame implements Game<State, Action, String> {
 		try{
 			result = movePawn(result, action);
 			if(action.getTurn() == Turn.WHITE){
-				result = checkCaptureWhite(result, action);			
+				result = checkCaptureWhite(result, action);
+				//TODO setoldnumblack e eatenupdate posso metterli direttamente nelle check migliorando l efficienza non essendo svolte per forza sempre			
 				result.setOldNumBlack(result.getNumBlack());
 				result.eatenUpdate(result.getBoard(), Turn.BLACK);
 				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.WHITE);
@@ -733,6 +736,7 @@ public class TablutGame implements Game<State, Action, String> {
 	@Override
 	public boolean isTerminal(State state) {
 		Turn turn = state.getTurn();
+		//TODO se implementi draw devi aggiungerlo qua
 		if(turn == Turn.BLACKWIN || turn == Turn.WHITEWIN)
 			return true;
 		else

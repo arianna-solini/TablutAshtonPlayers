@@ -54,7 +54,7 @@ public class Score{
 				
 			case "B":
 				scoreBlack += (state.getNumBlack() - state.getNumWhite());
-				scoreBlack += game.numBlackNearTheKing(state)/2;
+				scoreBlack += game.numBlackNearTheKing(state)/2.0;
 				if (board.isColumnEmpty(columnTo) || board.isRowEmpty(rowTo))
 					scoreBlack += 2;
 				return scoreBlack;
