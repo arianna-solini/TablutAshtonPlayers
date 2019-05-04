@@ -6,8 +6,6 @@ import domain.Action;
 import domain.Board;
 import domain.State;
 import domain.TablutGame;
-import domain.Action.Direction;
-import domain.State.Turn;
 //TODO decidere se farla statica
 /**
  * Class used for calculate the score of an action
@@ -45,18 +43,17 @@ public class Score{
 			case "W" :
 				ArrayList<Action> possibleWinActions = new ArrayList<Action>();
 				possibleWinActions = game.canKingWin(state);
-				scoreWhite += (state.getNumWhite() - state.getNumBlack());
+				scoreWhite = state.getNumWhite() - state.getNumBlack() - game.numBlackNearTheKing(state);
+				scoreWhite += (state.getOldNumBlack() - state.getNumBlack());
 				if(possibleWinActions != null)
 					scoreWhite += 20;
-				if(game.numBlackNearTheKing(state) > 2)
-					scoreWhite -= 2;
 				return scoreWhite;
 				
 			case "B":
-				scoreBlack += (state.getNumBlack() - state.getNumWhite());
-				scoreBlack += game.numBlackNearTheKing(state)/2.0;
+				scoreBlack = state.getNumBlack() - state.getNumWhite() + game.numBlackNearTheKing(state);
+				scoreBlack += (state.getOldNumWhite() - state.getNumWhite());
 				if (board.isColumnEmpty(columnTo) || board.isRowEmpty(rowTo))
-					scoreBlack += 2;
+					scoreBlack += 1;
 				return scoreBlack;
 
 			default:
@@ -64,5 +61,7 @@ public class Score{
 		}
 
 	}
+
+
 
 }
