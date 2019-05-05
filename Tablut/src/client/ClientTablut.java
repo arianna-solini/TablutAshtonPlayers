@@ -147,9 +147,17 @@ public class ClientTablut implements Runnable {
 					//Updates old number of  pawns
 					if(this.player == Turn.WHITE)
 						state.setOldNumWhite(state.getNumWhite());
-					else
+					else{
 						state.setOldNumBlack(state.getNumBlack());
 						
+					}
+					try{
+						state.updateOpponentPossibleActionsKeySet(opponent);
+						state.updatePossibleActions(opponent);
+					} catch(Exception e){
+						e.printStackTrace();
+					}
+
 					state.eatenUpdate(state.getBoard(), player);
 					state.updatePossibleActions(player);
 					//Updates the turn number after the opponent's move
@@ -195,6 +203,8 @@ public class ClientTablut implements Runnable {
 					state = rules.makeMove(state, selectedAction);
 					//After my move updates the key "from" of the moved pawn
 					state.updatePossibleActionsKeySet(selectedAction.getFrom(), selectedAction.getTo(), player);
+					state.eatenUpdate(state.getBoard(), opponent);
+					state.updatePossibleActions(opponent);
 					done = true;
 				} catch (Exception e) {
 					System.out.println("Eccezione: " + selectedAction.toString());

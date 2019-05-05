@@ -43,6 +43,18 @@ public class StateTest {
 		System.out.println(state.toString());
 		assertTrue(true);
 	}
+	@Test
+	public void checkStateChanging(){
+		state.setTurn(Turn.WHITE);
+		changeState(state);
+		assertTrue(state.getTurn() == Turn.BLACK);
+	}
+	public void changeState(State state){
+		if(state.getTurn() == Turn.WHITE)
+			state.setTurn(Turn.BLACK);
+		else
+		state.setTurn(Turn.WHITE);
+	}
 	
 
 

@@ -47,75 +47,59 @@ public class Score{
 		int oldNumWhite = state.getOldNumWhite();
 		int numBlackNearTheKing = game.numBlackNearTheKing(state);
 		String currentKingPosition = state.getCurrentKingPosition();
+		int rowKing = board.getRow(currentKingPosition);
+		int columnKing = board.getColumn(currentKingPosition);
 
-		//TODO lastAction potrebbe essere usata per vedere se certe pedine avversarie si stanno muovendo in una certa direzione
-		int rowTo = this.state.getLastAction().getRowTo(), columnTo = this.state.getLastAction().getColumnTo();
-
-		int whiteCaptured = (9-numWhite);
-		int weightwhiteCaptured = 1;
-
-		int blackCaptured = (16-numBlack);
-		int weightBlackCaptured = 1;
-		int weightBlackNearTheKing = 1;
+		int weightBlackNearTheKing = 0;
 
 		switch (player){
 			case "W" :
-				//if(turnNumber < 20)
-				//	captureMultiplier = 2;
-				//else if(turnNumber < 30)
-				//	captureMultiplier = 5;
-				//Differenza tra quelle che ho mangiato io e quelle che ha mangiato lui
+				//Mangio neri
+				scoreWhite += (16-numBlack);
 				
-				//Negative score of opponent's pawns
-				//scoreWhite -= numBlack;
-				switch(currentKingPosition){
-					case "e5":
-						if(numBlackNearTheKing >= 2)
-							weightBlackNearTheKing = -2;
+				//Doppio scacco del re 
+				if(rowKing == 2 || rowKing == 6 )
+					if(board.isRowEmpty(rowKing))
+						scoreWhite += 20;
 
-					case "e4":
-						if(numBlackNearTheKing >= 2)
-							weightBlackNearTheKing = -4;
+				//Doppio scacco del re 
+				if(columnKing == 2 || columnKing == 6)
+					if(board.isColumnEmpty(columnKing))
+						scoreWhite += 20;
 
-					case "e6":
-						if(numBlackNearTheKing >= 2)
-							weightBlackNearTheKing = -4;
-
-					case "d5":
-						if(numBlackNearTheKing >= 2)
-							weightBlackNearTheKing = -4;
-
-					case "f5":
-						if(numBlackNearTheKing >= 2)
-							weightBlackNearTheKing = -4;
-
-					default:
-						if(numBlackNearTheKing > 0)
-							weightBlackNearTheKing = -1;
-				}
-				if(weightBlackNearTheKing > -2)
-					weightBlackCaptured = 2;
-				
-				ArrayList<Action> possibleWinActions = game.canKingWin(state);
-				if(possibleWinActions != null)
-					return 20 + blackCaptured*weightBlackCaptured + weightBlackNearTheKing;
-				else
-					return blackCaptured*weightBlackCaptured + weightBlackNearTheKing;
+				return scoreWhite + r.nextDouble();
 				
 				
 			case "B":
-				//if(turnNumber < 20)
-				//	captureMultiplier = 5;
-				//else if(turnNumber < 30)
-				//	captureMultiplier = 2;
-				//Differenza tra quelle che ho mangiato io e quelle che ha mangiato lui
-				if(state.getTurnNumber() > 20)
-					weightwhiteCaptured = 2;
-				//scoreBlack -= numWhite;
-				//scoreBlack += (oldNumWhite - numWhite)*2;
-				//if (board.isColumnEmpty(columnTo) || board.isRowEmpty(rowTo))
-					//scoreBlack += 1;
-				return whiteCaptured*weightwhiteCaptured;
+				//Mangio bianchi
+				scoreBlack += (9-numWhite);
+				scoreBlack += numBlackNearTheKing;
+				switch(currentKingPosition){
+					case "e5":
+						if(numBlackNearTheKing >= 3)
+							weightBlackNearTheKing += 4;
+
+					case "e4":
+						if(numBlackNearTheKing >= 2)
+							weightBlackNearTheKing += 4;
+
+					case "e6":
+						if(numBlackNearTheKing >= 2)
+							weightBlackNearTheKing += 4;
+
+					case "d5":
+						if(numBlackNearTheKing >= 2)
+							weightBlackNearTheKing += 4;
+
+					case "f5":
+						if(numBlackNearTheKing >= 2)
+							weightBlackNearTheKing += 4;
+
+					default:
+						if(numBlackNearTheKing >= 1)
+							weightBlackNearTheKing += 4;
+				}
+				return scoreBlack + weightBlackNearTheKing + r.nextDouble();
 
 			default:
 				return -1;

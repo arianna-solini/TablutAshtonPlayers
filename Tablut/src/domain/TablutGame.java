@@ -607,37 +607,6 @@ public class TablutGame implements Game<State, Action, String> {
 	}
 
 	/**
-	 * @return An ArrayList of Action that can make the King escape and win
-	 * @author R.Vasumini, A.Solini
-	 */
-	public ArrayList<Action> canKingWin(State state){
-		ArrayList<Action> result = new ArrayList<Action>();
-		Board board = state.getBoard();
-		String currentKingPosition = state.getCurrentKingPosition();
-		HashMap<String, ArrayList<String>> possibleWhiteActions = state.getPossibleBlackActions();
-		
-		//Checks if the king has possible actions to do
-		if(possibleWhiteActions.get(currentKingPosition) != null){
-			for(String to :  possibleWhiteActions.get(currentKingPosition)){
-				try{
-					//Checks if the column or the row in which the king can go is empty, if it is the king the next turn can win unless is captured
-					if(board.isColumnEmpty(board.getColumn(to)) 
-					&& ((board.getPawnRight(to) == Pawn.EMPTY || board.isColumnEmpty(board.getColumn(to)-1))
-						|| (board.getPawnLeft(to) == Pawn.EMPTY || board.isColumnEmpty(board.getColumn(to)+1))))
-						result.add(new Action(currentKingPosition, to, Turn.WHITE));
-					if(board.isRowEmpty(board.getRow(to))
-					&& ((board.getPawnDown(to) == Pawn.EMPTY || board.isRowEmpty(board.getRow(to)-1))
-						|| (board.getPawnUp(to) == Pawn.EMPTY || board.isRowEmpty(board.getRow(to)+1))))
-						result.add(new Action(currentKingPosition, to, Turn.WHITE));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}	
-		} 
-		return result;
-	}
-
-	/**
 	 * @param state the current state
 	 *  @return A list of the possible actions in the current state
 	 */	

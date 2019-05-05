@@ -247,6 +247,36 @@ public class Board implements Serializable {
 	}
 
 	/**
+	 * @param row column to check
+	 * @return {@code true} if the row is empty or with white pawns, {@code false} otherwise
+	 * @author R.Vasumini, A.Solini
+	 */
+	public boolean isRowWhite(int row){
+		boolean isWhite = true;
+		for(int i = 0; i < 9; i++)
+			if(this.board[row][i] == Pawn.BLACK){
+				isWhite = false;
+				break;
+			}
+		return isWhite;
+	}
+
+	/**
+	 * @param row column to check
+	 * @return {@code true} if the row is empty or with black pawns, {@code false} otherwise
+	 * @author R.Vasumini, A.Solini
+	 */
+	public boolean isRowBlack(int row){
+		boolean isBlack = true;
+		for(int i = 0; i < 9; i++)
+			if(this.board[row][i] == Pawn.WHITE || this.board[row][i] == Pawn.KING){
+				isBlack = false;
+				break;
+			}
+		return isBlack;
+	}
+
+	/**
 	 * @param column column to check
 	 * @return {@code true} if the column is empty, {@code false} otherwise
 	 * @author R.Vasumini, A.Solini
@@ -259,6 +289,36 @@ public class Board implements Serializable {
 				break;
 			}
 		return isEmpty;
+	}
+
+	/**
+	 * @param column column to check
+	 * @return {@code true} if the column is empty or with white pawns, {@code false} otherwise
+	 * @author R.Vasumini, A.Solini
+	 */
+	public boolean isColumnWhite(int column){
+		boolean isWhite = true;
+		for(int i = 0; i < 9; i++)
+			if(this.board[i][column] == Pawn.BLACK){
+				isWhite = false;
+				break;
+			}
+		return isWhite;
+	}
+
+	/**
+	 * @param column column to check
+	 * @return {@code true} if the column is empty or with black pawns, {@code false} otherwise
+	 * @author R.Vasumini, A.Solini
+	 */
+	public boolean isColumnBlack(int column){
+		boolean isBlack = true;
+		for(int i = 0; i < 9; i++)
+			if(this.board[i][column] == Pawn.WHITE || this.board[i][column] == Pawn.KING){
+				isBlack = false;
+				break;
+			}
+		return isBlack;
 	}
 
 	public  int getLength(){

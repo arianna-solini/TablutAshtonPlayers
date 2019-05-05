@@ -78,6 +78,40 @@ public class State implements Serializable, Cloneable {
 		}
 	}
 
+	public void updateOpponentPossibleActionsKeySet(Turn opponent){
+		String toRemove = null, toAdd = null;
+		if(opponent == Turn.WHITE){
+			for(String from : this.possibleWhiteActions.keySet()){
+				if(this.board.getPawn(from) == Pawn.EMPTY || this.board.getPawn(from) == Pawn.THRONE){
+					toRemove = from;
+					for(String to : this.possibleWhiteActions.get(from)){
+						if(this.board.getPawn(to) == Pawn.WHITE || this.board.getPawn(to) == Pawn.KING){
+							toAdd = to;
+							if(this.board.getPawn(to) == Pawn.KING)
+								this.currentKingPosition = to;
+						}
+					}
+				}
+			}
+			this.possibleWhiteActions.remove(toRemove);
+			this.possibleWhiteActions.put(toAdd, null);
+		}
+		else if(opponent == Turn.BLACK){
+			for(String from : this.possibleBlackActions.keySet()){
+				if(this.board.getPawn(from) == Pawn.EMPTY){
+					toRemove = from;
+					for(String to : this.possibleBlackActions.get(from)){
+						if(this.board.getPawn(to) == Pawn.BLACK){
+							toAdd = to;
+						}
+					}
+				}
+			}
+			this.possibleBlackActions.remove(toRemove);
+			this.possibleBlackActions.put(toAdd, null);
+		}
+	}
+
 	/**
 	 * Calculates the possible moves for a pawn from a specified position of the board
 	 * @param from The string which represents the current position of the pawn
