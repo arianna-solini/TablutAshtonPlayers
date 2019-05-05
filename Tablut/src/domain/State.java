@@ -193,7 +193,7 @@ public class State implements Serializable, Cloneable {
 				this.possibleBlackActions.remove(removing);
 			
 		}
-		if (turn == Turn.WHITE){
+		else if (turn == Turn.WHITE){
 			for(String from : this.possibleWhiteActions.keySet()){
 				Pawn temp = board.getPawn(board.getRow(from),board.getColumn(from));
 				if(temp != Pawn.WHITE && temp != Pawn.KING)

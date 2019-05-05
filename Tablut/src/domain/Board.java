@@ -79,6 +79,14 @@ public class Board implements Serializable {
 		}
 	}
 
+	public Board getEmptyBoard(){
+		Board board = new Board();
+		for (int i = 0; i < 9; i++) 
+			for (int j = 0; j < 9; j++) 
+				board.setPawn(i, j, Pawn.EMPTY);
+		return board;
+	}
+
 	private void setGoals(){
 		this.goals.put("a2", Position.GOAL);
 		this.goals.put("a3", Position.GOAL);

@@ -18,14 +18,16 @@ import exceptions.*;
  */
 public class TablutGame implements Game<State, Action, String> {
 
-	public final static int minValue = -50;
-	public final static int maxValue = 50;
+	public final static int minValue = -100;
+	public final static int maxValue = 100;
 	private State initialState = new State();
-	private int movesWithoutCapturing;
+	private int movesWithoutCapturingWhite, movesWithoutCapturingBlack;
 
 	//TODO pensare a come fare un nostro eventuale costruttore di  TablutGame e se implementare il pareggio
 	public TablutGame(){
 		super();
+		this.movesWithoutCapturingBlack = 0;
+		this.movesWithoutCapturingWhite = 0;
 	}
 
 	/**
@@ -45,12 +47,11 @@ public class TablutGame implements Game<State, Action, String> {
 			switch (d) {
 			case DOWN:
 				return (rowTo < board.getLength() - 2 
-						&& board.getPawn(rowTo + 1, columnTo) == Pawn.BLACK
-						&& (board.getPawn(rowTo + 2, columnTo) == Pawn.WHITE
+						&& (board.getPawn(rowTo + 1, columnTo) == Pawn.BLACK)
+						&& ((board.getPawn(rowTo + 2, columnTo) == Pawn.WHITE)
 							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
-							|| board.getPawn(rowTo + 2, columnTo) == Pawn.KING
+							|| (board.getPawn(rowTo + 2, columnTo) == Pawn.KING)
 							|| ((positions.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)
-								// &&!(board.getPawn(rowTo+2, columnTo) == Pawn.BLACK)
 								&& !(columnTo == 8 && rowTo + 2 == 4) 
 								&& !(columnTo == 4 && rowTo + 2 == 0)
 								&& !(columnTo == 4 && rowTo + 2 == 8) 
@@ -58,12 +59,11 @@ public class TablutGame implements Game<State, Action, String> {
 
 			case UP:
 				return (rowTo > 1 
-						&& board.getPawn(rowTo - 1, columnTo) == Pawn.BLACK
-						&& (board.getPawn(rowTo - 2, columnTo) == Pawn.WHITE
+						&& (board.getPawn(rowTo - 1, columnTo) == Pawn.BLACK)
+						&& ((board.getPawn(rowTo - 2, columnTo) == Pawn.WHITE)
 							|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
-							|| board.getPawn(rowTo - 2, columnTo) == Pawn.KING
+							|| (board.getPawn(rowTo - 2, columnTo) == Pawn.KING)
 							|| ((positions.get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)
-								// &&!(board.getPawn(rowTo-2, columnTo) == Pawn.BLACK)
 								&& !(columnTo == 8 && rowTo - 2 == 4) 
 								&& !(columnTo == 4 && rowTo - 2 == 0)
 								&& !(columnTo == 4 && rowTo - 2 == 8) 
@@ -71,12 +71,11 @@ public class TablutGame implements Game<State, Action, String> {
 
 			case RIGHT:
 				return (columnTo < board.getLength() - 2 
-						&& board.getPawn(rowTo, columnTo + 1) == Pawn.BLACK
-						&& (board.getPawn(rowTo, columnTo + 2) == Pawn.WHITE
+						&& (board.getPawn(rowTo, columnTo + 1) == Pawn.BLACK)
+						&& ((board.getPawn(rowTo, columnTo + 2) == Pawn.WHITE)
 							|| (positions.get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE)
-							|| board.getPawn(rowTo, columnTo + 2) == Pawn.KING
+							|| (board.getPawn(rowTo, columnTo + 2) == Pawn.KING)
 							|| ((positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)
-								// &&!(board.getPawn(rowTo, columnTo+2) == Pawn.BLACK)
 								&& !(columnTo + 2 == 8 && rowTo == 4) 
 								&& !(columnTo + 2 == 4 && rowTo == 0)
 								&& !(columnTo + 2 == 4 && rowTo == 8) 
@@ -84,12 +83,11 @@ public class TablutGame implements Game<State, Action, String> {
 
 			case LEFT:
 				return (columnTo > 1 
-						&& board.getPawn(rowTo, columnTo - 1) == Pawn.BLACK
-						&& (board.getPawn(rowTo, columnTo - 2) == Pawn.WHITE
+						&& (board.getPawn(rowTo, columnTo - 1) == Pawn.BLACK)
+						&& ((board.getPawn(rowTo, columnTo - 2) == Pawn.WHITE)
 							|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.THRONE)
-							|| board.getPawn(rowTo, columnTo - 2) == Pawn.KING
+							|| (board.getPawn(rowTo, columnTo - 2) == Pawn.KING)
 							|| ((positions.get(board.getBox(rowTo, columnTo - 2)) == Position.CITADEL)
-								// &&!(board.getPawn(rowTo, columnTo-2) == Pawn.BLACK)
 								&& !(columnTo - 2 == 8 && rowTo == 4) 
 								&& !(columnTo - 2 == 4 && rowTo == 0)
 								&& !(columnTo - 2 == 4 && rowTo == 8) 
@@ -103,29 +101,29 @@ public class TablutGame implements Game<State, Action, String> {
 			switch (d) {
 			case DOWN:
 				return (rowTo < board.getLength() - 2 
-						&& board.getPawn(rowTo + 1, columnTo) == Pawn.WHITE
-						&& (board.getPawn(rowTo + 2, columnTo) == Pawn.BLACK
+						&& (board.getPawn(rowTo + 1, columnTo) == Pawn.WHITE)
+						&& ((board.getPawn(rowTo + 2, columnTo) == Pawn.BLACK)
 							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.THRONE)
 							|| (positions.get(board.getBox(rowTo + 2, columnTo)) == Position.CITADEL)));
 
 			case UP:
 				return (rowTo > 1 
-						&& board.getPawn(rowTo - 1, columnTo) == Pawn.WHITE
-						&& (board.getPawn(rowTo - 2, columnTo) == Pawn.BLACK
+						&& (board.getPawn(rowTo - 1, columnTo) == Pawn.WHITE)
+						&& ((board.getPawn(rowTo - 2, columnTo) == Pawn.BLACK)
 							|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.THRONE)
 							|| (positions.get(board.getBox(rowTo - 2, columnTo)) == Position.CITADEL)));
 
 			case RIGHT:
 				return (columnTo < board.getLength() - 2 
-						&& board.getPawn(rowTo, columnTo + 1) == Pawn.WHITE
-						&& (board.getPawn(rowTo, columnTo + 2) == Pawn.BLACK
-							|| positions.get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE
+						&& (board.getPawn(rowTo, columnTo + 1) == Pawn.WHITE)
+						&& ((board.getPawn(rowTo, columnTo + 2) == Pawn.BLACK)
+							|| (positions.get(board.getBox(rowTo, columnTo + 2)) == Position.THRONE)
 							|| (positions.get(board.getBox(rowTo, columnTo + 2)) == Position.CITADEL)));
 
 			case LEFT:
 				return (columnTo > 1
-						&& board.getPawn(rowTo, columnTo - 1) == Pawn.WHITE
-						&& (board.getPawn(rowTo, columnTo - 2) == Pawn.BLACK
+						&& (board.getPawn(rowTo, columnTo - 1) == Pawn.WHITE)
+						&& ((board.getPawn(rowTo, columnTo - 2) == Pawn.BLACK)
 							|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.THRONE)
 							|| (positions.get(board.getBox(rowTo, columnTo - 2)) == Position.CITADEL)));
 
@@ -152,8 +150,8 @@ public class TablutGame implements Game<State, Action, String> {
 		HashMap<String, Position> positions = board.getPositions();
 		switch (t) {
 		case WHITE:
-			return (rowTo == 0 || rowTo == board.getLength() - 1 || columnTo == 0 || columnTo == board.getLength() - 1)
-					&& (board.getPawn(rowTo, columnTo) == Pawn.KING);
+			return (board.getPawn(rowTo, columnTo) == Pawn.KING) 
+				&& (rowTo == 0 || rowTo == board.getLength() - 1 || columnTo == 0 || columnTo == board.getLength() - 1);
 
 		case BLACK:
 			switch (d) {
@@ -470,7 +468,7 @@ public class TablutGame implements Game<State, Action, String> {
 	 * @param action
 	 * @return The state with the black pawns eaten by the white
 	 */
-	private State checkCaptureWhite(State state, Action action) {
+	public State checkCaptureWhite(State state, Action action) {
 		boolean captured = false;
 		Board board = state.getBoard();
 		int rowTo = action.getRowTo(), columnTo = action.getColumnTo();
@@ -492,9 +490,9 @@ public class TablutGame implements Game<State, Action, String> {
 			captured = true;	
 		}
 		if(captured)
-			this.movesWithoutCapturing = 0;
+			this.movesWithoutCapturingWhite = 0;
 		else
-			this.movesWithoutCapturing++;
+			this.movesWithoutCapturingWhite++;
 
 		if(checkWhiteWin(state, action))
 			state.setTurn(Turn.WHITEWIN);
@@ -507,7 +505,7 @@ public class TablutGame implements Game<State, Action, String> {
 	 * @param action
 	 * @return The state with the white pawns eaten by the black
 	 */
-	private State checkCaptureBlack(State state, Action action) {
+	public State checkCaptureBlack(State state, Action action) {
 		boolean captured = false;
 		Board board = state.getBoard();
 		int rowTo = action.getRowTo(), columnTo = action.getColumnTo();
@@ -529,9 +527,9 @@ public class TablutGame implements Game<State, Action, String> {
 			captured = true;
 		}
 		if (captured)
-			this.movesWithoutCapturing = 0;
+			this.movesWithoutCapturingBlack = 0;
 		else
-			this.movesWithoutCapturing++;
+			this.movesWithoutCapturingBlack++;
 
 		if(checkBlackWin(state, action))
 			state.setTurn(Turn.BLACKWIN);
@@ -623,9 +621,13 @@ public class TablutGame implements Game<State, Action, String> {
 			for(String to :  possibleWhiteActions.get(currentKingPosition)){
 				try{
 					//Checks if the column or the row in which the king can go is empty, if it is the king the next turn can win unless is captured
-					if(board.isColumnEmpty(board.getColumn(to)))
+					if(board.isColumnEmpty(board.getColumn(to)) 
+					&& ((board.getPawnRight(to) == Pawn.EMPTY || board.isColumnEmpty(board.getColumn(to)-1))
+						|| (board.getPawnLeft(to) == Pawn.EMPTY || board.isColumnEmpty(board.getColumn(to)+1))))
 						result.add(new Action(currentKingPosition, to, Turn.WHITE));
-					if(board.isRowEmpty(board.getRow(to)))
+					if(board.isRowEmpty(board.getRow(to))
+					&& ((board.getPawnDown(to) == Pawn.EMPTY || board.isRowEmpty(board.getRow(to)-1))
+						|| (board.getPawnUp(to) == Pawn.EMPTY || board.isRowEmpty(board.getRow(to)+1))))
 						result.add(new Action(currentKingPosition, to, Turn.WHITE));
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -741,6 +743,34 @@ public class TablutGame implements Game<State, Action, String> {
 			return true;
 		else
 			return false;
+	}
+
+	/**
+	 * @return the movesWithoutCapturingWhite
+	 */
+	public int getMovesWithoutCapturingWhite() {
+		return movesWithoutCapturingWhite;
+	}
+
+	/**
+	 * @param movesWithoutCapturingWhite the movesWithoutCapturingWhite to set
+	 */
+	public void setMovesWithoutCapturingWhite(int movesWithoutCapturingWhite) {
+		this.movesWithoutCapturingWhite = movesWithoutCapturingWhite;
+	}
+
+	/**
+	 * @return the movesWithoutCapturingBlack
+	 */
+	public int getMovesWithoutCapturingBlack() {
+		return movesWithoutCapturingBlack;
+	}
+
+	/**
+	 * @param movesWithoutCapturingBlack the movesWithoutCapturingBlack to set
+	 */
+	public void setMovesWithoutCapturingBlack(int movesWithoutCapturingBlack) {
+		this.movesWithoutCapturingBlack = movesWithoutCapturingBlack;
 	}
 
 }

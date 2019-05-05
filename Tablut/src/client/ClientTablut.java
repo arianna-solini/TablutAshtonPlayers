@@ -47,7 +47,7 @@ public class ClientTablut implements Runnable {
 	 * State used after the updates
 	 */
 	private State currentState;
-	private  final static  int searchTime = 20;    
+	private  final static  int searchTime = 5;    
 
 	public ClientTablut(String player, String name) throws UnknownHostException, IOException {
 		
@@ -157,6 +157,7 @@ public class ClientTablut implements Runnable {
 				}
 
 				this.currentState = state;
+				System.out.println("Turn: " + state.getTurnNumber());	
 				System.out.println("Current state:");
 				System.out.println(this.currentState.toString());
 				play(state, rules, search);
@@ -182,7 +183,7 @@ public class ClientTablut implements Runnable {
 			long inizio = System.currentTimeMillis();
 			Action selectedAction = null;
 			boolean done = false;
-			while (!done) {				
+			while (!done) {			
 				System.out.println(rules.getPlayer(state) + "  playing ... ");
 				//Selects an action using iterative deepening alpha-beta search
 				selectedAction = search.makeDecision(state);

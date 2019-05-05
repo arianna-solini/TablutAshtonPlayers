@@ -27,6 +27,7 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	//Indicates that non-terminal nodes have been evaluated
 	private boolean heuristicEvaluationUsed; 
 	private Timer timer;
+	public int numCuts;
 
 
 	private Metrics metrics = new Metrics();
@@ -74,6 +75,7 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	 */
 	@Override
 	public Action makeDecision(State state) {
+		numCuts = 0;
 		metrics = new Metrics();
 		String player = game.getPlayer(state);
 		List<Action> results = orderActions(state, game.getActions(state), player, 0);
@@ -103,6 +105,7 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 				}
 			}
 		} while (!timer.timeOutOccurred() && heuristicEvaluationUsed);
+		System.out.println("Tagli effettuati: " + numCuts);
 		return results.get(0);
 	}
 
@@ -117,8 +120,10 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			for (Action action : orderActions(state, game.getActions(state), player, depth)) {
 				//Same as in makeDecision method's minValue
 				value = Math.max(value, minValue(game.getResult(state, action), player, alpha, beta, depth + 1));
-				if (value >= beta)
+				if (value >= beta){
+					numCuts++;
 					return value;
+				}
 				alpha = Math.max(alpha, value);
 			}
 			return value;
@@ -136,8 +141,10 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			for (Action action : orderActions(state, game.getActions(state), player, depth)) {
 				//Same as in makeDecision method's minValue
 				value = Math.min(value, maxValue(game.getResult(state, action), player, alpha, beta, depth + 1));
-				if (value <= alpha)
+				if (value <= alpha){
+					numCuts++;
 					return value;
+				}
 				beta = Math.min(beta, value);
 			}
 			return value;
