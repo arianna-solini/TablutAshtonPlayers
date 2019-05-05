@@ -7,11 +7,18 @@
         <delete dir="build"/>
     </target>
 
+    <path id="class.path">
+        <fileset dir="lib">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
     <target name="compile">
         <mkdir dir="build"/>
-        <javac encoding="iso-8859-1" srcdir="src" 
-            destdir="build"
-            classpath="lib/gson-2.2.2.jar" />
+        <javac includeantruntime="false" encoding="iso-8859-1" srcdir="src" 
+            destdir="build">
+            <classpath refid="class.path"/>
+        </javac>
         <copy todir="build">
             <fileset dir="src" excludes="*.java"/>
         </copy>
@@ -21,6 +28,7 @@
         <java classname="client.ClientTablut" fork="true">
             <classpath>
                 <pathelement location="lib/gson-2.2.2.jar"/>
+                <pathelement location="lib/aima-core-3.0.0.jar"/>
                 <pathelement location="build"/>
             </classpath>
             <arg value="${arg0}"/>
