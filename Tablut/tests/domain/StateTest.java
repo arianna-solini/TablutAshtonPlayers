@@ -2,7 +2,6 @@ package domain;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 import domain.Board.Pawn;
@@ -38,6 +37,11 @@ public class StateTest {
 		assertTrue(state.getPossibleBlackActions().keySet().size() == 0);
 		for (String to : state.getPossibleWhiteActions().get("e3"))
 				System.out.println(to);
+	}
+	@Test
+	public void testPrintBoard(){
+		System.out.println(state.toString());
+		assertTrue(true);
 	}
 	
 

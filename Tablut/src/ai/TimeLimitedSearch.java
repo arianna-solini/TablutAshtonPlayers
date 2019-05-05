@@ -10,7 +10,8 @@ import domain.State;
 import domain.TablutGame;
 
 /**
- * Alternative implementation of IterativeDeepeningAlphaBetaSearch of aima library
+ * Alternative implementation of IterativeDeepeningAlphaBetaSearch of aima
+ * library
  * <p>
  * Implements an iterative deepening Minimax search with alpha-beta pruning and
  * action ordering. Maximal computation time is specified in seconds.
@@ -24,11 +25,10 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	protected double utilMax;
 	protected double utilMin;
 	protected int currDepthLimit;
-	//Indicates that non-terminal nodes have been evaluated
-	private boolean heuristicEvaluationUsed; 
+	// Indicates that non-terminal nodes have been evaluated
+	private boolean heuristicEvaluationUsed;
 	private Timer timer;
 	public int numCuts;
-
 
 	private Metrics metrics = new Metrics();
 
@@ -45,7 +45,7 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	 * @param time    Maximal computation time in seconds.
 	 */
 	public static TimeLimitedSearch createFor(TablutGame game, double utilMin, double utilMax, int time) {
-			return new TimeLimitedSearch(game, utilMin, utilMax, time);
+		return new TimeLimitedSearch(game, utilMin, utilMax, time);
 	}
 
 	/**
@@ -68,14 +68,14 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	}
 
 	/**
-	 * It is based on iterative
-	 * deepening and tries to make to a good decision in limited time. Credit
-	 * goes to Behi Monsio who had the idea of ordering actions by utility in
-	 * subsequent depth-limited search runs.
+	 * It is based on iterative deepening and tries to make to a good decision in
+	 * limited time. Credit goes to Behi Monsio who had the idea of ordering actions
+	 * by utility in subsequent depth-limited search runs.
 	 */
 	@Override
 	public Action makeDecision(State state) {
 		numCuts = 0;
+		ActionStore<Action> newResults;
 		metrics = new Metrics();
 		String player = game.getPlayer(state);
 		List<Action> results = orderActions(state, game.getActions(state), player, 0);
@@ -84,23 +84,29 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		do {
 			incrementDepthLimit();
 			heuristicEvaluationUsed = false;
-			ActionStore<Action> newResults = new ActionStore<>();
+			newResults = new ActionStore<>();
 			for (Action action : results) {
-				//minValue calculus are based on the simulated action's state obtained by game.getResult
-				double value = minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
+				// minValue calculus are based on the simulated action's state obtained by
+				// game.getResult
+				double value = minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY,
+						Double.POSITIVE_INFINITY, 1);
 				if (timer.timeOutOccurred())
 					break; // exit from action loop
 				newResults.add(action, value);
 			}
 			if (newResults.size() > 0) {
-				//In the next iteration results will be checked from the best to the worst action thanks to ActionStore's newResults
-				//The actions in results are always the same, only their position in the list will change thanks to the iterative deep search
+				// In the next iteration results will be checked from the best to the worst
+				// action thanks to ActionStore's newResults
+				// The actions in results are always the same, only their position in the list
+				// will change thanks to the iterative deep search
 				results = newResults.actions;
+				System.out.println("Miglior score: " + newResults.utilValues.get(0) + " dell'azione "
+						+ newResults.actions.get(0));
 				if (!timer.timeOutOccurred()) {
 					if (hasSafeWinner(newResults.utilValues.get(0)))
 						break; // exit from iterative deepening loop
-					else if (newResults.size() > 1
-							&& isSignificantlyBetter(newResults.utilValues.get(0), newResults.utilValues.get(1)))
+					else if (newResults.size() > 1 && isSignificantlyBetter(
+							newResults.utilValues.get(0), newResults.utilValues.get(1)))
 						break; // exit from iterative deepening loop
 				}
 			}
@@ -135,6 +141,7 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		updateMetrics(depth);
 		if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
 			return -eval(state, getOtherPlayer(player));
+			//return eval(state, player);
 		} else {
 			double value = Double.POSITIVE_INFINITY;
 			//Current actions are calculated from the passed simulation state
@@ -179,9 +186,8 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	 * always false.
 	 */
 	protected boolean isSignificantlyBetter(double newUtility, double utility) {
-		//newUtility - 5 is an exemple
-		//return newUtility - 5 > utility ? true : false;
-		return false;
+		return newUtility - utility > 10 ? true : false;
+		
 	}
 
 	/**
@@ -250,9 +256,9 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	/**
 	 * Orders actions by utility.
 	 */
-	private static class ActionStore<A> {
-		private List<A> actions = new ArrayList<>();
-		private List<Double> utilValues = new ArrayList<>();
+	public static class ActionStore<A> {
+		public List<A> actions = new ArrayList<>();
+		public List<Double> utilValues = new ArrayList<>();
 
 		void add(A action, double utilValue) {
 			int idx = 0;

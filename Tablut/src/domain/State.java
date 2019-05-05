@@ -361,12 +361,26 @@ public class State implements Serializable, Cloneable {
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < this.board.getLength(); i++) {
 			for (int j = 0; j < this.board.getLength(); j++) {
-				result.append(this.board.getBoard()[i][j].toString());
+				if(this.board.getBoard()[i][j] == Pawn.EMPTY && this.board.getPositions().get(this.board.getBox(i,j)) == Position.CITADEL)
+					result.append("#  ");
+				else if(this.board.getBoard()[i][j] == Pawn.EMPTY)
+					 result.append("-  ");
+				else if (this.board.getBoard()[i][j] == Pawn.KING)
+					result.append("K  ");
+				else if (this.board.getBoard()[i][j] == Pawn.BLACK)
+					result.append("B  ");
+				else if (this.board.getBoard()[i][j] == Pawn.WHITE)
+					result.append("W  ");
+				else if (this.board.getBoard()[i][j] == Pawn.THRONE)
+					result.append("#  ");
+					
 				if (j == 8) {
+					result.append("  " + (i+1));
 					result.append("\n");
 				}
 			}
 		}
+		result.append("\nA  B  C  D  E  F  G  H  I\n");
 		return result.toString();
 	}
 

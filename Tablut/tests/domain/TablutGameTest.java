@@ -1,10 +1,7 @@
 package domain;
 
 import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
-
-import org.junit.Assert;
 import org.junit.Test;
 
 import domain.Board.Pawn;
