@@ -144,30 +144,28 @@ public class ClientTablut implements Runnable {
 				//TODO Sistema l'alternanza dei giocatori stando fermo quando tocca all'altro
 				//If it's my turn I've to check if a pawn of mine has been eaten and update my PossibleActions
 				if(this.player == state.getTurn() && (state.getTurnNumber() != 1 || player != Turn.WHITE)){
-					//Updates old number of  pawns
-					if(this.player == Turn.WHITE)
-						state.setOldNumWhite(state.getNumWhite());
-					else{
-						state.setOldNumBlack(state.getNumBlack());
+					//Updates my old number of  pawns
+					if(player == Turn.WHITE)
+						state.setOldNumPawn(player, state.getNumWhite());
+					else
+						state.setOldNumPawn(player, state.getNumBlack());
 						
-					}
-					try{
-						state.updateOpponentPossibleActionsKeySet(opponent);
-						state.updatePossibleActions(opponent);
-					} catch(Exception e){
-						e.printStackTrace();
-					}
-
+					//Updates opponent's actions' map keyset after his move
+					state.updateOpponentPossibleActionsKeySet(opponent);
+					//Updates opponent's possible actions
+					state.updatePossibleActions(opponent);
+					
+					//Removes from my actions' keyset the pawns that I've lost
 					state.eatenUpdate(state.getBoard(), player);
+					//Updates my possible actions
 					state.updatePossibleActions(player);
 					//Updates the turn number after the opponent's move
 					state.incrementTurnNumber();
 				}
 
-				this.currentState = state;
 				System.out.println("Turn: " + state.getTurnNumber());	
 				System.out.println("Current state:");
-				System.out.println(this.currentState.toString());
+				System.out.println(state.toString());
 				play(state, rules, search);
 			}
 
@@ -203,7 +201,14 @@ public class ClientTablut implements Runnable {
 					state = rules.makeMove(state, selectedAction);
 					//After my move updates the key "from" of the moved pawn
 					state.updatePossibleActionsKeySet(selectedAction.getFrom(), selectedAction.getTo(), player);
+					//Updates opponent's old pawns number in case I've captured some of them
+					if(opponent == Turn.WHITE)
+						state.setOldNumPawn(opponent, state.getNumWhite());
+					else
+						state.setOldNumPawn(opponent, state.getNumBlack());
+					//Removes the opponent's captured pawns from his actions'map
 					state.eatenUpdate(state.getBoard(), opponent);
+					//Updates opponent's possible actions
 					state.updatePossibleActions(opponent);
 					done = true;
 				} catch (Exception e) {

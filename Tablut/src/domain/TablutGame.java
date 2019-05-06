@@ -663,7 +663,7 @@ public class TablutGame implements Game<State, Action, String> {
 			if(action.getTurn() == Turn.WHITE){
 				result = checkCaptureWhite(result, action);
 				//TODO setoldnumblack e eatenupdate posso metterli direttamente nelle check migliorando l efficienza non essendo svolte per forza sempre			
-				result.setOldNumBlack(result.getNumBlack());
+				result.setOldNumPawn(Turn.BLACK, result.getNumBlack());
 				result.eatenUpdate(result.getBoard(), Turn.BLACK);
 				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.WHITE);
 				result.updatePossibleActions(Turn.BLACK);
@@ -672,7 +672,7 @@ public class TablutGame implements Game<State, Action, String> {
 			}
 			else if(action.getTurn() == Turn.BLACK){
 				result = checkCaptureBlack(result, action);					
-				result.setOldNumWhite(result.getNumWhite());
+				result.setOldNumPawn(Turn.WHITE, result.getNumWhite());
 				result.eatenUpdate(result.getBoard(), Turn.WHITE);
 				result.updatePossibleActionsKeySet(action.getFrom(), action.getTo(), Turn.BLACK);
 				result.updatePossibleActions(Turn.WHITE);

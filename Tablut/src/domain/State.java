@@ -35,12 +35,12 @@ public class State implements Serializable, Cloneable {
 
 	protected Board board;
 	protected Turn turn;
-	private Action lastAction;
-	private int oldNumWhite, oldNumBlack;
-	private String currentKingPosition;
-	private int turnNumber;
-	private HashMap<String, ArrayList<String>> possibleWhiteActions = new HashMap<String, ArrayList<String>>();
-	private HashMap<String, ArrayList<String>> possibleBlackActions = new HashMap<String, ArrayList<String>>();
+	protected Action lastAction;
+	protected int oldNumWhite, oldNumBlack;
+	protected String currentKingPosition;
+	protected int turnNumber;
+	protected HashMap<String, ArrayList<String>> possibleWhiteActions = new HashMap<String, ArrayList<String>>();
+	protected HashMap<String, ArrayList<String>> possibleBlackActions = new HashMap<String, ArrayList<String>>();
 
 	public State() {
 		this.board = new Board();
@@ -317,14 +317,6 @@ public class State implements Serializable, Cloneable {
 	}
 
 	/**
-	 * @param oldNumWhite the previous number of  white pawns in the board
-	 * @author R.Vasumini, A.Solini
-	 */
-	public void setOldNumWhite(int oldNumWhite) {
-		this.oldNumWhite = oldNumWhite;
-	}
-
-	/**
 	 * @return The number of black pawns in the board in the previous turn
 	 * @author R.Vasumini, A.Solini
 	 */
@@ -333,11 +325,15 @@ public class State implements Serializable, Cloneable {
 	}
 
 	/**
-	 * @param oldNumWhite the previous number of  black pawns in the board
+	 * @param player the player whose old pawns are to set
+	 * @param oldNumPlayerPawn the previous number of  player's pawns in the board
 	 * @author R.Vasumini, A.Solini
 	 */
-	public void setOldNumBlack(int oldNumBlack) {
-		this.oldNumBlack = oldNumBlack;
+	public void setOldNumPawn(Turn player, int oldNumPlayerPawn) {
+		if(player == Turn.BLACK)
+			this.oldNumBlack = oldNumPlayerPawn;
+		else if(player == Turn.WHITE)
+			this.oldNumWhite = oldNumPlayerPawn;
 	}
 
 	/**
@@ -500,6 +496,7 @@ public class State implements Serializable, Cloneable {
 	 * Clones the State
 	 */
 	@Override
+	@SuppressWarnings (value="unchecked")
 	public State clone() {
 		State result = new State();
 		Board oldboard = this.board;
@@ -508,10 +505,47 @@ public class State implements Serializable, Cloneable {
 		for (int i = 0; i < this.board.getBoard().length; i++) 
 			for (int j = 0; j < this.board.getBoard()[i].length; j++) 
 				newboard.setPawn(i, j, oldboard.getPawn(i, j));
-				
+
+		result.setCurrentKingPosition(this.currentKingPosition);
+		result.setTurnNumber(this.turnNumber);
+		
+		result.setPossibleBlackActions((HashMap<String, ArrayList<String>>) this.possibleBlackActions.clone());
+		result.setPossibleWhiteActions((HashMap<String, ArrayList<String>>) this.possibleWhiteActions.clone());
+		
+		result.setOldNumPawn(Turn.WHITE, this.oldNumWhite);
+		result.setOldNumPawn(Turn.BLACK, this.oldNumBlack);
+
+		try {
+			result.setLastAction(new Action(this.lastAction.getFrom(), this.lastAction.getTo(),
+					this.lastAction.getTurn()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		result.setBoard(newboard);
 		result.setTurn(this.turn);
 		return result;
+	}
+
+	/**
+	 * @param possibleWhiteActions the possibleWhiteActions to set
+	 */
+	public void setPossibleWhiteActions(HashMap<String, ArrayList<String>> possibleWhiteActions) {
+		this.possibleWhiteActions = possibleWhiteActions;
+	}
+
+	/**
+	 * @param possibleBlackActions the possibleBlackActions to set
+	 */
+	public void setPossibleBlackActions(HashMap<String, ArrayList<String>> possibleBlackActions) {
+		this.possibleBlackActions = possibleBlackActions;
+	}
+
+	/**
+	 * @param turnNumber the turnNumber to set
+	 */
+	public void setTurnNumber(int turnNumber) {
+		this.turnNumber = turnNumber;
 	}
 
 }

@@ -1,6 +1,8 @@
 package domain;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -55,6 +57,32 @@ public class StateTest {
 		else
 		state.setTurn(Turn.WHITE);
 	}
+
+	@Test
+	public void testChangeCurrentKingPositionAndHashMap(){
+		assertTrue(state.getCurrentKingPosition().equals("e5"));
+		state.setCurrentKingPosition("e3");
+		assertTrue(state.getCurrentKingPosition().equals("e3"));
+		assertNotNull(state.getPossibleWhiteActions().get("e4"));
+
+		State change = new State();
+		change.updatePossibleActionsKeySet("e4", "f4", Turn.WHITE);
+		change.updatePossibleActions(Turn.WHITE);
+		state.setPossibleWhiteActions(change.getPossibleWhiteActions());
+		assertNotNull(state.getPossibleWhiteActions().get("f4"));
+
+		state.updatePossibleActionsKeySet("f4", "e4", Turn.WHITE);
+		state.updatePossibleActions(Turn.WHITE);
+		assertNull(change.getPossibleWhiteActions().get("f4"));
+
+		change.currentKingPosition = state.currentKingPosition;
+		assertTrue(change.currentKingPosition.equals("e3"));
+		change.currentKingPosition = "e4";
+		assertTrue(state.currentKingPosition.equals("e3"));
+		//Dopo questi test si capisce che le stringhe non subiscono variazioni, come variabili primitive, le hashmap invece si
+	}
+
+	
 	
 
 

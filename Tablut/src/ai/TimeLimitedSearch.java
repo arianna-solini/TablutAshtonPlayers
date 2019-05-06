@@ -119,7 +119,7 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	public double maxValue(State state, String player, double alpha, double beta, int depth) {
 		updateMetrics(depth);
 		if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
-			return eval(state, player);
+			return -eval(state, getOtherPlayer(player));
 		} else {
 			double value = Double.NEGATIVE_INFINITY;
 			//Current actions are calculated from the passed simulation state
@@ -140,8 +140,7 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	public double minValue(State state, String player, double alpha, double beta, int depth) {
 		updateMetrics(depth);
 		if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
-			return -eval(state, getOtherPlayer(player));
-			//return eval(state, player);
+			return eval(state, player);
 		} else {
 			double value = Double.POSITIVE_INFINITY;
 			//Current actions are calculated from the passed simulation state
@@ -186,7 +185,8 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	 * always false.
 	 */
 	protected boolean isSignificantlyBetter(double newUtility, double utility) {
-		return newUtility - utility > 10 ? true : false;
+		//return newUtility - utility > 10 ? true : false;
+		return false;
 		
 	}
 
