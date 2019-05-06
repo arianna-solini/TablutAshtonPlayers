@@ -1,29 +1,23 @@
 .ArrayList che riempiamo man mano con gli stati della partita in modo da analizzarlo nel durante
-.Cercare di ottimizzare con lambda expressions
 .Sistemare le draw conditions
 .Sfruttare il multithreading
-
-
-**intelligenza**
-.Tenere conto delle pedine mangiate e magari tenere conto dell'ultima pedina dell'avversario spostata (mezzo fatto)
-.fare funzione che controlla se il re va in una cella dove è possibile scappare in due vie (senza esser mangiato)
 .fare funzione che controlla la vicinanza al re e celle libere attorno a lui
 .fare funzione che chiuda le uscite al re
+.guardare la vicinanza al re anche in diagonale
+.guardare il numero di neri nelle citadel
+.stare attenti al re nelle celle (2,2), (6,6), (2,6), (6,2)
+.pensare a un punteggio pesato, o perlomeno a range di punti ben distinguibili (+1 mangiata, +10 vicinanza, +20 scacco ecc (?))
+.creare branch in cui fare doMove e undoMove
+.pensare se inglobare nella movePawn e checkCapture e makeMove gli update dei campi dello stato
+.provare a rimettere i valori negativi in entrambe le eval e vedere se migliora la situa
+.trovare ripercorrendo tutti i passaggi quali sono le operazioni più costose
 
-Nere - Attacco:
-.Cattura bianca = +2
-.Vicinanza al re (dopo un certo punto della partita?)
 
-Bianche - Difesa:
-.Cattura = +2
-.Protezione Re
 
-spostare la enum Direction da Board a Action, in generale pensare a riordinare il codice e decidere dove far stare la roba
 
-il re nella checkKingWin controlla se ha la riga/colonna vuota ma non controlla se compiendo quell azione può venir mangiato, quindi il controllo non è completo,
-meglio mantenere checkKingWin così com'è e completare il controllo altrove (?)
 
-possiamo usare numBlackNearTheKing e lo stesso per white come controlli a seconda della posizione del re ( sul trono, vicino al trono o fuori)
+
+
 
 
 
