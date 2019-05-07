@@ -2,6 +2,8 @@ package ai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import aima.core.search.adversarial.AdversarialSearch;
 import aima.core.search.framework.Metrics;
@@ -31,6 +33,10 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	public int numCuts;
 
 	private Metrics metrics = new Metrics();
+
+	// variabili per thread
+	int K = 4;
+	private Lock lock = new ReentrantLock();
 
 	/**
 	 * Creates a new search object for a given game.
@@ -76,24 +82,45 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	public Action makeDecision(State state) {
 		numCuts = 0;
 		ActionStore<Action> newResults;
+		ArrayList<List<Action>> temp = new ArrayList<List<Action>>(K);
 		metrics = new Metrics();
 		String player = game.getPlayer(state);
 		List<Action> results = orderActions(state, game.getActions(state), player, 0);
 		timer.start();
 		currDepthLimit = 0;
+
 		do {
 			incrementDepthLimit();
+			System.out.println(""+currDepthLimit);
 			heuristicEvaluationUsed = false;
 			newResults = new ActionStore<>();
-			for (Action action : results) {
-				// minValue calculus are based on the simulated action's state obtained by
-				// game.getResult
-				double value = minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY,
-						Double.POSITIVE_INFINITY, 1);
-				if (timer.timeOutOccurred())
-					break; // exit from action loop
-				newResults.add(action, value);
+			int part = results.size() / K;
+			temp.add(0, results.subList(0, part - 1));
+			temp.add(1, results.subList(part, (part * 2) - 1));
+			temp.add(2, results.subList(part * 2, (part * 3) - 1));
+			temp.add(3, results.subList(part * 3, (part * 4) - 1));
+			Thread t[] = new Thread[K];
+			final ActionStore<Action> newResultsTemp = new ActionStore<>();
+			int index = 0;
+			for (List<Action> list : temp) {
+				t[index] = new Thread() {
+					public void run() {
+						System.out.println(this.getName());
+						for (Action action: list){
+							// minValue calculus are based on the simulated action's state obtained by
+							// game.getResult
+							double value = minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY,
+							Double.POSITIVE_INFINITY, 1);
+							if (timer.timeOutOccurred())
+								break; // exit from action loop
+							newResultsTemp.add(action, value);
+						}
+					}
+				};
+				t[index].start();
+				index++;
 			}
+			newResults = newResultsTemp;
 			if (newResults.size() > 0) {
 				// In the next iteration results will be checked from the best to the worst
 				// action thanks to ActionStore's newResults
@@ -110,6 +137,10 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 						break; // exit from iterative deepening loop
 				}
 			}
+			temp.clear();
+			for (Thread thread: t) {
+				thread.interrupt();
+			}
 		} while (!timer.timeOutOccurred() && heuristicEvaluationUsed);
 		System.out.println("Tagli effettuati: " + numCuts);
 		return results.get(0);
@@ -117,45 +148,59 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 
 	// returns an utility value
 	public double maxValue(State state, String player, double alpha, double beta, int depth) {
-		updateMetrics(depth);
-		if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
-			return eval(state, player);
-		} else {
-			double value = Double.NEGATIVE_INFINITY;
-			//Current actions are calculated from the passed simulation state
-			for (Action action : orderActions(state, game.getActions(state), player, depth)) {
-				//Same as in makeDecision method's minValue
-				value = Math.max(value, minValue(game.getResult(state, action), player, alpha, beta, depth + 1));
-				if (value >= beta){
-					numCuts++;
-					return value;
+		lock.lock();
+		double res = 0;
+		try{
+			updateMetrics(depth);
+			if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
+				res = -eval(state, getOtherPlayer(player));
+			} else {
+				double value = Double.NEGATIVE_INFINITY;
+				//Current actions are calculated from the passed simulation state
+				for (Action action : orderActions(state, game.getActions(state), player, depth)) {
+					//Same as in makeDecision method's minValue
+					value = Math.max(value, minValue(game.getResult(state, action), player, alpha, beta, depth + 1));
+					if (value >= beta){
+						numCuts++;
+						res = value;
+						break;
+					}
+					alpha = Math.max(alpha, value);
 				}
-				alpha = Math.max(alpha, value);
+				if(value < beta)
+					res = value;
 			}
-			return value;
-		}
+		}finally{lock.unlock();}
+		return res;
 	}
 
 	// returns a utility value, the opponent uses this method
 	public double minValue(State state, String player, double alpha, double beta, int depth) {
-		updateMetrics(depth);
-		if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
-			return -eval(state, getOtherPlayer(player));
-			//return eval(state, player);
-		} else {
-			double value = Double.POSITIVE_INFINITY;
-			//Current actions are calculated from the passed simulation state
-			for (Action action : orderActions(state, game.getActions(state), player, depth)) {
-				//Same as in makeDecision method's minValue
-				value = Math.min(value, maxValue(game.getResult(state, action), player, alpha, beta, depth + 1));
-				if (value <= alpha){
-					numCuts++;
-					return value;
+		lock.lock();
+		double res = 0;
+		try{
+			updateMetrics(depth);
+			if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
+				res = eval(state, player);
+				//return eval(state, player);
+			} else {
+				double value = Double.POSITIVE_INFINITY;
+				//Current actions are calculated from the passed simulation state
+				for (Action action : orderActions(state, game.getActions(state), player, depth)) {
+					//Same as in makeDecision method's minValue
+					value = Math.min(value, maxValue(game.getResult(state, action), player, alpha, beta, depth + 1));
+					if (value <= alpha){
+						numCuts++;
+						res = value;
+						break;
+					}
+					beta = Math.min(beta, value);
 				}
-				beta = Math.min(beta, value);
+				if(value > alpha)
+					res = value;
 			}
-			return value;
-		}
+		}finally{ lock.unlock(); }
+		return res;
 	}
 
 	private void updateMetrics(int depth) {
@@ -186,7 +231,8 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	 * always false.
 	 */
 	protected boolean isSignificantlyBetter(double newUtility, double utility) {
-		return newUtility - utility > 10 ? true : false;
+		//return newUtility - utility > 10 ? true : false;
+		return false;
 		
 	}
 
