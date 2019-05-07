@@ -1,38 +1,52 @@
 package client;
 
-import domain.Action;
-import domain.Game;
-import domain.State;
-import domain.StateGson;
-import domain.Board;
-import domain.Board.Pawn;
-import domain.State.Turn;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import domain.Action;
+import domain.State;
+import domain.StateGson;
+import domain.TablutGame;
+import domain.State.Turn;
+import ai.TimeLimitedSearch;
 import utils.StreamUtils;
 
-public class ClientTablut implements Runnable{
+/**
+ * Client class representing the Tablut player connecting to the server
+ * @author R.Vasumini, A.Solini
+ */
+public class ClientTablut implements Runnable {
 
-	private State.Turn player; 
+	/**
+	 * Player role, it can be white or black
+	 */
+	private Turn player; 
+	/**
+	 * Opponent role
+	 */
+	private Turn opponent;
+	/**
+	 * Team name
+	 */
 	private String name;
+	/**
+	 * Player socket used to connect to the server
+	 */
 	private Socket playerSocket;
 	private DataInputStream in;
 	private DataOutputStream out;
 	private Gson gson;
-    private State currentState;
 
+	private  final static  int searchTime = 5;    
+
+	//TODO creare un costruttore che preveda un indirizzo ip e porta variabili
 	public ClientTablut(String player, String name) throws UnknownHostException, IOException {
 		
 		int port = -1;
@@ -40,10 +54,12 @@ public class ClientTablut implements Runnable{
 		this.gson = new Gson();
 
 		if(player.equalsIgnoreCase("white")){
-			this.player = State.Turn.WHITE;
+			this.player = Turn.WHITE;
+			this.opponent = Turn.BLACK;
 			port = 5800;
 		}else if(player.equalsIgnoreCase("black")){
-			this.player = State.Turn.BLACK;
+			this.player = Turn.BLACK;
+			this.opponent = Turn.WHITE;
 			port = 5801;
 		}
 
@@ -58,29 +74,32 @@ public class ClientTablut implements Runnable{
 		in = new DataInputStream(playerSocket.getInputStream());
 	}
 
-    public static void main(String[] args) throws Exception {
+	/**
+	 * Client's main, it has to be launched specifiying squad's name and role
+	 * @param args aiofdtiger (white|black)
+	 * @throws Exception
+	 * @author R.Vasumini, A.Solini
+	 */
+    	public static void main(String[] args) throws Exception {
         
-        String player = null;
+		String player = null;
+		//TODO verificare se essenziale specificare il nome del concorrente secondo le regole
 		String name = null;
-		
-        /* CONTROLLO ARGOMENTI */
+		//Checks Argument
 		try {
 			if (args.length == 2) {
-                name = args[0];
-                player = args[1];
-				if (!(name.equalsIgnoreCase("aiofdtiger")))
-				{ 
-                    System.out.println("Wrong team name, it's AIofDtiger or aiofdtiger\n");
-                    System.exit(1);
+                		name = args[0];
+                		player = args[1];
+				if (!(name.equalsIgnoreCase("aiofdtiger"))){ 
+                   			 System.out.println("Wrong team name, it's AIofDtiger or aiofdtiger\n");
+                   			 System.exit(1);
 				}
-				if (!(player.equalsIgnoreCase("white") || player.equalsIgnoreCase("black"))){
-					
+				if (!(player.equalsIgnoreCase("white") || player.equalsIgnoreCase("black"))){	
 					System.out.println("You must specify which player you are (WHITE or BLACK)\n");
-                    System.exit(2);
+                    			System.exit(2);
 				}
-				
 			} else {
-				System.out.println("Usage: <TeamName> [White|Black] \n");// Usage
+				System.out.println("Usage: <TeamName> (White|Black) \n");// Usage
 				System.out.println("Client: closing...");
 				System.exit(3);
 			}
@@ -95,230 +114,132 @@ public class ClientTablut implements Runnable{
 		client.run();
 	}//main
 
+	/**
+	 * Main Thread code
+	 * @author R.Vasumini, A.Solini
+	 */
 	@Override
 	public void run() {
 		try{
+			//Tells to the server squad's name
 			StreamUtils.writeString(out, this.gson.toJson(this.name));
 		}catch(Exception e){
 			e.printStackTrace();
 			System.exit(1);
 		}
-
-		System.out.println("-----Inizio partita AshtonTablut-----");
-		Game rules = new Game(99, 0, "localLogs", "test", "test");
+		State state = new State();
+		TablutGame rules = new TablutGame();
+		TimeLimitedSearch search = new TimeLimitedSearch(rules, TablutGame.minValue, TablutGame.maxValue, searchTime);
+		System.out.println("/ASHTON TABLUT\\");
 		System.out.println("You are player " + this.player.toString() + "!");
-		State state = new State(); // istanziando State inizializzo anche la board (vedi costruttore)
-		state.setTurn(State.Turn.WHITE); //iniziano i bianchi
-
 		try{
 			while(true){
-				StateGson temp =  this.gson.fromJson(StreamUtils.readString(in), StateGson.class);	//Avendo personalizzato state abbiamo introdotto StateGson per una lettura corretta
+				//The use of StateGson is due to correctly receive the state from the server
+				StateGson temp =  this.gson.fromJson(StreamUtils.readString(in), StateGson.class);
+				//Our state must be updated consequently
 				state.getBoard().setBoard(temp.getBoard());
-				state.setTurn(temp.getTurn()); 
-				this.currentState = state;
-				System.out.println("Current state:");
-				System.out.println(this.currentState.toString());
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {}
-				if(this.player == Turn.WHITE){
-					imWhite(state, rules);
-				}else if(this.player == Turn.BLACK){
-					imBlack(state, rules);
+				state.setTurn(temp.getTurn());
+
+				//TODO Sistema l'alternanza dei giocatori stando fermo quando tocca all'altro
+				//If it's my turn I've to check if a pawn of mine has been eaten and update my PossibleActions
+				if(this.player == state.getTurn() && (state.getTurnNumber() != 1 || player != Turn.WHITE)){
+					//Updates my old number of  pawns
+					if(player == Turn.WHITE)
+						state.setOldNumPawn(player, state.getNumWhite());
+					else
+						state.setOldNumPawn(player, state.getNumBlack());
+						
+					//Updates opponent's actions' map keyset after his move
+					state.updateOpponentPossibleActionsKeySet(opponent);
+					//Updates opponent's possible actions
+					state.updatePossibleActions(opponent);
+					
+					//Removes from my actions' keyset the pawns that I've lost
+					state.eatenUpdate(state.getBoard(), player);
+					//Updates my possible actions
+					state.updatePossibleActions(player);
+					//Updates the turn number after the opponent's move
+					state.incrementTurnNumber();
 				}
+
+				System.out.println("Turn: " + state.getTurnNumber());	
+				System.out.println("Current state:");
+				System.out.println(state.toString());
+				play(state, rules, search);
 			}
 
-			/*chiusura socket?
-			playerSocket.shutdownOutput(); 
-			String esito = StreamUtils.readString(in); 
-			System.out.println(esito); 
-			playerSocket.shutdownInput();
-			playerSocket.close();*/
-
-		}catch(JsonSyntaxException | IOException e1){
-			e1.printStackTrace();
+		}catch(JsonSyntaxException | IOException e){
+			e.printStackTrace();
 			System.exit(2);
 		}
-
 	}//run
 
-	public void imWhite(State state, Game rules){
-
-		List<int[]> whitePawns = new ArrayList<int[]>();
-		List<int[]> emptyPawns = new ArrayList<int[]>();
-				
-		if (this.currentState.getTurn().equals(Turn.WHITE)) {
-			
-			int[] buf;
-			Board boardGame = state.getBoard();
-			for (int i=0;i< boardGame.getLength();i++){
-				for(int j=0; j<boardGame.getLength();j++){
-					Pawn curPawn = boardGame.getPawn(i, j);
-					if(curPawn.equalsPawn(Board.Pawn.WHITE.toString()) || curPawn.equalsPawn(Board.Pawn.KING.toString())){
-						buf = new int[2];
-						buf[0] = i;
-						buf[1] = j;
-						whitePawns.add(buf);
-					}else if (curPawn.equalsPawn(Board.Pawn.EMPTY.toString())){
-						buf = new int[2];
-						buf[0] = i;
-						buf[1] = j;
-						emptyPawns.add(buf);
-					}
-				}
-
-			}//for matrix
-			
-
-			int[] selected = new int[2]; // [0]: riga, [1]: colonna
+	/**
+	 * Plays the current turn
+	 * @param state Actual state
+	 * @param rules Instance of the game class used
+	 * @param search Instance of the intelligent search class used
+	 * @author R.Vasumini, A.Solini
+	 */
+	public void play(State state, TablutGame rules, TimeLimitedSearch search){
+		Turn turn = state.getTurn();
+		//Player turn
+		if (turn == player) {
+			long inizio = System.currentTimeMillis();
+			Action selectedAction = null;
 			boolean done = false;
-			Action a = null;
-
-			try {
-				a = new Action("z0", "z0" , State.Turn.WHITE);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			while (!done) {
-
-				/** parametro selected da modificare con la parte di intelligenza, per ora random **/
-
-				selected = whitePawns.get(new Random().nextInt(whitePawns.size() - 1));
-				String from = this.currentState.getBoard().getBox(selected[0], selected[1]);
-				//System.out.println("il random ha scelto from: "+from);
-				
-				selected = emptyPawns.get(new Random().nextInt(emptyPawns.size() - 1));
-				String to = this.currentState.getBoard().getBox(selected[0], selected[1]);
-				//System.out.println("il random ha scelto to: "+to);
-
-				a.setFrom(from);
-				a.setTo(to);
-
+			while (!done) {			
+				System.out.println(rules.getPlayer(state) + "  playing ... ");
+				//Selects an action using iterative deepening alpha-beta search
+				selectedAction = search.makeDecision(state);
+				System.out.println(search.getMetrics().toString());
+				long fine = System.currentTimeMillis();
+				System.out.println("Ricerca della mossa effettuata in " + (fine-inizio) + "ms");
 				try {
-					rules.checkMove(state, a);
+					//Checks move validity and executes it
+					state = rules.makeMove(state, selectedAction);
+					//After my move updates the key "from" of the moved pawn
+					state.updatePossibleActionsKeySet(selectedAction.getFrom(), selectedAction.getTo(), player);
+					//Updates opponent's old pawns number in case I've captured some of them
+					if(opponent == Turn.WHITE)
+						state.setOldNumPawn(opponent, state.getNumWhite());
+					else
+						state.setOldNumPawn(opponent, state.getNumBlack());
+					//Removes the opponent's captured pawns from his actions'map
+					state.eatenUpdate(state.getBoard(), opponent);
+					//Updates opponent's possible actions
+					state.updatePossibleActions(opponent);
 					done = true;
-				} catch (Exception e) {}
+				} catch (Exception e) {
+					System.out.println("Eccezione: " + selectedAction.toString());
+					e.printStackTrace();
+				}
 			}
-			currentState = new State();
-			System.out.println("Mossa scelta: " + a.toString());
 
+			System.out.println("Mossa scelta: " + selectedAction.toString());
 			try {
-				StreamUtils.writeString(out, this.gson.toJson(a));
+				//Tells to the server the chosen move
+				StreamUtils.writeString(out, this.gson.toJson(selectedAction));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-		// Turno dell'avversario
-		}else if (state.getTurn().equals(State.Turn.BLACK)) {
+		// Opponent turn
+		}else if (turn == opponent) {
 			System.out.println("Waiting for your opponent move... ");
 		}
-		// ho vinto
-		else if (state.getTurn().equals(State.Turn.WHITEWIN)) {
-			System.out.println("YOU WIN!");
+		// Win or Lost
+		else if (turn == Turn.WHITEWIN || turn == Turn.BLACKWIN) {
+			if(turn.toString().charAt(0) == player.toString().charAt(0))
+				System.out.println("YOU WIN!");
+			else
+				System.out.println("YOU LOST!");
 			System.exit(0);
 		}
-		// ho perso
-		else if (state.getTurn().equals(State.Turn.BLACKWIN)) {
-			System.out.println("YOU LOSE!");
-			System.exit(0);
-		}
-		// pareggio
-		else if (state.getTurn().equals(State.Turn.DRAW)) {
+		// Draw
+		else if (turn == Turn.DRAW){
 			System.out.println("DRAW!");
 			System.exit(0);
 		}
-	}
-
-	public void imBlack(State state, Game rules){
-
-		List<int[]> blackPawns = new ArrayList<int[]>();
-		List<int[]> emptyPawns = new ArrayList<int[]>();
-				
-		if (this.currentState.getTurn().equals(Turn.BLACK)) {//per ora lasciamo così
-			
-			int[] buf;
-			Board boardGame = state.getBoard();
-			for (int i=0;i< boardGame.getLength();i++){
-				for(int j=0; j<boardGame.getLength();j++){
-					Pawn curPawn = boardGame.getPawn(i, j);
-					if(curPawn.equalsPawn(Board.Pawn.BLACK.toString())){
-						buf = new int[2];
-						buf[0] = i;
-						buf[1] = j;
-						blackPawns.add(buf);
-					}else if (curPawn.equalsPawn(Board.Pawn.EMPTY.toString())){
-						buf = new int[2];
-						buf[0] = i;
-						buf[1] = j;
-						emptyPawns.add(buf);
-					}
-				}
-
-			}//for matrix
-			
-
-			int[] selected = new int[2]; // [0]: riga, [1]: colonna
-			boolean done = false;
-			Action a = null;
-
-			try {
-				a = new Action("z0", "z0" , State.Turn.BLACK);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			while (!done) {
-
-				/** parametro selected da modificare con la parte di intelligenza, per ora random **/
-
-				selected = blackPawns.get(new Random().nextInt(blackPawns.size() - 1));
-				String from = this.currentState.getBoard().getBox(selected[0], selected[1]);
-				//System.out.println("il random ha scelto from: "+from);
-				
-				selected = emptyPawns.get(new Random().nextInt(emptyPawns.size() - 1));
-				String to = this.currentState.getBoard().getBox(selected[0], selected[1]);
-				//System.out.println("il random ha scelto to: "+to);
-
-				a.setFrom(from);
-				a.setTo(to);
-
-				try {
-					rules.checkMove(state, a);
-					done = true;
-				} catch (Exception e) {}
-			}
-			currentState = new State();
-			System.out.println("Mossa scelta: " + a.toString());
-
-			try {
-				StreamUtils.writeString(out, this.gson.toJson(a));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		// Turno dell'avversario
-		}else if (state.getTurn().equals(State.Turn.WHITE)) {
-			System.out.println("Waiting for your opponent move... ");
-		}
-		// ho vinto
-		else if (state.getTurn().equals(State.Turn.BLACKWIN)) {
-			System.out.println("YOU WIN!");
-			System.exit(0);
-		}
-		// ho perso
-		else if (state.getTurn().equals(State.Turn.WHITEWIN)) {
-			System.out.println("YOU LOSE!");
-			System.exit(0);
-		}
-		// pareggio
-		else if (state.getTurn().equals(State.Turn.DRAW)) {
-			System.out.println("DRAW!");
-			System.exit(0);
-		}
-
-	}
-		
+	}//play
 }

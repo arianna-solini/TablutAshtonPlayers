@@ -4,21 +4,38 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.InvalidParameterException;
 
+import domain.State.Turn;
+
 /**
- * this class represents an action of a player
- * 
- * @author A.Piretti
- * 
- */
+* This class represents an action of a player
+* @author A.Piretti
+*/
 public class Action implements Serializable {
+
+	/**
+	 * Enum which represents the direction of an action
+	 */
+	public enum Direction {
+		LEFT("L"), RIGHT("R"), UP("U"), DOWN("D"), ANY("A");
+		private final String direction;
+		private Direction(String s) {
+			direction = s;
+		}
+		public boolean equalsDirection(String otherDirection) {
+			return (otherDirection == null) ? false : direction.equals(otherDirection);
+		}
+		public String toString() {
+			return direction;
+		}
+	}
 
 	private static final long serialVersionUID = 1L;
 
 	private String from;
 	private String to;
-	private State.Turn turn;
+	private Turn turn;
 
-	public Action(String from, String to, State.Turn t) throws IOException {
+	public Action(String from, String to, Turn t) throws IOException {
 		if (from.length() != 2 || to.length() != 2) {
 			throw new InvalidParameterException("The FROM and TO string must have length=2");
 		} 
@@ -45,11 +62,11 @@ public class Action implements Serializable {
 		this.to = to;
 	}
 
-	public State.Turn getTurn() {
+	public Turn getTurn() {
 		return turn;
 	}
 
-	public void setTurn(State.Turn turn) {
+	public void setTurn(Turn turn) {
 		this.turn = turn;
 	}
 
@@ -83,6 +100,23 @@ public class Action implements Serializable {
 	 */
 	public int getRowTo() {
 		return Integer.parseInt(this.to.charAt(1) + "") - 1;
+	}
+
+	/**
+	 * @return The Direction of the action
+	 * @author R.Vasumini, A.Solini
+	 */
+	public Direction getDirection(){
+		if(this.getRowFrom() == this.getRowTo())
+			if(this.getColumnFrom() > this.getColumnTo())
+				return Direction.LEFT;
+			else
+				return Direction.RIGHT;
+		else
+			if(this.getRowFrom() > this.getRowTo())
+				return Direction.UP;
+			else
+				return Direction.DOWN;
 	}
 
 }
