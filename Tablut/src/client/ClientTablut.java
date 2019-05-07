@@ -43,12 +43,10 @@ public class ClientTablut implements Runnable {
 	private DataInputStream in;
 	private DataOutputStream out;
 	private Gson gson;
-	/**
-	 * State used after the updates
-	 */
-	private State currentState;
+
 	private  final static  int searchTime = 5;    
 
+	//TODO creare un costruttore che preveda un indirizzo ip e porta variabili
 	public ClientTablut(String player, String name) throws UnknownHostException, IOException {
 		
 		int port = -1;
@@ -85,6 +83,7 @@ public class ClientTablut implements Runnable {
     	public static void main(String[] args) throws Exception {
         
 		String player = null;
+		//TODO verificare se essenziale specificare il nome del concorrente secondo le regole
 		String name = null;
 		//Checks Argument
 		try {
