@@ -45,6 +45,7 @@ public class Score{
 		int numWhite = state.getNumWhite();
 		int oldNumBlack = state.getOldNumBlack();
 		int oldNumWhite = state.getOldNumWhite();
+		int numWhiteNearTheKing = game.numWhiteNearTheKing(state);
 		int numBlackNearTheKing = game.numBlackNearTheKing(state);
 		String currentKingPosition = state.getCurrentKingPosition();
 		int rowKing = board.getRow(currentKingPosition);
@@ -54,52 +55,58 @@ public class Score{
 
 		switch (player){
 			case "W" :
-				//Mangio neri
+				//Numero di neri mangiati nel gioco
 				scoreWhite += (16-numBlack);
-				
+				//Numero di neri mangiati dopo la mia azione
+				scoreWhite += (oldNumBlack - numBlack);
 				//Doppio scacco del re 
 				if(rowKing == 2 || rowKing == 6 )
 					if(board.isRowEmpty(rowKing))
-						scoreWhite += 20;
+						scoreWhite += (20 + numWhiteNearTheKing);
 
 				//Doppio scacco del re 
 				if(columnKing == 2 || columnKing == 6)
 					if(board.isColumnEmpty(columnKing))
-						scoreWhite += 20;
+						scoreWhite += (20 + numWhiteNearTheKing);
 
-				return scoreWhite + r.nextDouble();
+				return scoreWhite;
 				
 				
 			case "B":
-				//Mangio bianchi
+				//Numero di bianchi mangiati nel gioco
 				scoreBlack += (9-numWhite);
+				//Numero di neri vicino al re
 				scoreBlack += numBlackNearTheKing;
+				//Numero di bianchi mangiati  dopo la mia azione
+				scoreBlack += (oldNumWhite - numWhite);
+
+				//Manca una pedina alla vittoria
 				switch(currentKingPosition){
 					case "e5":
 						if(numBlackNearTheKing >= 3)
-							weightBlackNearTheKing += 4;
+							scoreBlack += (20 + numBlackNearTheKing);
 
 					case "e4":
 						if(numBlackNearTheKing >= 2)
-							weightBlackNearTheKing += 4;
+							scoreBlack += (20 + numBlackNearTheKing);
 
 					case "e6":
 						if(numBlackNearTheKing >= 2)
-							weightBlackNearTheKing += 4;
+							scoreBlack += (20 + numBlackNearTheKing);
 
 					case "d5":
 						if(numBlackNearTheKing >= 2)
-							weightBlackNearTheKing += 4;
+							scoreBlack += (20 + numBlackNearTheKing);
 
 					case "f5":
 						if(numBlackNearTheKing >= 2)
-							weightBlackNearTheKing += 4;
+							scoreBlack += (20 + numBlackNearTheKing);
 
 					default:
 						if(numBlackNearTheKing >= 1)
-							weightBlackNearTheKing += 4;
+							scoreBlack += (20 + numBlackNearTheKing);
 				}
-				return scoreBlack + weightBlackNearTheKing + r.nextDouble();
+				return scoreBlack;
 
 			default:
 				return -1;
