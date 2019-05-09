@@ -17,8 +17,8 @@ import exceptions.*;
  */
 public class TablutGame implements Game<State, Action, String> {
 
-	public final static int minValue = -100;
-	public final static int maxValue = 100;
+	public final static double minValue = -100;
+	public final static double maxValue = 100;
 	private State initialState = new State();
 	private int movesWithoutCapturingWhite, movesWithoutCapturingBlack;
 

@@ -79,7 +79,7 @@ public class Board implements Serializable {
 		}
 	}
 
-	public Board getEmptyBoard(){
+	public static Board getEmptyBoard(){
 		Board board = new Board();
 		for (int i = 0; i < 9; i++) 
 			for (int j = 0; j < 9; j++) 

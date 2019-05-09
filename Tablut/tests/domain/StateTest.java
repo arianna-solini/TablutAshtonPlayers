@@ -28,7 +28,7 @@ public class StateTest {
 
 	@Test
 	public void testPossibleActions(){
-		Board board= state.getBoard().getEmptyBoard();
+		Board board=Board.getEmptyBoard();
 		state.setBoard(board);
 		state.eatenUpdate(board, Turn.WHITE);
 		board.setPawn("e3", Pawn.KING);

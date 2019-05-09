@@ -269,28 +269,33 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		for (int i = 0; i < K; i++) {
 			double res = Double.NEGATIVE_INFINITY;
 			try {
+				//TODO il problema è che gli indici di futures non corrispondono agli indici di resultT, pensare se mettere lo score come attributo di action, o sistemare la faccenda
+				//Un altro metodo più grezzo e che rende forse inutili i futuri è di settare globalmente un array di 8 con i valori riportati dal thread
 				res = futures.get(i).get();
 			} catch (InterruptedException | ExecutionException e) {
 				
 				e.printStackTrace();
 			}
-			if(res == TablutGame.maxValue){
-				if(player == "W" && game.checkWhiteWin(state, resultsT[i])){
-					maxi = i;
-					break;
+			
+			if(Double.compare(res, TablutGame.maxValue) == 0){
+				if(player.equals("W") && game.checkWhiteWin(state, resultsT[i])){
+					System.out.println("HAI VINTO!");
+					return resultsT[i];
+				
+				} else if(player.equals("B") && game.checkBlackWin(state, resultsT[i])){
+					System.out.println("HAI VINTO!");
+					return resultsT[i];
 				}
-			} else if(player == "B" && game.checkBlackWin(state, resultsT[i])){
-				maxi = i;
-				break;
 			}
-
 			if(res > max) {
 				max = res;
 				maxi = i;
 			}
 		}
+		
 		System.out.println("Mossa migliore: "+ resultsT[maxi].toString()+ " del thread "+ maxi);
 		return resultsT[maxi];
+		
 	}
 
 	// returns an utility value

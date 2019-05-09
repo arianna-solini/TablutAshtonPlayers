@@ -45,7 +45,8 @@ public class ClientTablut implements Runnable {
 	private Gson gson;
 
 	private final static int constantSearchTime = 5;
-	private int searchTime;    
+	private int searchTime;  
+	//TODO riguarda searchtime, come lo passi ed eventuali exception  
 
 	public ClientTablut(String player, String teamName) throws UnknownHostException, IOException {
 		this(player, teamName, "localhost", constantSearchTime );
