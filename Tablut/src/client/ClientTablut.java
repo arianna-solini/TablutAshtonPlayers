@@ -33,9 +33,9 @@ public class ClientTablut implements Runnable {
 	 */
 	private Turn opponent;
 	/**
-	 * Team name
+	 * Team teamName
 	 */
-	private String name;
+	private String teamName;
 	/**
 	 * Player socket used to connect to the server
 	 */
@@ -44,13 +44,20 @@ public class ClientTablut implements Runnable {
 	private DataOutputStream out;
 	private Gson gson;
 
-	private  final static  int searchTime = 5;    
+	private final static int constantSearchTime = 5;
+	private int searchTime;    
 
-	//TODO creare un costruttore che preveda un indirizzo ip e porta variabili
-	public ClientTablut(String player, String name) throws UnknownHostException, IOException {
-		
+	public ClientTablut(String player, String teamName) throws UnknownHostException, IOException {
+		this(player, teamName, "localhost", constantSearchTime );
+	}
+
+	public ClientTablut(String player, String teamName, int searchTime) throws UnknownHostException, IOException {
+		this(player, teamName, "localhost", searchTime);
+	}
+
+	public ClientTablut(String player, String teamName, String address, int searchTime) throws UnknownHostException, IOException{
 		int port = -1;
-		this.name = name;
+		this.teamName = teamName;
 		this.gson = new Gson();
 
 		if(player.equalsIgnoreCase("white")){
@@ -63,19 +70,16 @@ public class ClientTablut implements Runnable {
 			port = 5801;
 		}
 
-		if (port < 1024 || port > 65535) {
-			System.out.println("port " + port + " is out of range");
-			System.out.println("Client: closing..");
-			System.exit(1);
-		}
+		if(searchTime > 0)
+			this.searchTime = searchTime;
         
-		playerSocket = new Socket("localhost", port);
+		playerSocket = new Socket(address, port);
 		out = new DataOutputStream(playerSocket.getOutputStream());
 		in = new DataInputStream(playerSocket.getInputStream());
 	}
 
 	/**
-	 * Client's main, it has to be launched specifiying squad's name and role
+	 * Client's main, it has to be launched specifiying squad's teamName and role
 	 * @param args aiofdtiger (white|black)
 	 * @throws Exception
 	 * @author R.Vasumini, A.Solini
@@ -84,22 +88,38 @@ public class ClientTablut implements Runnable {
         
 		String player = null;
 		//TODO verificare se essenziale specificare il nome del concorrente secondo le regole
-		String name = null;
+		String teamName = null;
+		ClientTablut client = null;
 		//Checks Argument
 		try {
 			if (args.length == 2) {
-                		name = args[0];
+                		teamName = args[0];
                 		player = args[1];
-				if (!(name.equalsIgnoreCase("aiofdtiger"))){ 
-                   			 System.out.println("Wrong team name, it's AIofDtiger or aiofdtiger\n");
+				if (!(teamName.equalsIgnoreCase("aiofdtiger"))){ 
+                   			 System.out.println("Wrong team teamName, it's AIofDtiger or aiofdtiger\n");
                    			 System.exit(1);
 				}
 				if (!(player.equalsIgnoreCase("white") || player.equalsIgnoreCase("black"))){	
 					System.out.println("You must specify which player you are (WHITE or BLACK)\n");
                     			System.exit(2);
 				}
-			} else {
-				System.out.println("Usage: <TeamName> (White|Black) \n");// Usage
+				client = new ClientTablut(player, teamName);
+			} else if(args.length == 4){
+				teamName = args[0];
+                		player = args[1];
+				if (!(teamName.equalsIgnoreCase("aiofdtiger"))){ 
+                   			 System.out.println("Wrong team teamName, it's AIofDtiger or aiofdtiger\n");
+                   			 System.exit(1);
+				}
+				if (!(player.equalsIgnoreCase("white") || player.equalsIgnoreCase("black"))){	
+					System.out.println("You must specify which player you are (WHITE or BLACK)\n");
+                    			System.exit(2);
+				}
+				int searchTime = Integer.parseInt(args[3]);
+				client = new ClientTablut(player, teamName, args[2], searchTime);
+
+			} else{
+				System.out.println("Usage: <TeamteamName> (White|Black) \n");// Usage
 				System.out.println("Client: closing...");
 				System.exit(3);
 			}
@@ -110,7 +130,7 @@ public class ClientTablut implements Runnable {
 			System.exit(4);
 		}
 
-		ClientTablut client = new ClientTablut(player, name);
+		
 		client.run();
 	}//main
 
@@ -121,14 +141,16 @@ public class ClientTablut implements Runnable {
 	@Override
 	public void run() {
 		try{
-			//Tells to the server squad's name
-			StreamUtils.writeString(out, this.gson.toJson(this.name));
+			//Tells to the server squad's teamName
+			StreamUtils.writeString(out, this.gson.toJson(this.teamName));
 		}catch(Exception e){
 			e.printStackTrace();
 			System.exit(1);
 		}
 		State state = new State();
 		TablutGame rules = new TablutGame();
+		if(searchTime != constantSearchTime)
+			searchTime -= 10;
 		TimeLimitedSearch search = new TimeLimitedSearch(rules, TablutGame.minValue, TablutGame.maxValue, searchTime);
 		System.out.println("/ASHTON TABLUT\\");
 		System.out.println("You are player " + this.player.toString() + "!");
