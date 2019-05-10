@@ -8,44 +8,62 @@
     <property name="dist" location="dist" />
     <property name="version" value="1.0" />
 
-    <target name="clean">
-        <delete dir="build"/>
-        <delete dir="dist"/>
-    </target>
-
     <path id="class.path">
         <fileset dir="lib">
             <include name="**/*.jar" />
         </fileset>
     </path>
 
-    <target name="compile">
+    <target name="clean">
+
+        <delete includeemptydirs="true">
+            <fileset dir="build" includes="**/*"/>
+        </delete>
+
+        <delete>
+            <fileset dir="dist" includes="**/*.jar"/>
+        </delete>
+
+    </target>
+
+    <target name="compile" depends="clean">
+
         <mkdir dir="build"/>
+
         <javac includeantruntime="false" encoding="iso-8859-1" srcdir="src" 
             destdir="build">
             <classpath refid="class.path"/>
         </javac>
+
         <copy todir="build">
             <fileset dir="src" excludes="**/*.java"/>
         </copy>
+
     </target>
 
     <target name="dist" depends="compile" description="generate the distribution">
+
         <buildnumber />
+
         <!-- Create the distribution directory -->
-        <mkdir dir="${dist}/lib" />
+        <mkdir dir="${dist}" />
+
         <!-- Put everything in ${build} into the MyApplication-${version}.${build.number}.jar -->
-        <jar destfile="${dist}/lib/ClientTablut-${version}.${build.number}.jar" basedir="${build}">
-		<zipgroupfileset dir="lib" includes="aima-core-3.0.0.jar"/>
-		<zipgroupfileset dir="lib" includes="gson-2.2.2.jar"/>
-		<manifest>
-			<attribute name ="DependencyFinder" value="main"/>
-			<attribute name = "Main-Class" value = "client.ClientTablut"/>
-		</manifest>
-	</jar>
+        <jar destfile="${dist}/ClientTablut-${version}.${build.number}.jar" basedir="${build}">
+
+            <zipgroupfileset dir="lib" includes="aima-core-3.0.0.jar"/>
+            <zipgroupfileset dir="lib" includes="gson-2.2.2.jar"/>
+
+            <manifest>
+                <attribute name ="DependencyFinder" value="main"/>
+                <attribute name = "Main-Class" value = "client.ClientTablut"/>
+            </manifest>
+
+	    </jar>
+
     </target>
     
-    <target name="client">
+    <target name="client" description="specify teamName and colorPlayer (white|black)">
         <java classname="client.ClientTablut" fork="true">
             <classpath>
                 <pathelement location="lib/gson-2.2.2.jar"/>
@@ -57,7 +75,20 @@
         </java>
     </target>
 
-    <target name="clientWithAddressAndTime">
+    <target name="clientT" description="specify teamName, colorPlayer and timeout">
+        <java classname="client.ClientTablut" fork="true">
+            <classpath>
+                <pathelement location="lib/gson-2.2.2.jar"/>
+                <pathelement location="lib/aima-core-3.0.0.jar"/>
+                <pathelement location="build"/>
+            </classpath>
+            <arg value="${arg0}"/>
+            <arg value="${arg1}"/>
+            <arg value="${arg2}"/>
+        </java>
+    </target>
+
+    <target name="clientTA" description="specify teamName, colorPlayer, timeout and serverAddress">
         <java classname="client.ClientTablut" fork="true">
             <classpath>
                 <pathelement location="lib/gson-2.2.2.jar"/>
@@ -68,6 +99,21 @@
             <arg value="${arg1}"/>
             <arg value="${arg2}"/>
             <arg value="${arg3}"/>
+        </java>
+    </target>
+
+    <target name="clientTAD" description="specify teamName, colorPlayer, timeout, serverAddress and debugTimeSearc">
+        <java classname="client.ClientTablut" fork="true">
+            <classpath>
+                <pathelement location="lib/gson-2.2.2.jar"/>
+                <pathelement location="lib/aima-core-3.0.0.jar"/>
+                <pathelement location="build"/>
+            </classpath>
+            <arg value="${arg0}"/>
+            <arg value="${arg1}"/>
+            <arg value="${arg2}"/>
+            <arg value="${arg3}"/>
+            <arg value="${arg4}"/>
         </java>
     </target>
 

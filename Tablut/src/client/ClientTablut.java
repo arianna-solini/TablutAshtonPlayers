@@ -43,20 +43,24 @@ public class ClientTablut implements Runnable {
 	private DataInputStream in;
 	private DataOutputStream out;
 	private Gson gson;
-
-	private final static int constantSearchTime = 5;
-	private int searchTime;  
+	private int debugTimeSearch = 5;
+	private int searchTime = debugTimeSearch; 
+	private int timeoutServer = 60; 
 	//TODO riguarda searchtime, come lo passi ed eventuali exception  
 
-	public ClientTablut(String player, String teamName) throws UnknownHostException, IOException {
-		this(player, teamName, "localhost", constantSearchTime );
+	public ClientTablut(String teamName, String player) throws UnknownHostException, IOException {
+		this(teamName, player, 60, "localhost", -1 );
 	}
 
-	public ClientTablut(String player, String teamName, int searchTime) throws UnknownHostException, IOException {
-		this(player, teamName, "localhost", searchTime);
+	public ClientTablut(String teamName, String player, int timeoutServer) throws UnknownHostException, IOException {
+		this(teamName, player, timeoutServer, "localhost", -1);
 	}
 
-	public ClientTablut(String player, String teamName, String address, int searchTime) throws UnknownHostException, IOException{
+	public ClientTablut(String teamName, String player, int timeoutServer, String address) throws UnknownHostException, IOException {
+		this(teamName, player, timeoutServer, address, -1);
+	}
+
+	public ClientTablut(String teamName, String player, int timeoutServer, String address, int debugTimeSearch) throws UnknownHostException, IOException{
 		int port = -1;
 		this.teamName = teamName;
 		this.gson = new Gson();
@@ -71,14 +75,20 @@ public class ClientTablut implements Runnable {
 			port = 5801;
 		}
 
-		if(searchTime > 0)
-			this.searchTime = searchTime;
+		if(timeoutServer > 0)
+			this.timeoutServer = timeoutServer;
+
+		
+		this.debugTimeSearch = debugTimeSearch;		
+
+
         
 		playerSocket = new Socket(address, port);
 		out = new DataOutputStream(playerSocket.getOutputStream());
 		in = new DataInputStream(playerSocket.getInputStream());
 	}
 
+	//TODO da rifare description relativa agli argomenti del main
 	/**
 	 * Client's main, it has to be launched specifiying squad's teamName and role
 	 * @param args aiofdtiger (white|black)
@@ -93,36 +103,33 @@ public class ClientTablut implements Runnable {
 		ClientTablut client = null;
 		//Checks Argument
 		try {
-			if (args.length == 2) {
-                		teamName = args[0];
-                		player = args[1];
-				if (!(teamName.equalsIgnoreCase("aiofdtiger"))){ 
-                   			 System.out.println("Wrong team teamName, it's AIofDtiger or aiofdtiger\n");
-                   			 System.exit(1);
-				}
-				if (!(player.equalsIgnoreCase("white") || player.equalsIgnoreCase("black"))){	
-					System.out.println("You must specify which player you are (WHITE or BLACK)\n");
-                    			System.exit(2);
-				}
-				client = new ClientTablut(player, teamName);
-			} else if(args.length == 4){
+			if(args.length >= 2 && args.length <= 5){
 				teamName = args[0];
-                		player = args[1];
+				player = args[1];
 				if (!(teamName.equalsIgnoreCase("aiofdtiger"))){ 
-                   			 System.out.println("Wrong team teamName, it's AIofDtiger or aiofdtiger\n");
-                   			 System.exit(1);
+					System.out.println("Wrong team teamName, it's AIofDtiger or aiofdtiger\n");
+					System.exit(1);
 				}
+				
 				if (!(player.equalsIgnoreCase("white") || player.equalsIgnoreCase("black"))){	
 					System.out.println("You must specify which player you are (WHITE or BLACK)\n");
-                    			System.exit(2);
+					System.exit(2);
 				}
-				int searchTime = Integer.parseInt(args[3]);
-				client = new ClientTablut(player, teamName, args[2], searchTime);
 
-			} else{
-				System.out.println("Usage: <TeamteamName> (White|Black) \n");// Usage
-				System.out.println("Client: closing...");
-				System.exit(3);
+				if (args.length == 2) {
+					client = new ClientTablut(teamName, player);
+				} else if(args.length == 3){
+					int timeoutServer = Integer.parseInt(args[2]);
+					client = new ClientTablut(teamName, player, timeoutServer);
+
+				} else if(args.length == 4){
+					int timeoutServer = Integer.parseInt(args[2]);
+					client = new ClientTablut(teamName, player, timeoutServer, args[3]);
+				} else if(args.length == 5){
+					int timeoutServer = Integer.parseInt(args[2]);
+					int debugTimeSearch = Integer.parseInt(args[4]);
+					client = new ClientTablut(teamName, player, timeoutServer, args[3], debugTimeSearch);
+				}	
 			}
 		} catch (InvalidParameterException e) {
 			System.out.println("Something's wrong with the input parameters");
@@ -150,8 +157,12 @@ public class ClientTablut implements Runnable {
 		}
 		State state = new State();
 		TablutGame rules = new TablutGame();
-		if(searchTime != constantSearchTime)
-			searchTime -= 10;
+		//TODO Controlla se va bene 
+		if(debugTimeSearch > 0)
+			searchTime = debugTimeSearch;
+		else if(timeoutServer >= 20)
+			searchTime = timeoutServer - 10;
+
 		TimeLimitedSearch search = new TimeLimitedSearch(rules, TablutGame.minValue, TablutGame.maxValue, searchTime);
 		System.out.println("/ASHTON TABLUT\\");
 		System.out.println("You are player " + this.player.toString() + "!");
@@ -159,11 +170,15 @@ public class ClientTablut implements Runnable {
 			while(true){
 				//The use of StateGson is due to correctly receive the state from the server
 				StateGson temp =  this.gson.fromJson(StreamUtils.readString(in), StateGson.class);
+				// Opponent turn
+				if (temp.getTurn() == opponent) {
+					System.out.println("Waiting for your opponent move... ");
+					continue;
+				}
 				//Our state must be updated consequently
 				state.getBoard().setBoard(temp.getBoard());
 				state.setTurn(temp.getTurn());
 
-				//TODO Sistema l'alternanza dei giocatori stando fermo quando tocca all'altro
 				//If it's my turn I've to check if a pawn of mine has been eaten and update my PossibleActions
 				if(this.player == state.getTurn() && (state.getTurnNumber() != 1 || player != Turn.WHITE)){
 					//Updates my old number of  pawns
@@ -240,16 +255,15 @@ public class ClientTablut implements Runnable {
 			}
 
 			System.out.println("Mossa scelta: " + selectedAction.toString());
+			System.out.println("Current state:");
+			state.setTurn(opponent);
+			System.out.println(state.toString());
 			try {
 				//Tells to the server the chosen move
 				StreamUtils.writeString(out, this.gson.toJson(selectedAction));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-		// Opponent turn
-		}else if (turn == opponent) {
-			System.out.println("Waiting for your opponent move... ");
 		}
 		// Win or Lost
 		else if (turn == Turn.WHITEWIN || turn == Turn.BLACKWIN) {

@@ -51,7 +51,6 @@ public class Score{
 				
 				//PUNTEGGI NEGATIVI
 				scoreWhite -= numBlackNearTheKing;
-
 				return scoreWhite;
 				
 				
@@ -63,32 +62,40 @@ public class Score{
 				scoreBlack += numBlackNearTheKing;
 				//Numero di bianchi mangiati  dopo la mia azione
 				scoreBlack += (oldNumWhite - numWhite);
+				
+				//TODO se non si è nella situazione di scacco, la mangiata vale 2 e la vicinanza al re solo 1, tenerne conto
 
 				//Manca una pedina alla vittoria
 				switch(currentKingPosition){
 					case "e5":
 						if(numBlackNearTheKing >= 3)
 							scoreBlack += (20 + numBlackNearTheKing);
+						break;
 
 					case "e4":
 						if(numBlackNearTheKing >= 2)
 							scoreBlack += (20 + numBlackNearTheKing);
+						break;
 
 					case "e6":
 						if(numBlackNearTheKing >= 2)
 							scoreBlack += (20 + numBlackNearTheKing);
+						break;
 
 					case "d5":
 						if(numBlackNearTheKing >= 2)
 							scoreBlack += (20 + numBlackNearTheKing);
+						break;
 
 					case "f5":
 						if(numBlackNearTheKing >= 2)
 							scoreBlack += (20 + numBlackNearTheKing);
+						break;
 
 					default:
 						if(numBlackNearTheKing >= 1)
 							scoreBlack += (20 + numBlackNearTheKing);
+						break;
 				}
 
 				//PUNTEGGI NEGATIVI

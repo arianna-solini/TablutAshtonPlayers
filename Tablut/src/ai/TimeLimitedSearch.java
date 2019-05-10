@@ -13,6 +13,7 @@ import aima.core.search.framework.Metrics;
 import domain.Action;
 import domain.State;
 import domain.TablutGame;
+import domain.State.Turn;
 
 /**
  * Alternative implementation of IterativeDeepeningAlphaBetaSearch of aima
@@ -29,9 +30,6 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	protected TablutGame game;
 	protected double utilMax;
 	protected double utilMin;
-	// protected int currDepthLimit;
-	// Indicates that non-terminal nodes have been evaluated
-	// private boolean heuristicEvaluationUsed;
 	private Timer timer;
 	public int numCuts;
 
@@ -39,9 +37,6 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 
 	// variabili per thread
 	protected int K = 8;
-	// ArrayList<ArrayList<Action>> temp;
-	// ArrayList<ActionStore<Action>> newResultsTemp;
-	protected Action[] resultsT = new Action[K];
 	protected int[] currDepthLimit = new int[K];
 
 	/**
@@ -96,7 +91,7 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	 * il più alto
 	 */
 
-	private class SearchCallable implements Callable<Double> {
+	private class SearchCallable implements Callable<Action> {
 		private int num;
 		private State state;
 		private String player;
@@ -112,40 +107,32 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		}
 
 		@Override
-		public Double call() {
+		public Action call() {
 			do {
 				currDepthLimit[num]++;
 				int threadDepth = currDepthLimit[num];
 				for (Action action : tempA) {
-					// minValue calculus are based on the simulated action's state obtained by
-					// game.getResult
+					// minValue calculus are based on the simulated action's state obtained by game.getResult
 					double value = minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY,
 							Double.POSITIVE_INFINITY, 1, threadDepth);
 					if (timer.timeOutOccurred())
 						break; // exit from action loop
-					// System.out.println("newResultsTemp: " + newResultsTemp.size());
-					// System.out.println("temp: " + tempA.size());
 					newResultsTemp.add(action, value);
 				}
 				if (newResultsTemp.size() > 0) {
 
-					// resultsT = newResultsTemp.get(num).actions;
-					// System.out.println("Miglior score: " +
-					// newResultsTemp.get(num).utilValues.get(0) + " dell'azione "
-					// + newResultsTemp.get(num).actions.get(0));
 					if (!timer.timeOutOccurred()) {
 						if (hasSafeWinner(newResultsTemp.utilValues.get(0)))
 							break;
-						else if (newResultsTemp.size() > 1 && isSignificantlyBetter(
-								newResultsTemp.utilValues.get(0), newResultsTemp.utilValues.get(1)))
+						else if (newResultsTemp.size() > 1 && isSignificantlyBetter(newResultsTemp.utilValues.get(0),
+								newResultsTemp.utilValues.get(1)))
 							break;
 					}
 				}
-				System.out.println("Tagli effettuati: " + numCuts);
 			} while (!timer.timeOutOccurred());
-			System.out.println("Thread " + num + " ha score migliore di: " + newResultsTemp.utilValues.get(0));
-			resultsT[num] = newResultsTemp.actions.get(0);
-			return newResultsTemp.utilValues.get(0);
+			System.out.println("Thread " + num + " ha score migliore di: " + newResultsTemp.utilValues.get(0) + " con mossa " + newResultsTemp.actions.get(0).toString());
+			newResultsTemp.actions.get(0).setScore(newResultsTemp.utilValues.get(0));
+			return newResultsTemp.actions.get(0);
 		}// call
 
 	}
@@ -183,7 +170,7 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			while (K > 0) {
 				if ((part = results.size() / K) > 0) {
 					for (int i = 0; i < K; i++) {
-						temp.add(i, results.subList(i, i));// metto subList anche se è un solo elemento altrimenti rompe
+						temp.add(i, results.subList(i, i));
 					}
 					break;
 				} else {
@@ -192,60 +179,12 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			} // while
 		}
 
-		// temp.add(1, results.subList(part, (part * 2) - 1));
-		// temp.add(2, results.subList(part * 2, (part * 3) - 1));
-		// temp.add(3, results.subList(part * 3, results.size() - 1));
-
-		// System.out.println(""+temp.get(3).size()); per vedere che in temp ci fossero
-		// le azioni
-
-		/*
-		 * for(int i=0;i<K;i++) newResultsTemp.add(i, new ActionStore<Action>());
-		 * 
-		 * Thread t[] = new Thread[K];
-		 */
-
-		// for (int i = 0; i < K; i++) {
-
-		/*
-		 * t[i] = new Thread("" + i) {
-		 * 
-		 * @Override public void run() { do{
-		 * currDepthLimit[Integer.parseInt(this.getName())]++; int num =
-		 * Integer.parseInt(this.getName()); int threadDepth =
-		 * currDepthLimit[Integer.parseInt(this.getName())]; for (Action action :
-		 * temp.get(num)) { // minValue calculus are based on the simulated action's
-		 * state obtained by // game.getResult double value =
-		 * minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY,
-		 * Double.POSITIVE_INFINITY, 1, threadDepth); if (timer.timeOutOccurred())
-		 * break; // exit from action loop newResultsTemp.get(num).add(action, value); }
-		 * for (ActionStore<Action> as : newResultsTemp) { for (int i = 0; i <
-		 * as.actions.size(); i++) { newResults.add(as.actions.get(i),
-		 * as.utilValues.get(i)); } }
-		 * 
-		 * if (newResults.size() > 0) {
-		 * 
-		 * resultsT = newResults.actions; System.out.println("Miglior score: " +
-		 * newResults.utilValues.get(0) + " dell'azione " + newResults.actions.get(0));
-		 * if (!timer.timeOutOccurred()) { if
-		 * (hasSafeWinner(newResults.utilValues.get(0))) break; else if
-		 * (newResults.size() > 1 && isSignificantlyBetter(newResults.utilValues.get(0),
-		 * newResults.utilValues.get(1))) break; } } //temp.clear(); } while
-		 * (!timer.timeOutOccurred());
-		 * 
-		 * } }; t[i].start(); } for (Thread thread : t) { try { thread.join();
-		 * System.out.println("Thread " + thread.getName() +
-		 * ": Stato "+thread.getState().toString()); } catch (InterruptedException e) {
-		 * // TODO Auto-generated catch block e.printStackTrace(); } }
-		 */
-		// results = resultsT;
-
-		ArrayList<Callable<Double>> callableTasks = new ArrayList<Callable<Double>>(K);
+		ArrayList<Callable<Action>> callableTasks = new ArrayList<Callable<Action>>(K);
 		for (int i = 0; i < K; i++) {
 			callableTasks.add(new SearchCallable(i, state, player, temp.get(i)));
 		}
 
-		List<Future<Double>> futures = new ArrayList<>();
+		List<Future<Action>> futures = new ArrayList<>();
 
 		ExecutorService exec = Executors.newFixedThreadPool(K);
 		try {
@@ -258,44 +197,45 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		} finally {
 			exec.shutdown();
 		}
-		for (int i = 0; i < K; i++) {
-			Future<Double> f = futures.get(i);
-			if (f.isDone())
-				System.out.println("Future " + i + " ANALIYZED.");
-		}
+
 		// max
 		int maxi = -1;
 		double max = Double.NEGATIVE_INFINITY;
+		Action result = null;
 		for (int i = 0; i < K; i++) {
-			double res = Double.NEGATIVE_INFINITY;
+			double futureScore = Double.NEGATIVE_INFINITY;
+			Action futureAction = null;
 			try {
-				//TODO il problema è che gli indici di futures non corrispondono agli indici di resultT, pensare se mettere lo score come attributo di action, o sistemare la faccenda
-				//Un altro metodo più grezzo e che rende forse inutili i futuri è di settare globalmente un array di 8 con i valori riportati dal thread
-				res = futures.get(i).get();
+				futureAction = futures.get(i).get();
+				futureScore = futureAction.getScore();
 			} catch (InterruptedException | ExecutionException e) {
-				
+
 				e.printStackTrace();
 			}
-			
-			if(Double.compare(res, TablutGame.maxValue) == 0){
-				if(player.equals("W") && game.checkWhiteWin(state, resultsT[i])){
+
+			if (Double.compare(futureScore, TablutGame.maxValue) == 0) {
+				State s = game.getResult(state, futureAction);
+				if (player.equals("W") && s.getTurn() == Turn.WHITEWIN) {
 					System.out.println("HAI VINTO!");
-					return resultsT[i];
-				
-				} else if(player.equals("B") && game.checkBlackWin(state, resultsT[i])){
+					return futureAction;
+
+				} else if (player.equals("B") && s.getTurn() == Turn.BLACKWIN) {
 					System.out.println("HAI VINTO!");
-					return resultsT[i];
+					return futureAction;
 				}
 			}
-			if(res > max) {
-				max = res;
+			if (futureScore > max) {
+				max = futureScore;
 				maxi = i;
 			}
+		}//for
+		try {
+			result = futures.get(maxi).get();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
 		}
-		
-		System.out.println("Mossa migliore: "+ resultsT[maxi].toString()+ " del thread "+ maxi);
-		return resultsT[maxi];
-		
+		System.out.println("Tagli effettuati: " + numCuts);
+		return result;
 	}
 
 	// returns an utility value
