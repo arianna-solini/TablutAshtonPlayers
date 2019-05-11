@@ -78,11 +78,8 @@ public class ClientTablut implements Runnable {
 		if(timeoutServer > 0)
 			this.timeoutServer = timeoutServer;
 
-		
 		this.debugTimeSearch = debugTimeSearch;		
 
-
-        
 		playerSocket = new Socket(address, port);
 		out = new DataOutputStream(playerSocket.getOutputStream());
 		in = new DataInputStream(playerSocket.getInputStream());
@@ -164,7 +161,16 @@ public class ClientTablut implements Runnable {
 			searchTime = timeoutServer - 10;
 
 		TimeLimitedSearch search = new TimeLimitedSearch(rules, TablutGame.minValue, TablutGame.maxValue, searchTime);
-		System.out.println("/ASHTON TABLUT\\");
+		System.out.println("          _____          __       _   _______ _                 ");
+		System.out.println("    /\\   |_   _|        / _|     | | |__   __(_)                ");
+		System.out.println("   /  \\    | |     ___ | |_    __| |    | |   _  __ _  ___ _ __ ");
+		System.out.println("  / /\\ \\   | |    / _ \\|  _|  / _` |    | |  | |/ _` |/ _ \\ '__|");
+
+		System.out.println(" / ____ \\ _| |_  | (_) | |   | (_| |    | |  | | (_| |  __/ |   ");
+		System.out.println("/_/    \\_\\_____|  \\___/|_|    \\__,_|    |_|  |_|\\__, |\\___|_|   ");
+		System.out.println("                                                 __/ |          ");
+		System.out.println("                                                |___/           ");
+
 		System.out.println("You are player " + this.player.toString() + "!");
 		try{
 			while(true){
