@@ -74,21 +74,8 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		this.timer = new Timer(time);
 	}
 
-	/*
-	 * Classe che implementa Callable, chiamata dai thread che eseguono
-	 * concorrentemente la ricerca:
-	 *
-	 * le azioni iniziali vengono suddivise in K parti dove K corrisponde al numero
-	 * di thread eseguiti concorrentemente
-	 *
-	 * ogni thread analizza in profondità il proprio gruppo di azioni fino allo
-	 * scadere del timeout
-	 *
-	 * ogni thread restituisce lo score più alto del gruppo di azioni che ha
-	 * analizzato
-	 *
-	 * il metodo makeDecision si occuperà di confrontare i K risultati e scegliere
-	 * il più alto
+	/**
+	 * Implementation of the interface Callable for multithreading
 	 */
 
 	private class SearchCallable implements Callable<Action> {
@@ -97,6 +84,15 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		private String player;
 		private List<Action> tempA;
 		private ActionStore<Action> newResultsTemp;
+
+		/**
+		 * Create a new Callable object
+		 * 
+		 * @param num		Index of the callableTask
+		 * @param state		state of the game
+		 * @param player 	player type (white or black)
+		 * @param tempA	 	sub-list of the action list at depth 0
+		 */
 
 		public SearchCallable(int num, State state, String player, List<Action> tempA) {
 			this.num = num;
@@ -111,6 +107,7 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			do {
 				currDepthLimit[num]++;
 				int threadDepth = currDepthLimit[num];
+				newResultsTemp = new ActionStore<Action>();
 				for (Action action : tempA) {
 					// minValue calculus are based on the simulated action's state obtained by game.getResult
 					double value = minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY,
@@ -121,6 +118,9 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 				}
 				if (newResultsTemp.size() > 0) {
 
+					tempA = newResultsTemp.actions;
+					tempA.get(0).setScore(newResultsTemp.utilValues.get(0));
+
 					if (!timer.timeOutOccurred()) {
 						if (hasSafeWinner(newResultsTemp.utilValues.get(0)))
 							break;
@@ -130,9 +130,11 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 					}
 				}
 			} while (!timer.timeOutOccurred());
-			System.out.println("Thread " + num + " ha score migliore di: " + newResultsTemp.utilValues.get(0) + " con mossa " + newResultsTemp.actions.get(0).toString());
-			newResultsTemp.actions.get(0).setScore(newResultsTemp.utilValues.get(0));
-			return newResultsTemp.actions.get(0);
+			System.out.println("Thread " + num + " ha score migliore di: " + tempA.get(0).getScore() + " con mossa " + tempA.get(0).toString());
+			//System.out.println("Thread " + num + " ha score migliore di: " + newResultsTemp.utilValues.get(0) + " con mossa " + newResultsTemp.actions.get(0).toString());
+			//newResultsTemp.actions.get(0).setScore(newResultsTemp.utilValues.get(0));
+			//return newResultsTemp.actions.get(0);
+			return tempA.get(0);
 		}// call
 
 	}
@@ -155,6 +157,11 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		for (int i = 0; i < K; i++) {
 			currDepthLimit[i] = 0;
 		}
+
+		/*
+		 * The action list at depth 0 is organized in K sub-lists where 
+		 * K is the number of thread executed at the same time.
+		 */
 
 		int part = results.size() / K;
 
@@ -179,12 +186,17 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			} // while
 		}
 
+		/**
+		 * Each thread analyzes the tree of its sub-list until timeout is reached 
+		 * then it returns the action with the higher score 
+		 */
+
 		ArrayList<Callable<Action>> callableTasks = new ArrayList<Callable<Action>>(K);
 		for (int i = 0; i < K; i++) {
 			callableTasks.add(new SearchCallable(i, state, player, temp.get(i)));
 		}
 
-		List<Future<Action>> futures = new ArrayList<>();
+		List<Future<Action>> futures = new ArrayList<Future<Action>>();
 
 		ExecutorService exec = Executors.newFixedThreadPool(K);
 		try {
@@ -198,7 +210,9 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 			exec.shutdown();
 		}
 
-		// max
+		/**
+		 * makeDecision chooses, among eight actions, the one with the higher score.
+		 */
 		int maxi = -1;
 		double max = Double.NEGATIVE_INFINITY;
 		Action result = null;
@@ -238,7 +252,9 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		return result;
 	}
 
-	// returns an utility value
+	/**
+	 * Returns an utility value 
+	 */
 	public double maxValue(State state, String player, double alpha, double beta, int depth, int threadDepth) {
 		updateMetrics(depth);
 		if (game.isTerminal(state) || depth >= threadDepth || timer.timeOutOccurred()) {
@@ -259,7 +275,9 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		}
 	}
 
-	// returns a utility value, the opponent uses this method
+	/**
+	 * returns a utility value, the opponent uses this method
+	 */
 	public double minValue(State state, String player, double alpha, double beta, int depth, int threadDepth) {
 		updateMetrics(depth);
 		if (game.isTerminal(state) || depth >= threadDepth || timer.timeOutOccurred()) {
@@ -294,15 +312,6 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	}
 
 	/**
-	 * Primitive operation which is called at the beginning of one depth limited
-	 * search step. This implementation increments the current depth limit by
-	 * one.
-	 */
-	/*protected void incrementDepthLimit() {
-		currDepthLimit++;
-	}*/
-
-	/**
 	 * Primitive operation which is used to stop iterative deepening search in
 	 * situations where a clear best action exists. This implementation returns
 	 * always false.
@@ -325,15 +334,12 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 
 	/**
 	 * Primitive operation, which estimates the value for (not necessarily
-	 * terminal) states. This implementation returns the utility value for
-	 * terminal states and <code>(utilMin + utilMa results = newResults.actions;x) / 2</code> for non-terminal
-	 * states. When overriding, first call the super implementation!
+	 * terminal) states.
 	 */
 	protected double eval(State state, String player) {
 		if (game.isTerminal(state)) {
 			return game.getUtility(state, player);
 		} else {
-			//heuristicEvaluationUsed = true;
 			return Score.calculateScore(game, state, player);
 		}
 	}
@@ -346,12 +352,20 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	}
 
 	/**
-	 * Primitive operation for action ordering. This implementation preserves
-	 * the original order (provided by the game).
+	 * Primitive operation for action ordering.
 	 */
 	//TODO implementandola sfruttando depth, magari tenendosi in memoria in Time Limited Search una struttura di ActionStore per livello
 	//ottimizzo le ricerche, perché per ora ordiniamo solo quelle a depth 0
+	//ArrayList<ActionStore<Action>> depthResult = new ArrayList<>();
 	public List<Action> orderActions(State state, List<Action> actions, String player, int depth) {
+		/*double value;
+		ActionStore<Action> orderedActions = new ActionStore<>();
+		for (Action a: actions){
+			value = eval(game.getResult(state, a), player);
+			orderedActions.add(a, value);
+		}
+		depthResult.add(depth, orderedActions);
+		return orderedActions.actions;*/
 		return actions;
 	}
 
