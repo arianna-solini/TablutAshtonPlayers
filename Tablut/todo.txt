@@ -1,16 +1,14 @@
-.ArrayList che riempiamo man mano con gli stati della partita in modo da analizzarlo nel durante
-.Sistemare le draw conditions
-.Sfruttare il multithreading
+.Sistemare le draw conditions (no)
 .fare funzione che controlla la vicinanza al re e celle libere attorno a lui
-.fare funzione che chiuda le uscite al re
+.fare funzione che chiuda le uscite al re (aria)
 .guardare la vicinanza al re anche in diagonale
 .guardare il numero di neri nelle citadel
-.stare attenti al re nelle celle (2,2), (6,6), (2,6), (6,2)
+.stare attenti al re nelle celle (2,2), (6,6), (2,6), (6,2) (no..per ora)
 .pensare a un punteggio pesato, o perlomeno a range di punti ben distinguibili (+1 mangiata, +10 vicinanza, +20 scacco ecc (?))
-.creare branch in cui fare doMove e undoMove
-.pensare se inglobare nella movePawn e checkCapture e makeMove gli update dei campi dello stato
-.provare a rimettere i valori negativi in entrambe le eval e vedere se migliora la situa
-.trovare ripercorrendo tutti i passaggi quali sono le operazioni più costose
+.creare branch in cui fare doMove e undoMove (ricky)
+.pensare se inglobare nella movePawn e checkCapture e makeMove gli update dei campi dello stato (ricky)
+.provare a rimettere i valori negativi in entrambe le eval e vedere se migliora la situa (aria)
+.trovare ripercorrendo tutti i passaggi quali sono le operazioni più costose (ricky)
 
 
 
