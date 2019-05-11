@@ -2,12 +2,18 @@ package ai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import aima.core.search.adversarial.AdversarialSearch;
 import aima.core.search.framework.Metrics;
 import domain.Action;
 import domain.State;
 import domain.TablutGame;
+import domain.State.Turn;
 
 /**
  * Alternative implementation of IterativeDeepeningAlphaBetaSearch of aima
@@ -24,13 +30,14 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	protected TablutGame game;
 	protected double utilMax;
 	protected double utilMin;
-	protected int currDepthLimit;
-	// Indicates that non-terminal nodes have been evaluated
-	private boolean heuristicEvaluationUsed;
 	private Timer timer;
 	public int numCuts;
 
 	private Metrics metrics = new Metrics();
+
+	// variabili per thread
+	protected int K = 8;
+	protected int[] currDepthLimit = new int[K];
 
 	/**
 	 * Creates a new search object for a given game.
@@ -67,65 +74,181 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		this.timer = new Timer(time);
 	}
 
+	/*
+	 * Classe che implementa Callable, chiamata dai thread che eseguono
+	 * concorrentemente la ricerca:
+	 *
+	 * le azioni iniziali vengono suddivise in K parti dove K corrisponde al numero
+	 * di thread eseguiti concorrentemente
+	 *
+	 * ogni thread analizza in profondità il proprio gruppo di azioni fino allo
+	 * scadere del timeout
+	 *
+	 * ogni thread restituisce lo score più alto del gruppo di azioni che ha
+	 * analizzato
+	 *
+	 * il metodo makeDecision si occuperà di confrontare i K risultati e scegliere
+	 * il più alto
+	 */
+
+	private class SearchCallable implements Callable<Action> {
+		private int num;
+		private State state;
+		private String player;
+		private List<Action> tempA;
+		private ActionStore<Action> newResultsTemp;
+
+		public SearchCallable(int num, State state, String player, List<Action> tempA) {
+			this.num = num;
+			this.state = state;
+			this.player = player;
+			this.tempA = tempA;
+			this.newResultsTemp = new ActionStore<Action>();
+		}
+
+		@Override
+		public Action call() {
+			do {
+				currDepthLimit[num]++;
+				int threadDepth = currDepthLimit[num];
+				for (Action action : tempA) {
+					// minValue calculus are based on the simulated action's state obtained by game.getResult
+					double value = minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY,
+							Double.POSITIVE_INFINITY, 1, threadDepth);
+					if (timer.timeOutOccurred())
+						break; // exit from action loop
+					newResultsTemp.add(action, value);
+				}
+				if (newResultsTemp.size() > 0) {
+
+					if (!timer.timeOutOccurred()) {
+						if (hasSafeWinner(newResultsTemp.utilValues.get(0)))
+							break;
+						else if (newResultsTemp.size() > 1 && isSignificantlyBetter(newResultsTemp.utilValues.get(0),
+								newResultsTemp.utilValues.get(1)))
+							break;
+					}
+				}
+			} while (!timer.timeOutOccurred());
+			System.out.println("Thread " + num + " ha score migliore di: " + newResultsTemp.utilValues.get(0) + " con mossa " + newResultsTemp.actions.get(0).toString());
+			newResultsTemp.actions.get(0).setScore(newResultsTemp.utilValues.get(0));
+			return newResultsTemp.actions.get(0);
+		}// call
+
+	}
+
 	/**
 	 * It is based on iterative deepening and tries to make to a good decision in
 	 * limited time. Credit goes to Behi Monsio who had the idea of ordering actions
 	 * by utility in subsequent depth-limited search runs.
 	 */
+
 	@Override
 	public Action makeDecision(State state) {
 		numCuts = 0;
-		ActionStore<Action> newResults;
+		ArrayList<List<Action>> temp = new ArrayList<List<Action>>(K);
 		metrics = new Metrics();
 		String player = game.getPlayer(state);
 		List<Action> results = orderActions(state, game.getActions(state), player, 0);
 		timer.start();
-		currDepthLimit = 0;
-		do {
-			incrementDepthLimit();
-			heuristicEvaluationUsed = false;
-			newResults = new ActionStore<>();
-			for (Action action : results) {
-				// minValue calculus are based on the simulated action's state obtained by
-				// game.getResult
-				double value = minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY,
-						Double.POSITIVE_INFINITY, 1);
-				if (timer.timeOutOccurred())
-					break; // exit from action loop
-				newResults.add(action, value);
+
+		for (int i = 0; i < K; i++) {
+			currDepthLimit[i] = 0;
+		}
+
+		int part = results.size() / K;
+
+		if (results.size() >= K) {
+			for (int i = 0; i < K; i++) {
+				temp.add(i, results.subList(part * i, part * (i + 1) - 1));
+				if (i == K - 1)
+					temp.add(i, results.subList(part * i, results.size() - 1));
 			}
-			if (newResults.size() > 0) {
-				// In the next iteration results will be checked from the best to the worst
-				// action thanks to ActionStore's newResults
-				// The actions in results are always the same, only their position in the list
-				// will change thanks to the iterative deep search
-				results = newResults.actions;
-				System.out.println("Miglior score: " + newResults.utilValues.get(0) + " dell'azione "
-						+ newResults.actions.get(0));
-				if (!timer.timeOutOccurred()) {
-					if (hasSafeWinner(newResults.utilValues.get(0)))
-						break; // exit from iterative deepening loop
-					else if (newResults.size() > 1 && isSignificantlyBetter(
-							newResults.utilValues.get(0), newResults.utilValues.get(1)))
-						break; // exit from iterative deepening loop
+
+		} else {
+			K--;
+			while (K > 0) {
+				if ((part = results.size() / K) > 0) {
+					for (int i = 0; i < K; i++) {
+						temp.add(i, results.subList(i, i));
+					}
+					break;
+				} else {
+					K--;
+				}
+			} // while
+		}
+
+		ArrayList<Callable<Action>> callableTasks = new ArrayList<Callable<Action>>(K);
+		for (int i = 0; i < K; i++) {
+			callableTasks.add(new SearchCallable(i, state, player, temp.get(i)));
+		}
+
+		List<Future<Action>> futures = new ArrayList<>();
+
+		ExecutorService exec = Executors.newFixedThreadPool(K);
+		try {
+			try {
+				futures = exec.invokeAll(callableTasks);
+			} catch (InterruptedException e) {
+
+				e.printStackTrace();
+			}
+		} finally {
+			exec.shutdown();
+		}
+
+		// max
+		int maxi = -1;
+		double max = Double.NEGATIVE_INFINITY;
+		Action result = null;
+		for (int i = 0; i < K; i++) {
+			double futureScore = Double.NEGATIVE_INFINITY;
+			Action futureAction = null;
+			try {
+				futureAction = futures.get(i).get();
+				futureScore = futureAction.getScore();
+			} catch (InterruptedException | ExecutionException e) {
+
+				e.printStackTrace();
+			}
+
+			if (Double.compare(futureScore, TablutGame.maxValue) == 0) {
+				State s = game.getResult(state, futureAction);
+				if (player.equals("W") && s.getTurn() == Turn.WHITEWIN) {
+					System.out.println("HAI VINTO!");
+					return futureAction;
+
+				} else if (player.equals("B") && s.getTurn() == Turn.BLACKWIN) {
+					System.out.println("HAI VINTO!");
+					return futureAction;
 				}
 			}
-		} while (!timer.timeOutOccurred() && heuristicEvaluationUsed);
+			if (futureScore > max) {
+				max = futureScore;
+				maxi = i;
+			}
+		}//for
+		try {
+			result = futures.get(maxi).get();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
 		System.out.println("Tagli effettuati: " + numCuts);
-		return results.get(0);
+		return result;
 	}
 
 	// returns an utility value
-	public double maxValue(State state, String player, double alpha, double beta, int depth) {
+	public double maxValue(State state, String player, double alpha, double beta, int depth, int threadDepth) {
 		updateMetrics(depth);
-		if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
+		if (game.isTerminal(state) || depth >= threadDepth || timer.timeOutOccurred()) {
 			return -eval(state, getOtherPlayer(player));
 		} else {
 			double value = Double.NEGATIVE_INFINITY;
 			//Current actions are calculated from the passed simulation state
 			for (Action action : orderActions(state, game.getActions(state), player, depth)) {
 				//Same as in makeDecision method's minValue
-				value = Math.max(value, minValue(game.getResult(state, action), player, alpha, beta, depth + 1));
+				value = Math.max(value, minValue(game.getResult(state, action), player, alpha, beta, depth + 1, threadDepth));
 				if (value >= beta){
 					numCuts++;
 					return value;
@@ -137,16 +260,16 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	}
 
 	// returns a utility value, the opponent uses this method
-	public double minValue(State state, String player, double alpha, double beta, int depth) {
+	public double minValue(State state, String player, double alpha, double beta, int depth, int threadDepth) {
 		updateMetrics(depth);
-		if (game.isTerminal(state) || depth >= currDepthLimit || timer.timeOutOccurred()) {
+		if (game.isTerminal(state) || depth >= threadDepth || timer.timeOutOccurred()) {
 			return eval(state, player);
 		} else {
 			double value = Double.POSITIVE_INFINITY;
 			//Current actions are calculated from the passed simulation state
 			for (Action action : orderActions(state, game.getActions(state), player, depth)) {
 				//Same as in makeDecision method's minValue
-				value = Math.min(value, maxValue(game.getResult(state, action), player, alpha, beta, depth + 1));
+				value = Math.min(value, maxValue(game.getResult(state, action), player, alpha, beta, depth + 1, threadDepth));
 				if (value <= alpha){
 					numCuts++;
 					return value;
@@ -175,9 +298,9 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	 * search step. This implementation increments the current depth limit by
 	 * one.
 	 */
-	protected void incrementDepthLimit() {
+	/*protected void incrementDepthLimit() {
 		currDepthLimit++;
-	}
+	}*/
 
 	/**
 	 * Primitive operation which is used to stop iterative deepening search in
@@ -207,12 +330,11 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	 * states. When overriding, first call the super implementation!
 	 */
 	protected double eval(State state, String player) {
-		Score score = new Score(player, state);
 		if (game.isTerminal(state)) {
 			return game.getUtility(state, player);
 		} else {
-			heuristicEvaluationUsed = true;
-			return score.calculateScore(game);
+			//heuristicEvaluationUsed = true;
+			return Score.calculateScore(game, state, player);
 		}
 	}
 

@@ -2,10 +2,11 @@
 
 
 <project name="Tablut">
-
-    <target name="clean">
-        <delete dir="build"/>
-    </target>
+     <!-- set global properties for this build -->
+    <property name="src" location="src" />
+    <property name="build" location="build" />
+    <property name="dist" location="dist" />
+    <property name="version" value="1.0" />
 
     <path id="class.path">
         <fileset dir="lib">
@@ -13,28 +14,59 @@
         </fileset>
     </path>
 
-    <target name="compile">
+    <target name="clean">
+
+        <delete includeemptydirs="true">
+            <fileset dir="build" includes="**/*"/>
+        </delete>
+
+        <delete>
+            <fileset dir="dist" includes="**/*.jar"/>
+        </delete>
+
+    </target>
+
+    <target name="compile" depends="clean">
+
         <mkdir dir="build"/>
+
         <javac includeantruntime="false" encoding="iso-8859-1" srcdir="src" 
             destdir="build">
             <classpath refid="class.path"/>
         </javac>
+
         <copy todir="build">
-            <fileset dir="src" excludes="*.java"/>
+            <fileset dir="src" excludes="**/*.java"/>
         </copy>
+
+    </target>
+
+    <target name="dist" depends="compile" description="generate the distribution">
+
+        <buildnumber />
+
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}" />
+
+        <!-- Put everything in ${build} into the MyApplication-${version}.${build.number}.jar -->
+        <jar destfile="${dist}/TablutAshtonPlayers-${version}.jar" basedir="${build}">
+
+            <zipgroupfileset dir="lib" includes="aima-core-3.0.0.jar"/>
+            <zipgroupfileset dir="lib" includes="gson-2.2.2.jar"/>
+
+            <manifest>
+                <attribute name ="DependencyFinder" value="main"/>
+                <attribute name = "Main-Class" value = "client.ClientTablut"/>
+            </manifest>
+
+            </jar>
+
+    </target>
+
+    <target name="run">
+        <java jar="dist/TablutAshtonPlayers-${version}.jar" fork="true">
+		    <arg line="${args}"/>
+		</java>
     </target>
     
-    <target name="client">
-        <java classname="client.ClientTablut" fork="true">
-            <classpath>
-                <pathelement location="lib/gson-2.2.2.jar"/>
-                <pathelement location="lib/aima-core-3.0.0.jar"/>
-                <pathelement location="build"/>
-            </classpath>
-            <arg value="${arg0}"/>
-            <arg value="${arg1}"/>
-        </java>
-    </target>
-
-
 </project>

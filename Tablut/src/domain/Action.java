@@ -34,6 +34,7 @@ public class Action implements Serializable {
 	private String from;
 	private String to;
 	private Turn turn;
+	private double score;
 
 	public Action(String from, String to, Turn t) throws IOException {
 		if (from.length() != 2 || to.length() != 2) {
@@ -117,6 +118,16 @@ public class Action implements Serializable {
 				return Direction.UP;
 			else
 				return Direction.DOWN;
+	}
+
+	//Metodi per ricavare lo score caratteristico di uno stato provocato dall'azione
+
+	public void setScore(double score){
+		this.score = score;
+	}
+
+	public double getScore(){
+		return this.score;
 	}
 
 }

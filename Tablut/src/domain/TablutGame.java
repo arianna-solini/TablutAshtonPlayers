@@ -1,7 +1,6 @@
 package domain;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import aima.core.search.adversarial.Game;
@@ -18,8 +17,8 @@ import exceptions.*;
  */
 public class TablutGame implements Game<State, Action, String> {
 
-	public final static int minValue = -100;
-	public final static int maxValue = 100;
+	public final static double minValue = -100;
+	public final static double maxValue = 100;
 	private State initialState = new State();
 	private int movesWithoutCapturingWhite, movesWithoutCapturingBlack;
 
@@ -192,7 +191,7 @@ public class TablutGame implements Game<State, Action, String> {
 								&& board.getPawn(4, 2) == Pawn.BLACK 
 								&& board.getPawn(3, 3) == Pawn.BLACK)
 							|| (board.getBox(rowTo - 1, columnTo).equals("f5")
-								&& board.getPawn(4, 4) == Pawn.BLACK 
+								&& board.getPawn(4, 6) == Pawn.BLACK 
 								&& board.getPawn(3, 5) == Pawn.BLACK)
 							|| (!board.getBox(rowTo - 1, columnTo).equals("d5") // king outside the throne areas
 								&& !board.getBox(rowTo - 1, columnTo).equals("e4")
@@ -216,7 +215,7 @@ public class TablutGame implements Game<State, Action, String> {
 								&& board.getPawn(6, 4) == Pawn.BLACK)
 							|| (board.getBox(rowTo, columnTo + 1).equals("d5")
 								&& board.getPawn(3, 3) == Pawn.BLACK 
-								&& board.getPawn(3, 5) == Pawn.BLACK)
+								&& board.getPawn(5, 3) == Pawn.BLACK)
 							|| (!board.getBox(rowTo, columnTo + 1).equals("d5") // king outside the throne areas
 								&& !board.getBox(rowTo, columnTo + 1).equals("e6")
 								&& !board.getBox(rowTo, columnTo + 1).equals("e4")

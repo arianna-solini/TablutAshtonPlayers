@@ -13,7 +13,7 @@ public class TablutGameTest {
 
 	@Test
 	public void testCheckCaptureConditionsBBW() throws IOException {
-		Board board = state.getBoard().getEmptyBoard();
+		Board board = Board.getEmptyBoard();
 		board.setPawn("a4", Pawn.BLACK);
 		board.setPawn("b4", Pawn.BLACK);
 		board.setPawn("c4", Pawn.EMPTY);
