@@ -7,7 +7,6 @@ import domain.State.Turn;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -24,7 +23,5 @@ public class ActionTest {
 		Action a = new Action("e5", "e4", Turn.WHITE);
 		assertTrue(a.getDirection() == Direction.UP);
 	}
-
-
 
 }

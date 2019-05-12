@@ -45,6 +45,22 @@ First, run the server in `https://github.com/AGalassi/TablutCompetition`, then y
 ```
 For the TABLUT STUDENTS COMPETITION is recommended to choose the 1st configuration if the timeout is set to 60 secs, otherwise the 2nd.
 
+### Run the program with ant
+ If you want to make sure you're about to run the latest version you have to type:
+```
+cd /path/to/repository/TablutAshtonPlayers/Tablut
+
+ant dist
+```
+then:
+
+```
+ant run -Dargs='aiofdtiger (white|black) serverTimeout'
+
+#example
+ant run -Dargs='aiofdtiger white 60'
+```
+
 ### Run the program with java
 The last compiled version of the project is in the Tablut/dist/ directory, if you want to make sure you're about to run the latest version you have to type:
 ```
@@ -59,23 +75,5 @@ cd /path/to/repository/TablutAshtonPlayers/Tablut/dist
 java -jar fileJarInThisDirectory.jar aiofdtiger (white|black) serverTimeout
 
 #example
-java -jar fileJarInThisDirectory.jar aiofdtiger white 60
-```
-
-### Run the program with ant
- If you want to make sure you're about to run the latest version you have to type:
-```
-cd /path/to/repository/TablutAshtonPlayers/Tablut
-
-ant dist
-```
-then:
-
-```
-cd /path/to/repository/TablutAshtonPlayers/Tablut
-
-ant run -Dargs='aiofdtiger (white|black) serverTimeout'
-
-#example
-ant run -Dargs='aiofdtiger white 60'
+java -jar TablutAshtonPlayers-1.0.jar aiofdtiger white 60
 ```

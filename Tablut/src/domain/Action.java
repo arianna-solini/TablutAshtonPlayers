@@ -10,10 +10,11 @@ import domain.State.Turn;
 * This class represents an action of a player
 * @author A.Piretti
 */
-public class Action implements Serializable {
+public class Action implements Serializable, Comparable<Action> {
 
 	/**
 	 * Enum which represents the direction of an action
+	 * @author R.Vasumini, A.Solini
 	 */
 	public enum Direction {
 		LEFT("L"), RIGHT("R"), UP("U"), DOWN("D"), ANY("A");
@@ -34,6 +35,11 @@ public class Action implements Serializable {
 	private String from;
 	private String to;
 	private Turn turn;
+	/**
+	 * The value given to this action in a certain state, it's set by default to Double.NEGATIVE_INFINITY, 
+	 * it will be set to another value in makeDecision method in TimeLimitedSearch
+	 * @author R.Vasumini, A.Solini
+	 */
 	private double score;
 
 	public Action(String from, String to, Turn t) throws IOException {
@@ -44,6 +50,7 @@ public class Action implements Serializable {
 			this.from = from;
 			this.to = to;
 			this.turn = t;
+			this.score = Double.NEGATIVE_INFINITY;
 		}
 	}
 
@@ -120,14 +127,27 @@ public class Action implements Serializable {
 				return Direction.DOWN;
 	}
 
-	//Metodi per ricavare lo score caratteristico di uno stato provocato dall'azione
-
+	/**
+	 * @author R.Vasumini, A.Solini
+	 */
 	public void setScore(double score){
 		this.score = score;
 	}
 
+	/**
+	 * @author R.Vasumini, A.Solini
+	 */
 	public double getScore(){
 		return this.score;
+	}
+
+	/**
+	 * Method used to implement Comparable interface
+	 * @author R.Vasumini, A.Solini
+	 */
+	@Override
+	public int compareTo(Action other) {
+		return Double.compare(this.score, other.getScore());
 	}
 
 }

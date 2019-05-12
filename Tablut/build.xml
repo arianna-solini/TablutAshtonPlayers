@@ -43,8 +43,6 @@
 
     <target name="dist" depends="compile" description="generate the distribution">
 
-        <buildnumber />
-
         <!-- Create the distribution directory -->
         <mkdir dir="${dist}" />
 
@@ -59,7 +57,7 @@
                 <attribute name = "Main-Class" value = "client.ClientTablut"/>
             </manifest>
 
-            </jar>
+        </jar>
 
     </target>
 

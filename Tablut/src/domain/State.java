@@ -11,6 +11,8 @@ import domain.Board.Position;
 /**
  * Class for the State of the game, we have a representation of the board and the turn
  * @author Andrea Piretti
+ * <p>Modified by:
+ * @R.Vasumini, A.Solini
  */
 public class State implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
@@ -77,7 +79,10 @@ public class State implements Serializable, Cloneable {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Updates opponent possible actions map after his move, if the opponent is white player and moves the king the king position is updated too.
+	 * @author R.Vasumini, A.Solini
+	 */
 	public void updateOpponentPossibleActionsKeySet(Turn opponent){
 		String toRemove = null, toAdd = null;
 		if(opponent == Turn.WHITE){
@@ -386,6 +391,7 @@ public class State implements Serializable, Cloneable {
 
 	/**
 	 * @return A string representing the board
+	 * @author R.Vasumini, A.Solini
 	 */
 	public String boardString() {
 		StringBuffer result = new StringBuffer();
@@ -494,6 +500,7 @@ public class State implements Serializable, Cloneable {
 
 	/**
 	 * Clones the State
+	 * @author R.Vasumini, A.Solini
 	 */
 	@Override
 	@SuppressWarnings (value="unchecked")
@@ -529,6 +536,7 @@ public class State implements Serializable, Cloneable {
 
 	/**
 	 * @param possibleWhiteActions the possibleWhiteActions to set
+	 * @author R.Vasumini, A.Solini
 	 */
 	public void setPossibleWhiteActions(HashMap<String, ArrayList<String>> possibleWhiteActions) {
 		this.possibleWhiteActions = possibleWhiteActions;
@@ -536,6 +544,7 @@ public class State implements Serializable, Cloneable {
 
 	/**
 	 * @param possibleBlackActions the possibleBlackActions to set
+	 * @author R.Vasumini, A.Solini
 	 */
 	public void setPossibleBlackActions(HashMap<String, ArrayList<String>> possibleBlackActions) {
 		this.possibleBlackActions = possibleBlackActions;
@@ -543,6 +552,7 @@ public class State implements Serializable, Cloneable {
 
 	/**
 	 * @param turnNumber the turnNumber to set
+	 * @author R.Vasumini, A.Solini
 	 */
 	public void setTurnNumber(int turnNumber) {
 		this.turnNumber = turnNumber;

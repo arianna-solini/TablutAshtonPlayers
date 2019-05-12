@@ -1,12 +1,12 @@
 package ai;
 
-import java.util.Random;
 import domain.Board;
 import domain.State;
 import domain.TablutGame;
+import domain.Board.Pawn;
 
 /**
- * Class used for calculate the score of an action
+ * Class used to calculate the score of an action
  * @author R.Vasumini, A.Solini
  */
 public class Score{
@@ -15,9 +15,9 @@ public class Score{
 		int scoreWhite = 0;
 		int scoreBlack = 0;
 
-		Random r = new Random(System.currentTimeMillis());
+		//Random r = new Random(System.currentTimeMillis());
 		Board board = state.getBoard();
-		int captureMultiplier=1;
+		//int captureMultiplier=1;
 
 		int turnNumber = state.getTurnNumber();
 		int numBlack = state.getNumBlack();
@@ -40,7 +40,7 @@ public class Score{
 				//Numero di neri mangiati dopo la mia azione
 				scoreWhite += (oldNumBlack - numBlack);
 				//Doppio scacco del re 
-				if(rowKing == 2 || rowKing == 6 )
+				if(rowKing == 2 || rowKing == 6)
 					if(board.isRowEmpty(rowKing))
 						scoreWhite += (20 + numWhiteNearTheKing);
 
@@ -62,7 +62,6 @@ public class Score{
 				scoreBlack += numBlackNearTheKing;
 				//Numero di bianchi mangiati  dopo la mia azione
 				scoreBlack += (oldNumWhite - numWhite);
-				
 				//TODO se non si è nella situazione di scacco, la mangiata vale 2 e la vicinanza al re solo 1, tenerne conto
 
 				//Manca una pedina alla vittoria
@@ -100,6 +99,14 @@ public class Score{
 
 				//PUNTEGGI NEGATIVI
 				//scoreBlack -= numWhiteNearTheKing;
+				/*if(board.isColumnWhite(2) || board.isColumnWhite(6))
+					scoreBlack -= 1;
+				if(board.isRowWhite(2) || board.isRowWhite(6)){
+					scoreBlack -= 1;
+				}*/
+				/*if(board.isRowEmpty(rowKing) || board.isColumnEmpty(columnKing)){
+					scoreBlack -= 20;
+				}*/
 				return scoreBlack;
 
 			default:
@@ -107,6 +114,116 @@ public class Score{
 		}
 
 	}
+
+	public boolean kingInE7E3Protected (Board board, int rowKing, int columnKing){
+		boolean checkBlack = false;
+		if(rowKing == 2){
+			for(int i=columnKing + 1 ;i< board.getLength() - 1; i++){
+				if(board.getPawn(rowKing + 1, i) == Pawn.BLACK){
+					checkBlack = true;
+					break;
+				}
+				if(board.getPawn(rowKing + 1, i) == Pawn.WHITE){
+					checkBlack = false;
+					break;
+				}
+			}
+			if(checkBlack == false){
+				for(int i=columnKing - 1;i > - 1; i--){
+					if(board.getPawn(rowKing + 1, i) == Pawn.BLACK){
+						checkBlack = true;
+						break;
+					}
+					if(board.getPawn(rowKing + 1, i) == Pawn.WHITE){
+						checkBlack = false;
+						break;
+					}
+				}
+			}
+		} //rowKing == 2
+
+		if(rowKing == 6){
+			for(int i=columnKing + 1 ;i< board.getLength() - 1; i++){
+				if(board.getPawn(rowKing - 1, i) == Pawn.BLACK){
+					checkBlack = true;
+					break;
+				}
+				if(board.getPawn(rowKing - 1, i) == Pawn.WHITE){
+					checkBlack = false;
+					break;
+				}
+			}
+			if(checkBlack == false){
+				for(int i=columnKing - 1;i > - 1; i--){
+					if(board.getPawn(rowKing - 1, i) == Pawn.BLACK){
+						checkBlack = true;
+						break;
+					}
+					if(board.getPawn(rowKing - 1, i) == Pawn.WHITE){
+						checkBlack = false;
+						break;
+					}
+				}
+			}
+
+		} // rowKing = 6
+
+		return !checkBlack;
+	}
+
+	public boolean kingInC5G5Protected (Board board, int rowKing, int columnKing){
+		boolean checkBlack = false;
+		if(columnKing == 2){
+			for(int i=rowKing + 1 ;i< board.getLength() - 1; i++){
+				if(board.getPawn(i, columnKing + 1) == Pawn.BLACK){
+					checkBlack = true;
+					break;
+				}
+				if(board.getPawn(i, columnKing + 1) == Pawn.WHITE){
+					checkBlack = false;
+					break;
+				}
+			}
+			if(checkBlack == false){
+				for(int i=rowKing - 1;i > - 1; i--){
+					if(board.getPawn(i, columnKing + 1) == Pawn.BLACK){
+						checkBlack = true;
+						break;
+					}
+					if(board.getPawn(i, columnKing + 1) == Pawn.WHITE){
+						checkBlack = false;
+						break;
+					}
+				}
+			}
+		}// columnKing == 2
+		else if(columnKing == 6){
+			for(int i=rowKing + 1 ;i< board.getLength() - 1; i++){
+				if(board.getPawn(i, columnKing - 1) == Pawn.BLACK){
+					checkBlack = true;
+					break;
+				}
+				if(board.getPawn(i, columnKing - 1) == Pawn.WHITE){
+					checkBlack = false;
+					break;
+				}
+			}
+			if(checkBlack == false){
+				for(int i=rowKing - 1;i > - 1; i--){
+					if(board.getPawn(i, columnKing - 1) == Pawn.BLACK){
+						checkBlack = true;
+						break;
+					}
+					if(board.getPawn(i, columnKing - 1) == Pawn.WHITE){
+						checkBlack = false;
+						break;
+					}
+				}
+			}
+		}//columnKing == 6
+		return !checkBlack;
+	}
+
 
 
 
