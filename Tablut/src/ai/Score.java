@@ -6,7 +6,7 @@ import domain.TablutGame;
 import domain.Board.Pawn;
 
 /**
- * Class used for calculate the score of an action
+ * Class used to calculate the score of an action
  * @author R.Vasumini, A.Solini
  */
 public class Score{

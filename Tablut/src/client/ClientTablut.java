@@ -33,7 +33,7 @@ public class ClientTablut implements Runnable {
 	 */
 	private Turn opponent;
 	/**
-	 * Team teamName
+	 * TeamName
 	 */
 	private String teamName;
 	/**
@@ -43,10 +43,19 @@ public class ClientTablut implements Runnable {
 	private DataInputStream in;
 	private DataOutputStream out;
 	private Gson gson;
+
+	/**
+	 * Time to chose the best action during debug mode
+	 */
 	private int debugTimeSearch = 5;
+	/**
+	 * Time to chose the best action
+	 */
 	private int searchTime = debugTimeSearch; 
+	/**
+	 * The action choosen must be sent to the server before this timeout
+	 */
 	private int timeoutServer = 60; 
-	//TODO riguarda searchtime, come lo passi ed eventuali exception  
 
 	public ClientTablut(String teamName, String player) throws UnknownHostException, IOException {
 		this(teamName, player, 60, "localhost", -1 );
@@ -85,17 +94,14 @@ public class ClientTablut implements Runnable {
 		in = new DataInputStream(playerSocket.getInputStream());
 	}
 
-	//TODO da rifare description relativa agli argomenti del main
 	/**
-	 * Client's main, it has to be launched specifiying squad's teamName and role
-	 * @param args aiofdtiger (white|black)
+	 * @param args aiofdtiger (white|black) [[[serverTimeout] serverAddress] debugTimeSearch]
 	 * @throws Exception
 	 * @author R.Vasumini, A.Solini
 	 */
     	public static void main(String[] args) throws Exception {
         
 		String player = null;
-		//TODO verificare se essenziale specificare il nome del concorrente secondo le regole
 		String teamName = null;
 		ClientTablut client = null;
 		//Checks Argument
@@ -154,13 +160,14 @@ public class ClientTablut implements Runnable {
 		}
 		State state = new State();
 		TablutGame rules = new TablutGame();
-		//TODO Controlla se va bene 
+
 		if(debugTimeSearch > 0)
 			searchTime = debugTimeSearch;
 		else if(timeoutServer >= 20)
 			searchTime = timeoutServer - 10;
 
 		TimeLimitedSearch search = new TimeLimitedSearch(rules, TablutGame.minValue, TablutGame.maxValue, searchTime);
+		//Prints	AI of d Tiger
 		System.out.println("          _____          __       _   _______ _                 ");
 		System.out.println("    /\\   |_   _|        / _|     | | |__   __(_)                ");
 		System.out.println("   /  \\    | |     ___ | |_    __| |    | |   _  __ _  ___ _ __ ");

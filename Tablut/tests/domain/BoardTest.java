@@ -44,13 +44,13 @@ public class BoardTest {
 	@Test
 	public void testIsColumnEmpty(){
 		//this.board.setPawn("c3", Pawn.KING);
-		assertTrue("OK", this.board.isColumnEmpty(2));
+		assertTrue(this.board.isColumnEmpty(2));
 	}
 
 	@Test
 	public void testIsRowEmpty(){
 		//this.board.setPawn("c", Pawn.KING);
-		assertTrue("OK", this.board.isRowEmpty(2));
+		assertTrue(this.board.isRowEmpty(2));
 	}
 
 	@Test

@@ -14,6 +14,8 @@ import exceptions.*;
 /**
  * Game engine inspired by the Ashton Rules of Tablut
  * @author A. Piretti, Andrea Galassi
+ * <p>Modified by 
+ * @author R.Vasumini, A.Solini
  */
 public class TablutGame implements Game<State, Action, String> {
 
@@ -22,7 +24,6 @@ public class TablutGame implements Game<State, Action, String> {
 	private State initialState = new State();
 	private int movesWithoutCapturingWhite, movesWithoutCapturingBlack;
 
-	//TODO pensare a come fare un nostro eventuale costruttore di  TablutGame e se implementare il pareggio
 	public TablutGame(){
 		super();
 		this.movesWithoutCapturingBlack = 0;
@@ -257,7 +258,6 @@ public class TablutGame implements Game<State, Action, String> {
 
 	}
 
-	//TODO: eventuale cambiamento drastico: essendo fatte bene le azioni di mosse possibili potremmo evitarci questo controllo costoso
 	/**
 	 * Throws different exceptions if it encounters a problem in the action to be executed in the specified state
 	 * @param state
@@ -413,7 +413,6 @@ public class TablutGame implements Game<State, Action, String> {
 
 	/**
 	 * @return The state with the move made
-	 * @author R.Vasumini, A.Solini
 	 */
 	public State makeMove(State state, Action action){
 		try{
@@ -438,7 +437,6 @@ public class TablutGame implements Game<State, Action, String> {
 	 * @param state
 	 * @param action
 	 * @return The state with the pawn moved
-	 * @author R.Vasumini, A.Solini
 	 */
 	private State movePawn(State state, Action action) {
 		Board board = state.getBoard();
@@ -706,7 +704,7 @@ public class TablutGame implements Game<State, Action, String> {
 	@Override
 	public boolean isTerminal(State state) {
 		Turn turn = state.getTurn();
-		//TODO se implementi draw devi aggiungerlo qua
+		//TODO You must add DRAW if  you implement it
 		if(turn == Turn.BLACKWIN || turn == Turn.WHITEWIN)
 			return true;
 		else
