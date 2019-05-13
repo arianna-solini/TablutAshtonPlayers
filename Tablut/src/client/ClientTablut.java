@@ -35,7 +35,7 @@ public class ClientTablut implements Runnable {
 	/**
 	 * TeamName
 	 */
-	private String teamName;
+	private String teamName = "aiofdtiger";
 	/**
 	 * Player socket used to connect to the server
 	 */
@@ -57,21 +57,20 @@ public class ClientTablut implements Runnable {
 	 */
 	private int timeoutServer = 60; 
 
-	public ClientTablut(String teamName, String player) throws UnknownHostException, IOException {
-		this(teamName, player, 60, "localhost", -1 );
+	public ClientTablut(String player) throws UnknownHostException, IOException {
+		this(player, 60, "localhost", -1 );
 	}
 
-	public ClientTablut(String teamName, String player, int timeoutServer) throws UnknownHostException, IOException {
-		this(teamName, player, timeoutServer, "localhost", -1);
+	public ClientTablut(String player, int timeoutServer) throws UnknownHostException, IOException {
+		this(player, timeoutServer, "localhost", -1);
 	}
 
-	public ClientTablut(String teamName, String player, int timeoutServer, String address) throws UnknownHostException, IOException {
-		this(teamName, player, timeoutServer, address, -1);
+	public ClientTablut(String player, int timeoutServer, String address) throws UnknownHostException, IOException {
+		this(player, timeoutServer, address, -1);
 	}
 
-	public ClientTablut(String teamName, String player, int timeoutServer, String address, int debugTimeSearch) throws UnknownHostException, IOException{
+	public ClientTablut(String player, int timeoutServer, String address, int debugTimeSearch) throws UnknownHostException, IOException{
 		int port = -1;
-		this.teamName = teamName;
 		this.gson = new Gson();
 
 		if(player.equalsIgnoreCase("white")){
@@ -95,43 +94,37 @@ public class ClientTablut implements Runnable {
 	}
 
 	/**
-	 * @param args aiofdtiger (white|black) [[[serverTimeout] serverAddress] debugTimeSearch]
+	 * @param args (white|black) [[[serverTimeout] serverAddress] debugTimeSearch]
 	 * @throws Exception
 	 * @author R.Vasumini, A.Solini
 	 */
     	public static void main(String[] args) throws Exception {
         
 		String player = null;
-		String teamName = null;
 		ClientTablut client = null;
 		//Checks Argument
 		try {
-			if(args.length >= 2 && args.length <= 5){
-				teamName = args[0];
-				player = args[1];
-				if (!(teamName.equalsIgnoreCase("aiofdtiger"))){ 
-					System.out.println("Wrong team teamName, it's AIofDtiger or aiofdtiger\n");
-					System.exit(1);
-				}
+			if(args.length >= 1 && args.length <= 4){
+				player = args[0];
 				
 				if (!(player.equalsIgnoreCase("white") || player.equalsIgnoreCase("black"))){	
 					System.out.println("You must specify which player you are (WHITE or BLACK)\n");
 					System.exit(2);
 				}
 
-				if (args.length == 2) {
-					client = new ClientTablut(teamName, player);
-				} else if(args.length == 3){
-					int timeoutServer = Integer.parseInt(args[2]);
-					client = new ClientTablut(teamName, player, timeoutServer);
+				if (args.length == 1) {
+					client = new ClientTablut(player);
+				} else if(args.length == 2){
+					int timeoutServer = Integer.parseInt(args[1]);
+					client = new ClientTablut(player, timeoutServer);
 
+				} else if(args.length == 3){
+					int timeoutServer = Integer.parseInt(args[1]);
+					client = new ClientTablut(player, timeoutServer, args[2]);
 				} else if(args.length == 4){
-					int timeoutServer = Integer.parseInt(args[2]);
-					client = new ClientTablut(teamName, player, timeoutServer, args[3]);
-				} else if(args.length == 5){
-					int timeoutServer = Integer.parseInt(args[2]);
-					int debugTimeSearch = Integer.parseInt(args[4]);
-					client = new ClientTablut(teamName, player, timeoutServer, args[3], debugTimeSearch);
+					int timeoutServer = Integer.parseInt(args[1]);
+					int debugTimeSearch = Integer.parseInt(args[3]);
+					client = new ClientTablut(player, timeoutServer, args[2], debugTimeSearch);
 				}	
 			}
 		} catch (InvalidParameterException e) {

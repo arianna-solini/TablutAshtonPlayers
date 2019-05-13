@@ -29,19 +29,18 @@ git clone https://github.com/arianna-solini/TablutAshtonPlayers.git
 ## Run the program
 First, run the server in `https://github.com/AGalassi/TablutCompetition`, then you can choose 4 differents launch configuration:
 ```
-#teamName MUST be aiofdtiger (case insensitive)
 #playerColor MUST be white or black (case insensitive)
 #serverTimeout is set by default to 60 secs
 #serverAddress is set by default to localhost
 #debugSearchTime is used for debugging, otherwise searchTime is set by default to (serverTimeout - 10) secs
 
-1) Specify teamName, playerColor
+1) Specify playerColor
 
-2) Specify teamName, playerColor, serverTimeout
+2) Specify playerColor, serverTimeout
 
-3) Specify teamName, playerColor, serverTimeout, serverAddress
+3) Specify playerColor, serverTimeout, serverAddress
 
-4) Specify teamName, playerColor, serverTimeout, serverAddress, debugSearchTime
+4) Specify playerColor, serverTimeout, serverAddress, debugSearchTime
 ```
 For the TABLUT STUDENTS COMPETITION is recommended to choose the 1st configuration if the timeout is set to 60 secs, otherwise the 2nd.
 
@@ -55,10 +54,10 @@ ant dist
 then:
 
 ```
-ant run -Dargs='aiofdtiger (white|black) serverTimeout'
+ant run -Dargs='(white|black) serverTimeout'
 
 #example
-ant run -Dargs='aiofdtiger white 60'
+ant run -Dargs='white 60'
 ```
 
 ### Run the program with java
@@ -72,8 +71,8 @@ then:
 ```
 cd /path/to/repository/TablutAshtonPlayers/Tablut/dist
 
-java -jar fileJarInThisDirectory.jar aiofdtiger (white|black) serverTimeout
+java -jar AIofdTiger.jar (white|black) serverTimeout
 
 #example
-java -jar TablutAshtonPlayers-1.0.jar aiofdtiger white 60
+java -jar AIofdTiger.jar white 60
 ```

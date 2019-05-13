@@ -17,7 +17,6 @@ public class Score{
 
 		//Random r = new Random(System.currentTimeMillis());
 		Board board = state.getBoard();
-		//int captureMultiplier=1;
 
 		int turnNumber = state.getTurnNumber();
 		int numBlack = state.getNumBlack();
@@ -48,6 +47,10 @@ public class Score{
 				if(columnKing == 2 || columnKing == 6)
 					if(board.isColumnEmpty(columnKing))
 						scoreWhite += (20 + numWhiteNearTheKing);
+
+				//PUNTEGGI NEUTRI
+				//Differenza tra mangiati neri e mangiati bianchi
+				scoreWhite+=(16-numBlack) - (9-numWhite);
 				
 				//PUNTEGGI NEGATIVI
 				scoreWhite -= numBlackNearTheKing;
@@ -68,37 +71,54 @@ public class Score{
 				switch(currentKingPosition){
 					case "e5":
 						if(numBlackNearTheKing >= 3)
+							scoreBlack += (30 + numBlackNearTheKing);
+						else if(numBlackNearTheKing >= 2)
 							scoreBlack += (20 + numBlackNearTheKing);
 						break;
 
 					case "e4":
 						if(numBlackNearTheKing >= 2)
+							scoreBlack += (30 + numBlackNearTheKing);
+						else if(numBlackNearTheKing >= 1)
 							scoreBlack += (20 + numBlackNearTheKing);
 						break;
 
 					case "e6":
 						if(numBlackNearTheKing >= 2)
+							scoreBlack += (30 + numBlackNearTheKing);
+						else if(numBlackNearTheKing >= 1)
 							scoreBlack += (20 + numBlackNearTheKing);
 						break;
 
 					case "d5":
 						if(numBlackNearTheKing >= 2)
+							scoreBlack += (30 + numBlackNearTheKing);
+						else if(numBlackNearTheKing >= 1)
 							scoreBlack += (20 + numBlackNearTheKing);
 						break;
 
 					case "f5":
 						if(numBlackNearTheKing >= 2)
+							scoreBlack += (30 + numBlackNearTheKing);
+						else if(numBlackNearTheKing >= 1)
 							scoreBlack += (20 + numBlackNearTheKing);
 						break;
 
 					default:
 						if(numBlackNearTheKing >= 1)
+							scoreBlack += (30 + numBlackNearTheKing);
+						else if(numBlackNearTheKing >= 0)
 							scoreBlack += (20 + numBlackNearTheKing);
 						break;
 				}
 
+				//PUNTEGGI NEUTRI
+				//Differenza tra mangiati bianchi e mangiati neri
+				scoreBlack+=(9-numWhite) - (16-numBlack); 
+
 				//PUNTEGGI NEGATIVI
-				//scoreBlack -= numWhiteNearTheKing;
+				scoreBlack -= numWhiteNearTheKing;
+				
 				/*if(board.isColumnWhite(2) || board.isColumnWhite(6))
 					scoreBlack -= 1;
 				if(board.isRowWhite(2) || board.isRowWhite(6)){
@@ -114,7 +134,7 @@ public class Score{
 		}
 
 	}
-
+	/*
 	public boolean kingInE7E3Protected (Board board, int rowKing, int columnKing){
 		boolean checkBlack = false;
 		if(rowKing == 2){
@@ -222,9 +242,6 @@ public class Score{
 			}
 		}//columnKing == 6
 		return !checkBlack;
-	}
-
-
-
+	}*/
 
 }
