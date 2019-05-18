@@ -1,17 +1,6 @@
 # TablutAshtonPlayers
 A player for the Tablut Students Competition - UNIBO2019 - AIofdTiger team
 
-```
-          _____          __       _   _______ _                 
-    /\   |_   _|        / _|     | | |__   __(_)                
-   /  \    | |     ___ | |_    __| |    | |   _  __ _  ___ _ __ 
-  / /\ \   | |    / _ \|  _|  / _` |    | |  | |/ _` |/ _ \ '__|
- / ____ \ _| |_  | (_) | |   | (_| |    | |  | | (_| |  __/ |   
-/_/    \_\_____|  \___/|_|    \__,_|    |_|  |_|\__, |\___|_|   
-                                                 __/ |          
-                                                |___/           
-```
-
 ## Installation of the repository on Ubuntu/Debian
 For this project we've used the following versions of java and ant.
 
