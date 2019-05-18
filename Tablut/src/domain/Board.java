@@ -16,7 +16,7 @@ public class Board implements Serializable {
 	 * @author R.Vasumini, A.Solini
 	 */
 	public enum Position{
-		THRONE("T"), CITADEL("C"), GOAL("G"), STARTWHITE("S");
+		THRONE("T"), CITADEL("C"), STARTWHITE("S");
 		private final String position;
 		private Position(String s) {
 			position = s;
@@ -27,6 +27,37 @@ public class Board implements Serializable {
 		public String toString() {
 			return position;
 		}
+	}
+
+	public enum Diagonal{
+		LEFTUPBIG("LUB"), LEFTUPSMALL("LUS"), LEFTDOWNBIG("LDB"), LEFTDOWNSMALL("LDS"),
+		RIGHTUPBIG("RUB"), RIGHTUPSMALL("RUS"), RIGHTDOWNBIG("RDB"), RIGHTDOWNSMALL("RDS");
+		private final String diagonal;
+		private Diagonal(String s){
+			diagonal = s;
+		}
+		public boolean equalsDiagonal(String otherDiagonal) {
+			return (otherDiagonal == null) ? false : diagonal.equals(otherDiagonal);
+		}
+		public String toString() {
+			return diagonal;
+		}
+			
+	}
+
+	public enum Citadel{
+		LEFT("CL"), RIGHT("CR"), UP("CU"), DOWN("CD");
+		private final String citadel;
+		private Citadel(String s){
+			citadel = s;
+		}
+		public boolean equalsCitadel(String otherCitadel) {
+			return (otherCitadel== null) ? false : citadel.equals(otherCitadel);
+		}
+		public String toString() {
+			return citadel;
+		}
+			
 	}
 	/**
 	 * Enum which represents the  pawns in the board
@@ -48,18 +79,22 @@ public class Board implements Serializable {
 	 * HashMap that associates  board's boxes to the corresponding Position
 	 */
 	protected HashMap<String, Position> positions  = new HashMap<String, Position>();
-	/**
-	 * HashMap that associates board's  boxes to the corresponding Goal Position
-	 */
-	protected HashMap<String, Position> goals = new HashMap<String, Position>();
+
+	protected HashMap<Diagonal, String[]> diagonals  = new HashMap<Diagonal, String[]>();
+
+	protected HashMap<Diagonal, String[]> backDiagonals  = new HashMap<Diagonal, String[]>();
+
+	protected HashMap<Citadel, String[]> citadels  = new HashMap<Citadel, String[]>();
 	/**
 	 * Matrix of Pawns representing the board
 	 */
 	protected Pawn board[][];
 
 	public Board(){
+		setBackDiagonals();
+		setDiagonals();
 		setPositions();
-		setGoals();
+		setCitadels();
 		this.board = new Pawn[9][9];
 		//Sets all boxes to empty
 		for (int i = 0; i < 9; i++) 
@@ -87,26 +122,60 @@ public class Board implements Serializable {
 		return board;
 	}
 
-	private void setGoals(){
-		this.goals.put("a2", Position.GOAL);
-		this.goals.put("a3", Position.GOAL);
-		this.goals.put("a7", Position.GOAL);
-		this.goals.put("a8", Position.GOAL);
+	private void setDiagonals(){
 
-		this.goals.put("i2", Position.GOAL);
-		this.goals.put("i3", Position.GOAL);
-		this.goals.put("i7", Position.GOAL);
-		this.goals.put("i8", Position.GOAL);
+		this.diagonals.put(Diagonal.LEFTDOWNBIG, new String[]{"b7", "c8"});
 
-		this.goals.put("b9", Position.GOAL);
-		this.goals.put("c9", Position.GOAL);
-		this.goals.put("g9", Position.GOAL);
-		this.goals.put("h9", Position.GOAL);
+		this.diagonals.put(Diagonal.LEFTDOWNSMALL, new String[]{"c6", "d7"});
 
-		this.goals.put("b1", Position.GOAL);
-		this.goals.put("c1", Position.GOAL);
-		this.goals.put("g1", Position.GOAL);
-		this.goals.put("h1", Position.GOAL);
+		this.diagonals.put(Diagonal.LEFTUPBIG, new String[]{"b3", "c2"});
+
+		this.diagonals.put(Diagonal.LEFTUPSMALL, new String[]{"c4", "d3"});
+
+		this.diagonals.put(Diagonal.RIGHTDOWNBIG, new String[]{"g8", "h7"});
+
+		this.diagonals.put(Diagonal.RIGHTDOWNSMALL, new String[]{"f7", "g6"});
+
+		this.diagonals.put(Diagonal.RIGHTUPBIG, new String[]{"g2", "h3"});
+
+		this.diagonals.put(Diagonal.RIGHTUPSMALL, new String[]{"f3", "g4"});
+	}
+
+	private void setBackDiagonals(){
+
+		this.diagonals.put(Diagonal.LEFTDOWNBIG, new String[]{"a7", "a8", "a9", "b8", "b9", "c9"});
+
+		this.diagonals.put(Diagonal.LEFTDOWNSMALL, new String[]{"a7", "a8", "a9", "b8", "b9", "c9", "b6", "b7", "c7", "c8", "d8"});
+
+		this.diagonals.put(Diagonal.LEFTUPBIG, new String[]{"a1", "b1", "c1", "a2", "a3", "b2"});
+
+		this.diagonals.put(Diagonal.LEFTUPSMALL, new String[]{"a1", "b1", "c1", "a2", "a3", "b2", "b3", "c2", "b4", "c3", "d2"});
+
+		this.diagonals.put(Diagonal.RIGHTDOWNBIG, new String[]{"i7", "i8", "i9", "g9", "h9", "h8"});
+
+		this.diagonals.put(Diagonal.RIGHTDOWNSMALL, new String[]{"i7", "i8", "i9", "g9", "h9", "h8", "g8", "h7", "f8", "g7", "h6"});
+
+		this.diagonals.put(Diagonal.RIGHTUPBIG, new String[]{"i3", "i2", "i1", "g1", "h1", "h2"});
+
+		this.diagonals.put(Diagonal.RIGHTUPSMALL, new String[]{"i3", "i2", "i1", "g1", "h1", "h2", "g2", "h3", "f2", "g3", "h4"});
+	}
+
+	private void setCitadels(){
+		this.citadels.put(Citadel.LEFT, new String[]{"a4", "a5", "a6", "b5"});
+
+		this.citadels.put(Citadel.RIGHT, new String[]{"i4", "i5", "i6", "h5"});
+
+		this.citadels.put(Citadel.UP, new String[]{"d1", "e1", "f1", "e2"});
+
+		this.citadels.put(Citadel.DOWN, new String[]{"d9", "e9", "f9", "e8"});
+	}
+
+	public HashMap<Diagonal, String[]> getDiagonals(){
+		return this.diagonals;
+	}
+
+	public HashMap<Diagonal, String[]> getBackDiagonals(){
+		return this.backDiagonals;
 	}
 
 	private void setPositions(){
@@ -145,10 +214,6 @@ public class Board implements Serializable {
 
 	public HashMap<String, Position> getPositions(){
 		return this.positions;
-	}
-
-	public HashMap<String, Position> getGoals(){
-		return this.goals;
 	}
 
 	public Pawn[][] getBoard(){
@@ -230,6 +295,23 @@ public class Board implements Serializable {
 	public Pawn getPawnRight(String position){
 		return this.board[this.getRow(position)][this.getColumn(position)+1];
 	}
+
+	public Pawn getPawnDiagonalLeftUp(String position){
+		return this.board[this.getRow(position)-1][this.getColumn(position)-1];
+	}
+
+	public Pawn getPawnDiagonalLeftDown(String position){
+		return this.board[this.getRow(position)+1][this.getColumn(position)-1];
+	}
+
+	public Pawn getPawnDiagonalRightUp(String position){
+		return this.board[this.getRow(position)-1][this.getColumn(position)+1];
+	}
+
+	public Pawn getPawnDiagonalRightDown(String position){
+		return this.board[this.getRow(position)+1][this.getColumn(position)+1];
+	}
+	
 
 	/**
 	 * @param row line to check
@@ -319,6 +401,210 @@ public class Board implements Serializable {
 				break;
 			}
 		return isBlack;
+	}
+
+	public boolean isWhiteDown(String position){
+		boolean isWhite = true;
+		int column = this.getColumn(position);
+		for(int i = this.getRow(position) + 1; i < 9; i++)
+			if(this.board[i][column] == Pawn.BLACK){
+				isWhite = false;
+				break;
+			}
+		return isWhite;
+	}
+
+	public boolean isWhiteUp(String position){
+		boolean isWhite = true;
+		int column = this.getColumn(position);
+		for(int i = this.getRow(position) -1;  i > -1; i--)
+			if(this.board[i][column] == Pawn.BLACK){
+				isWhite = false;
+				break;
+			}
+		return isWhite;
+	}
+
+	public boolean isWhiteRight(String position){
+		boolean isWhite = true;
+		int row = this.getRow(position);
+		for(int i = this.getColumn(position) + 1; i < 9; i++)
+			if(this.board[row][i] == Pawn.BLACK){
+				isWhite = false;
+				break;
+			}
+		return isWhite;
+	}
+
+	public boolean isWhiteLeft(String position){
+		boolean isWhite = true;
+		int row = this.getRow(position);
+		for(int i = this.getColumn(position) - 1; i > -1; i--)
+			if(this.board[row][i] == Pawn.BLACK){
+				isWhite = false;
+				break;
+			}
+		return isWhite;
+	}
+
+	public boolean isEmptyDown(String position){
+		boolean isEmpty = true;
+		int column = this.getColumn(position);
+		for(int i = this.getRow(position) + 1; i < 9; i++)
+			if(this.board[i][column] != Pawn.EMPTY){
+				isEmpty= false;
+				break;
+			}
+		return isEmpty;
+	}
+
+	public boolean isEmptyUp(String position){
+		boolean isEmpty = true;
+		int column = this.getColumn(position);
+		for(int i = this.getRow(position) -1;  i > -1; i--)
+			if(this.board[i][column] != Pawn.EMPTY){
+				isEmpty = false;
+				break;
+			}
+		return isEmpty;
+	}
+
+	public boolean isEmptyRight(String position){
+		boolean isEmpty = true;
+		int row = this.getRow(position);
+		for(int i = this.getColumn(position) + 1; i < 9; i++)
+			if(this.board[row][i] != Pawn.EMPTY){
+				isEmpty = false;
+				break;
+			}
+		return isEmpty;
+	}
+
+	public boolean isEmptyLeft(String position){
+		boolean isEmpty = true;
+		int row = this.getRow(position);
+		for(int i = this.getColumn(position) - 1; i > -1; i--)
+			if(this.board[row][i] != Pawn.EMPTY){
+				isEmpty = false;
+				break;
+			}
+		return isEmpty;
+	}
+
+	public boolean kingProtectedUp(int rowKing, int columnKing){
+		boolean checkBlack = false;
+
+		for(int i=columnKing + 1 ; i < 9; i++){
+			if(board[rowKing -1][i] == Pawn.BLACK){
+				checkBlack = true;
+				break;
+			}
+			if(board[rowKing -1][i] == Pawn.WHITE){
+				checkBlack = false;
+				break;
+			}
+		}
+		if(checkBlack == false){
+			for(int i=columnKing - 1;i > - 1; i--){
+				if(board[rowKing -1][i] == Pawn.BLACK){
+					checkBlack = true;
+					break;
+				}
+				if(board[rowKing -1][i] == Pawn.WHITE){
+					checkBlack = false;
+					break;
+				}
+			}
+		}
+
+		return !checkBlack;
+	}
+
+	public boolean kingProtectedDown(int rowKing, int columnKing){
+		boolean checkBlack = false;
+
+		for(int i=columnKing + 1 ; i < 9; i++){
+			if(board[rowKing +1][i] == Pawn.BLACK){
+				checkBlack = true;
+				break;
+			}
+			if(board[rowKing +1][i] == Pawn.WHITE){
+				checkBlack = false;
+				break;
+			}
+		}
+		if(checkBlack == false){
+			for(int i=columnKing - 1;i > - 1; i--){
+				if(board[rowKing +1][i] == Pawn.BLACK){
+					checkBlack = true;
+					break;
+				}
+				if(board[rowKing +1][i] == Pawn.WHITE){
+					checkBlack = false;
+					break;
+				}
+			}
+		}
+
+		return !checkBlack;
+	}
+
+	public boolean kingProtectedLeft(int rowKing, int columnKing){
+		boolean checkBlack = false;
+
+		for(int i=rowKing + 1 ; i < 9; i++){
+			if(board[i][columnKing - 1] == Pawn.BLACK){
+				checkBlack = true;
+				break;
+			}
+			if(board[i][columnKing - 1] == Pawn.WHITE){
+				checkBlack = false;
+				break;
+			}
+		}
+		if(checkBlack == false){
+			for(int i=rowKing - 1;i > - 1; i--){
+				if(board[i][columnKing - 1] == Pawn.BLACK){
+					checkBlack = true;
+					break;
+				}
+				if(board[i][columnKing - 1] == Pawn.WHITE){
+					checkBlack = false;
+					break;
+				}
+			}
+		}
+
+		return !checkBlack;
+	}
+
+	public boolean kingProtectedRight(int rowKing, int columnKing){
+		boolean checkBlack = false;
+
+		for(int i=rowKing + 1 ; i < 9; i++){
+			if(board[i][columnKing + 1] == Pawn.BLACK){
+				checkBlack = true;
+				break;
+			}
+			if(board[i][columnKing + 1] == Pawn.WHITE){
+				checkBlack = false;
+				break;
+			}
+		}
+		if(checkBlack == false){
+			for(int i=rowKing - 1;i > - 1; i--){
+				if(board[i][columnKing + 1] == Pawn.BLACK){
+					checkBlack = true;
+					break;
+				}
+				if(board[i][columnKing + 1] == Pawn.WHITE){
+					checkBlack = false;
+					break;
+				}
+			}
+		}
+
+		return !checkBlack;
 	}
 
 	public  int getLength(){

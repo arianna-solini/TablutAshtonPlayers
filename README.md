@@ -30,17 +30,20 @@ git clone https://github.com/arianna-solini/TablutAshtonPlayers.git
 First, run the server in `https://github.com/AGalassi/TablutCompetition`, then you can choose 4 differents launch configuration:
 ```
 #playerColor MUST be white or black (case insensitive)
+
 #serverTimeout is set by default to 60 secs
+
 #serverAddress is set by default to localhost
-#debugSearchTime is used for debugging, otherwise searchTime is set by default to (serverTimeout - 10) secs
+
+#debugSearchTime is used for debugging, otherwise searchTime is set by default to (serverTimeout - 3) secs
 
 1) Specify playerColor
 
 2) Specify playerColor, serverTimeout
 
-3) Specify playerColor, serverTimeout, serverAddress
+4) Specify playerColor, serverTimeout, serverAddress
 
-4) Specify playerColor, serverTimeout, serverAddress, debugSearchTime
+5) Specify playerColor, serverTimeout, serverAddress, debugSearchTime
 ```
 For the TABLUT STUDENTS COMPETITION is recommended to choose the 1st configuration if the timeout is set to 60 secs, otherwise the 2nd.
 

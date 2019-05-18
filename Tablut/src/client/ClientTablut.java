@@ -62,10 +62,10 @@ public class ClientTablut implements Runnable {
 	}
 
 	public ClientTablut(String player, int timeoutServer) throws UnknownHostException, IOException {
-		this(player, timeoutServer, "localhost", -1);
+		this(player, timeoutServer, "localhost", -1 );
 	}
 
-	public ClientTablut(String player, int timeoutServer, String address) throws UnknownHostException, IOException {
+	public ClientTablut(String player, int timeoutServer,String address) throws UnknownHostException, IOException {
 		this(player, timeoutServer, address, -1);
 	}
 
@@ -98,8 +98,7 @@ public class ClientTablut implements Runnable {
 	 * @throws Exception
 	 * @author R.Vasumini, A.Solini
 	 */
-    	public static void main(String[] args) throws Exception {
-        
+    	public static void main(String[] args) throws Exception {		
 		String player = null;
 		ClientTablut client = null;
 		//Checks Argument
@@ -121,11 +120,11 @@ public class ClientTablut implements Runnable {
 				} else if(args.length == 3){
 					int timeoutServer = Integer.parseInt(args[1]);
 					client = new ClientTablut(player, timeoutServer, args[2]);
-				} else if(args.length == 4){
+				}  else if(args.length == 4){
 					int timeoutServer = Integer.parseInt(args[1]);
 					int debugTimeSearch = Integer.parseInt(args[3]);
 					client = new ClientTablut(player, timeoutServer, args[2], debugTimeSearch);
-				}	
+				}		
 			}
 		} catch (InvalidParameterException e) {
 			System.out.println("Something's wrong with the input parameters");
@@ -156,8 +155,8 @@ public class ClientTablut implements Runnable {
 
 		if(debugTimeSearch > 0)
 			searchTime = debugTimeSearch;
-		else if(timeoutServer >= 20)
-			searchTime = timeoutServer - 10;
+		else if(timeoutServer >= 5)
+			searchTime = timeoutServer - 3;
 
 		TimeLimitedSearch search = new TimeLimitedSearch(rules, TablutGame.minValue, TablutGame.maxValue, searchTime);
 		//Prints	AI of d Tiger
