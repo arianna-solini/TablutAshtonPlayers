@@ -37,10 +37,10 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	private Metrics metrics = new Metrics();
 
 	public int numCuts;
-	private static int numberOfThread = 8;
-	protected int K = numberOfThread;
-	protected int[] currDepthLimit = new int[K];
-	protected boolean[] heuristicEvaluationUsed = new boolean[K];
+	private int numberOfThread;
+	protected int K;
+	protected int[] currDepthLimit;
+	protected boolean[] heuristicEvaluationUsed;
 
 	/**
 	 * Creates a new search object for a given game.
@@ -59,6 +59,10 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 		this.utilMin = utilMin;
 		this.utilMax = utilMax;
 		this.timer = new Timer(time);
+		this.numberOfThread = Runtime.getRuntime().availableProcessors();
+		this.K = this.numberOfThread;
+		this.currDepthLimit = new int[K];
+		this.heuristicEvaluationUsed = new boolean[K];
 	}
 
 	/**
@@ -102,8 +106,9 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 					double value = minValue(game.getResult(state, action), player, Double.NEGATIVE_INFINITY, 
 											Double.POSITIVE_INFINITY, 1, num);
 
-					if (timer.timeOutOccurred())
+					if (timer.timeOutOccurred()){
 						break; // exit from action loop
+					}
 
 					lastValuedActions.add(action, value);
 				}
@@ -112,10 +117,12 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 					lastValuedActions.actions.get(0).setScore(lastValuedActions.utilValues.get(0));
 					tempA = lastValuedActions.actions;
 					if (!timer.timeOutOccurred()) {
-						if (hasSafeWinner(tempA.get(0).getScore()))
+						if (hasSafeWinner(tempA.get(0).getScore())){
 							break;
-						else if (lastValuedActions.size() > 1 && isSignificantlyBetter(tempA.get(0).getScore(), lastValuedActions.utilValues.get(1)))
+						}
+						else if (lastValuedActions.size() > 1 && isSignificantlyBetter(tempA.get(0).getScore(), lastValuedActions.utilValues.get(1))){
 							break;
+						}
 					}
 				}
 				
@@ -325,10 +332,12 @@ public class TimeLimitedSearch implements AdversarialSearch<State, Action> {
 	}
 
 	public String getOtherPlayer(String player){
-		if(player.equals("W"))
+		if(player.equals("W")){
 			return "B";
-		else 
+		}
+		else {
 			return "W";
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////

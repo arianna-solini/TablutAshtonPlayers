@@ -50,7 +50,7 @@ public class Action implements Serializable, Comparable<Action> {
 			this.from = from;
 			this.to = to;
 			this.turn = t;
-			this.score = Double.NEGATIVE_INFINITY;
+			this.score = -999999.0;
 		}
 	}
 
