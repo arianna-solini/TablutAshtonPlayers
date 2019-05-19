@@ -1,5 +1,3 @@
-<!-- Per lanciare ClientTablut: ant client -Darg0=<nomegruppo> -Darg1=[white|black] -->
-
 
 <project name="Tablut">
      <!-- set global properties for this build -->
